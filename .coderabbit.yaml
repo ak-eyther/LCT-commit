@@ -1,0 +1,112 @@
+# Coderabbit Configuration for LCT Success Matrix Tracker
+# Automatically reviews code on every push and PR
+
+# Language settings
+language: en-US
+
+# Review settings
+reviews:
+  # Enable automatic reviews
+  auto_review: true
+
+  # Review on these events
+  on:
+    - push
+    - pull_request
+
+  # What to review
+  review:
+    - changed_files
+    - new_files
+
+  # Review depth
+  level: detailed
+
+  # Focus areas for this project
+  focus:
+    - code_quality
+    - best_practices
+    - security
+    - performance
+    - maintainability
+    - documentation
+
+  # Project-specific rules
+  rules:
+    - Check HTML/CSS/JavaScript syntax
+    - Verify code comments are clear for beginners
+    - Flag potential security issues
+    - Identify performance bottlenecks
+    - Check for console.log statements in production
+    - Validate localStorage usage patterns
+    - Review form validation logic
+    - Check for accessibility issues
+
+# Ignore patterns
+ignore:
+  - "*.md"  # Don't review markdown documentation
+  - ".gitignore"
+  - "vercel.json"
+  - "package-lock.json"
+  - "*.log"
+
+# Custom instructions for reviewers
+custom_instructions: |
+  This is a beginner-friendly healthcare claims tracking application.
+
+  Key Review Focus:
+  1. Code must be simple and well-commented for beginners
+  2. All changes should relate to one of the 31 success criteria
+  3. Priority: CRITICAL > High > Medium > Low
+  4. Security: No hardcoded credentials, sanitize user inputs
+  5. Testing: Must work by opening HTML file in browser
+  6. Performance: Check localStorage size and efficiency
+  7. UX: Forms should save automatically, exports should work
+  8. Healthcare context: Validate medical codes (ICD-10), amounts, dates
+
+  Project Stack:
+  - Pure HTML/CSS/JavaScript (no build process)
+  - LocalStorage for persistence
+  - No external dependencies
+  - Deployed on Vercel
+
+  Red Flags:
+  - Complex code that beginners can't understand
+  - Missing error handling
+  - Broken export/save functionality
+  - Console errors
+  - Accessibility violations
+  - Security vulnerabilities
+
+# Enable specific checks
+checks:
+  security: true
+  performance: true
+  best_practices: true
+  documentation: true
+  accessibility: true
+  error_handling: true
+
+# Comment style
+comments:
+  style: conversational
+  include_suggestions: true
+  include_praise: true
+  max_comments: 20
+
+# Auto-label PRs based on review
+labels:
+  - label: "needs-changes"
+    condition: "review.status == 'changes_requested'"
+  - label: "approved"
+    condition: "review.status == 'approved'"
+  - label: "security-issue"
+    condition: "review.security_issues > 0"
+  - label: "critical-priority"
+    condition: "pr.body contains 'CRITICAL'"
+
+# Summary format
+summary:
+  format: markdown
+  include_stats: true
+  include_recommendations: true

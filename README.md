@@ -249,11 +249,23 @@ localStorage.removeItem('lctTrackerData')
    - Include test results
 
 5. **Code Review**
+   - 🤖 **Automatic reviews** by Coderabbit AI on every push
+   - Reviews check: code quality, security, performance, best practices
    - Address reviewer feedback
    - Update as needed
    - Celebrate when merged! 🎉
 
 See [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md) for detailed guidelines.
+
+### 🤖 Automated Code Reviews
+
+Every commit automatically triggers:
+- **Coderabbit AI Review** - Comprehensive code analysis
+- **Security Scan** - Checks for credentials, sensitive data
+- **Quality Checks** - HTML validation, console.log detection
+- **Performance Review** - File size, efficiency checks
+
+Reviews appear as comments on commits and PRs automatically!
 
 ---
 
