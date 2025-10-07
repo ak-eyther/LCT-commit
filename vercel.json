@@ -1,20 +1,8 @@
 {
-  "version": 2,
-  "name": "lct-success-matrix-tracker",
-  "builds": [
+  "rewrites": [
     {
-      "src": "lct-tracker-html.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/",
-      "dest": "/lct-tracker-html.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/",
+      "destination": "/lct-tracker-html.html"
     }
   ],
   "headers": [
@@ -32,14 +20,12 @@
         {
           "key": "X-XSS-Protection",
           "value": "1; mode=block"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, must-revalidate"
         }
       ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/lct-tracker-html.html"
     }
   ]
 }
