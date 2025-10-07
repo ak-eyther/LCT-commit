@@ -5,15 +5,22 @@
 
 ## 🎯 Related Criteria
 <!-- Which of the 31 LCT Success Matrix criteria does this address? -->
+<!-- Check all that apply, or mark N/A if infrastructure/docs only -->
+
+**Category 1: Clinical Accuracy**
 - [ ] #1 - ICD matches billed service
 - [ ] #2 - Service-Diagnosis consistency
 - [ ] #3 - Medical notes completeness
+
+**Category 2: Financial & Policy Compliance**
 - [ ] #4 - Invoice amount precedence (CRITICAL)
 - [ ] #5 - Invoice date within policy
 - [ ] #6 - Preauthorization linkage
 - [ ] #7 - Benefit-level savings tracking
 - [ ] #8 - Service-level savings tracking
 - [ ] #9 - Tariff and price validation (CRITICAL)
+
+**Category 3: Fraud & Duplication Safeguards**
 - [ ] #10 - Duplicate visit detection
 - [ ] #11 - Repeated service detection (CRITICAL)
 - [ ] #12 - Invoice number format consistency
@@ -32,11 +39,17 @@
 - [ ] #25 - Seasonal/temporal fraud patterns
 - [ ] #26 - Chronic condition consistency
 - [ ] #27 - Provider service scope validation
+
+**Category 4: Vetting Completeness**
 - [ ] #28 - 100% vetting completeness
 - [ ] #29 - Query criteria definition
+
+**Category 5: Process Efficiency**
 - [ ] #30 - Vetting TAT
 - [ ] #31 - Cost savings tracking
-- [ ] N/A - Infrastructure/tooling
+
+**Other**
+- [ ] N/A - Infrastructure/tooling/documentation
 
 ## 🔧 Changes Made
 <!-- List the specific changes in this PR -->
@@ -46,21 +59,19 @@
 
 ## ✅ Testing Done
 <!-- Describe how you tested these changes -->
-- [ ] Tested manually in browser
-- [ ] Verified with sample data
+- [ ] Tested manually in browser (opened HTML file)
+- [ ] Verified functionality works as expected
 - [ ] Checked edge cases
-- [ ] No console errors
-- [ ] Export functionality works (if applicable)
-- [ ] Data saves correctly (if applicable)
+- [ ] No console errors or warnings
+- [ ] Export/save functionality works (if applicable)
 
-### Test Cases
-<!-- Describe specific test scenarios -->
+### Test Scenarios
+<!-- Describe specific test scenarios you ran -->
 1.
 2.
-3.
 
-## 📸 Screenshots/Recordings
-<!-- If UI changes, include before/after screenshots -->
+## 📸 Screenshots
+<!-- If UI changes, include screenshots -->
 
 
 
@@ -68,47 +79,8 @@
 <!-- What's the priority of this work? -->
 - [ ] CRITICAL - Blocks 90% accuracy goal
 - [ ] High - Important for quality metrics
-- [ ] Medium - Nice to have
-- [ ] Low - Future enhancement
-
-## 🚨 Breaking Changes
-<!-- Does this break existing functionality? -->
-- [ ] Yes - see migration notes below
-- [ ] No
-
-**Migration Notes** (if applicable):
-<!-- Describe what users need to do to handle breaking changes -->
-
-
-
-## 📚 Documentation
-<!-- Have you updated documentation? -->
-- [ ] Code comments added
-- [ ] README updated (if needed)
-- [ ] BRANCHING_STRATEGY.md followed
-- [ ] Commit messages are clear
-
-## 🔗 Related Issues/PRs
-<!-- Link to related issues or PRs -->
-- Closes #
-- Related to #
-
-## ✨ Additional Context
-<!-- Any other info reviewers should know -->
-
-
-
----
-
-## 👀 Reviewer Checklist
-<!-- For reviewers - verify these before approving -->
-- [ ] Code is clear and well-commented
-- [ ] Follows beginner-friendly style
-- [ ] Aligns with project priorities
-- [ ] No security concerns
-- [ ] Tested functionality works
-- [ ] No console errors/warnings
-- [ ] Documentation is adequate
+- [ ] Medium - Improves user experience
+- [ ] Low - Nice to have
 
 ---
 

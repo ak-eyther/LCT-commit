@@ -88,7 +88,6 @@ LCT-Project/
 
 3. **Automatic Deployments**
    - `main` branch → Production deployment
-   - `develop` branch → Preview deployment
    - Feature branches → Optional preview deployments
 
 ---
@@ -157,9 +156,9 @@ feature/*, fix/*, hotfix/* (short-lived)
 ### Creating a New Feature
 
 ```bash
-# Start from develop
-git checkout develop
-git pull origin develop
+# Start from main
+git checkout main
+git pull origin main
 
 # Create feature branch
 git checkout -b feature/duplicate-detection
@@ -176,8 +175,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 
 git push -u origin feature/duplicate-detection
 
-# Create pull request
-gh pr create --base develop --title "Add duplicate service detection"
+# Merge via PR or directly to main
 ```
 
 See [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md) for complete workflow details.
