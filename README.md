@@ -33,7 +33,10 @@ The **LCT Success Matrix Tracker** is a comprehensive tool for tracking the impl
 
 ```
 LCT-Project/
-├── lct-tracker-html.html              # Main tracker application ⭐
+├── index.html                         # Main tracker (Dashboard + Checklist) ⭐
+├── reports.html                       # Reports & Analytics page
+├── documentation.html                 # Project documentation viewer
+├── settings.html                      # Settings & Data Management
 ├── lct-success-matrix-checklist.tsx   # React component version
 ├── LCT_Vitraya_Complete_Project_Context.md  # Full business context
 ├── claude.md                          # Claude AI assistant guide
@@ -41,11 +44,26 @@ LCT-Project/
 ├── BRANCHING_STRATEGY.md              # Git workflow guide
 ├── vercel.json                        # Vercel deployment config
 ├── .gitignore                         # Git ignore rules
+├── .vercelignore                      # Vercel deployment ignore
+├── .coderabbit.yaml                   # Automated code review config
 ├── .github/
+│   ├── workflows/
+│   │   └── code-review.yml            # GitHub Actions workflow
 │   └── PULL_REQUEST_TEMPLATE/
 │       └── pull_request_template.md   # PR template
 └── README.md                          # This file
 ```
+
+### 📄 Multi-Page Application
+
+The tracker is now a multi-page HTML application:
+
+- **`index.html`** - Main dashboard with 31 criteria tracker
+- **`reports.html`** - Analytics and progress reports
+- **`documentation.html`** - Complete project documentation
+- **`settings.html`** - Data import/export and management
+
+All pages share data via `localStorage` - changes sync automatically!
 
 ---
 
@@ -61,12 +79,12 @@ LCT-Project/
 
 2. **Open in browser**
    ```bash
-   # Simply open the HTML file
-   open lct-tracker-html.html
+   # Simply open the main HTML file
+   open index.html
    # Or on Windows
-   start lct-tracker-html.html
+   start index.html
    # Or on Linux
-   xdg-open lct-tracker-html.html
+   xdg-open index.html
    ```
 
 3. **Start using!**

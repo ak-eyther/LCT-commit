@@ -40,6 +40,33 @@
             color: #737373;
         }
 
+        .top-nav {
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 16px 24px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            margin-bottom: 0;
+        }
+
+        .top-nav a {
+            color: #737373;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.15s;
+        }
+
+        .top-nav a:hover {
+            color: #0a0a0a;
+        }
+
+        .top-nav a.active {
+            color: #0a0a0a;
+            border-bottom: 2px solid #0a0a0a;
+        }
+
         .nav {
             display: flex;
             gap: 4px;
@@ -514,6 +541,14 @@
     </style>
 </head>
 <body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="index.html" class="active">Dashboard</a>
+        <a href="reports.html">Reports</a>
+        <a href="documentation.html">Documentation</a>
+        <a href="settings.html">Settings</a>
+    </nav>
+
     <div class="container">
         <div class="header">
             <h1>LCT Success Matrix Tracker</h1>

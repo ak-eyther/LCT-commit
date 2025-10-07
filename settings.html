@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - LCT Success Matrix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            color: #0a0a0a;
+            line-height: 1.5;
+        }
+
+        .nav {
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 16px 24px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav a {
+            color: #737373;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.15s;
+        }
+
+        .nav a:hover {
+            color: #0a0a0a;
+        }
+
+        .nav a.active {
+            color: #0a0a0a;
+            border-bottom: 2px solid #0a0a0a;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .setting-group {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .setting-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .setting-group h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .setting-group p {
+            font-size: 13px;
+            color: #737373;
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #e5e5e5;
+            background: white;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-danger {
+            background: #fef2f2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+
+        .btn-danger:hover {
+            background: #fee2e2;
+        }
+
+        .btn-primary {
+            background: #0a0a0a;
+            color: white;
+            border-color: #0a0a0a;
+        }
+
+        .btn-primary:hover {
+            background: #262626;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0a0a0a;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideIn 0.2s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 13px;
+            color: #1e40af;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="index.html">Dashboard</a>
+        <a href="reports.html">Reports</a>
+        <a href="documentation.html">Documentation</a>
+        <a href="settings.html" class="active">Settings</a>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Settings</h1>
+        </div>
+
+        <div class="card">
+            <h2>Data Management</h2>
+
+            <div class="setting-group">
+                <h3>Export Data</h3>
+                <p>Download your progress data in different formats</p>
+                <button class="btn" onclick="exportJSON()">Export as JSON</button>
+                <button class="btn" onclick="exportCSV()">Export as CSV</button>
+            </div>
+
+            <div class="setting-group">
+                <h3>Import Data</h3>
+                <p>Restore your progress from a previously exported file</p>
+                <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+                <button class="btn" onclick="document.getElementById('importFile').click()">Import from JSON</button>
+                <div class="info-box">
+                    💡 Importing will overwrite your current progress. Export first to create a backup!
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h3>Clear All Data</h3>
+                <p>Remove all saved progress. This cannot be undone.</p>
+                <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>About</h2>
+            <p><strong>Version:</strong> 1.0.0</p>
+            <p><strong>Project:</strong> LCT Success Matrix Tracker</p>
+            <p><strong>Organization:</strong> LCT Group & Vitraya Technologies</p>
+            <p style="margin-top: 12px;"><a href="https://github.com/ak-eyther/LCT-commit" target="_blank">View on GitHub</a></p>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Saved</div>
+
+    <script>
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        function exportJSON() {
+            const data = localStorage.getItem('lctTrackerData');
+            if (!data) {
+                showToast('No data to export');
+                return;
+            }
+
+            const dataStr = JSON.stringify(JSON.parse(data), null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', `lct-tracker-${new Date().toISOString().split('T')[0]}.json`);
+            link.click();
+            showToast('Exported as JSON');
+        }
+
+        function exportCSV() {
+            const data = localStorage.getItem('lctTrackerData');
+            if (!data) {
+                showToast('No data to export');
+                return;
+            }
+
+            const parsed = JSON.parse(data);
+            let csv = 'ID,Status,Owner,Date,Current Coverage,Future Plan\n';
+
+            Object.entries(parsed).forEach(([id, item]) => {
+                const current = (item.currentCoverage || '').replace(/"/g, '""');
+                const future = (item.futurePlan || '').replace(/"/g, '""');
+                csv += `${id},"${item.status}","${item.owner || ''}","${item.estDate || ''}","${current}","${future}"\n`;
+            });
+
+            const dataUri = 'data:text/csv;charset=utf-8,'+ encodeURIComponent(csv);
+            const link = document.createElement('a');
+            link.setAttribute('href', dataUri);
+            link.setAttribute('download', `lct-tracker-${new Date().toISOString().split('T')[0]}.csv`);
+            link.click();
+            showToast('Exported as CSV');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    localStorage.setItem('lctTrackerData', JSON.stringify(data));
+                    showToast('Data imported successfully');
+                    setTimeout(() => window.location.href = 'index.html', 1500);
+                } catch (error) {
+                    showToast('Error importing data');
+                    console.error(error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all data? This cannot be undone.\n\nTip: Export your data first to create a backup.')) {
+                localStorage.removeItem('lctTrackerData');
+                showToast('All data cleared');
+                setTimeout(() => window.location.href = 'index.html', 1500);
+            }
+        }
+    </script>
+</body>
+</html>
