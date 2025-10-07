@@ -1,10 +1,8 @@
 {
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/lct-tracker-html.html"
-    }
-  ],
+  "buildCommand": null,
+  "devCommand": null,
+  "installCommand": null,
+  "framework": null,
   "headers": [
     {
       "source": "/(.*)",

@@ -77,18 +77,41 @@ LCT-Project/
 
 ### Option 2: Deploy to Vercel
 
-1. **Fork this repository** to your GitHub account
+**Repository:** https://github.com/ak-eyther/LCT-commit
+**Live URL:** https://lct-commit.vercel.app (auto-updates from Git)
 
-2. **Deploy to Vercel**
-   - Go to [vercel.com](https://vercel.com)
-   - Click "New Project"
-   - Import your forked repository
-   - Vercel will auto-detect the `vercel.json` configuration
-   - Click "Deploy"
+#### Vercel Branching Strategy
 
-3. **Automatic Deployments**
-   - `main` branch → Production deployment
-   - Feature branches → Optional preview deployments
+Vercel follows your Git branching strategy:
+
+```
+main branch
+  ↓
+  Production: https://lct-commit.vercel.app
+
+feature/* branches
+  ↓
+  Preview: https://lct-commit-git-feature-name.vercel.app
+```
+
+**Deployment Rules:**
+- ✅ **Push to `main`** → Automatic production deployment
+- ✅ **Push to `feature/*`** → Automatic preview deployment
+- ✅ **Open PR** → Preview URL added to PR comments
+- ⚡ **Deploy time:** ~30 seconds
+
+#### Manual Deployment (if needed)
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy to production
+vercel --prod
+
+# Deploy preview
+vercel
+```
 
 ---
 

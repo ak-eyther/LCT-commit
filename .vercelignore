@@ -1,0 +1,34 @@
+# Files to ignore during Vercel deployment
+
+# Documentation (not needed in production)
+*.md
+!README.md
+
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Configuration files (not needed for static site)
+.coderabbit.yaml
+
+# GitHub specific files
+.github/
+
+# Environment files
+.env
+.env.*
