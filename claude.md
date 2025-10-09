@@ -76,6 +76,7 @@
   - Automatically creates Linear issues from AI reviewer comments
   - Works with Sentinel, CodeRabbit, and any AI reviewer
   - Maps priorities: 🔴 CRITICAL → Priority 1, 🟠 HIGH → Priority 2, etc.
+  - **Project**: LCT commit (all issues created under this project)
   - **Team**: Vitraya-ak (ID: b5835b14-c3cd-4048-b42a-7a7502647f4b)
   - **Workflow**: `.github/workflows/linear-integration.yml`
   - **Setup**: GitHub Secrets (LINEAR_API_KEY, LINEAR_TEAM_ID)

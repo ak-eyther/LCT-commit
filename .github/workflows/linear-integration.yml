@@ -67,7 +67,7 @@ jobs:
           # Create issue description using external script to avoid YAML parsing issues
           ISSUE_DESCRIPTION=$(./.github/scripts/build-issue-description.sh "$PRIORITY_TEXT" "$PR_NUMBER" "$PR_TITLE" "$PR_URL" "$COMMENT_URL" "$COMMENT_BODY")
 
-          # Resolve Linear project (prefer secret, else auto-discover by name "LCT Commit")
+          # Resolve Linear project (prefer secret, else auto-discover by name "LCT commit")
           PROJECT_ID="${{ secrets.LINEAR_PROJECT_ID }}"
           if [ -z "$PROJECT_ID" ]; then
             PROJECT_ID=$(curl -s -X POST https://api.linear.app/graphql \
@@ -75,7 +75,7 @@ jobs:
               -H "Authorization: $LINEAR_KEY" \
               -d '{
                 "query": "{ projects(first: 100) { nodes { id name team { id name } } } }"
-              }' | jq -r --arg NAME "LCT Commit" --arg TEAM "$TEAM_ID_SECRET" '.data.projects.nodes[] | select((.name==$NAME) and (.team.id==$TEAM)) | .id' | head -n1)
+              }' | jq -r --arg NAME "LCT commit" --arg TEAM "$TEAM_ID_SECRET" '.data.projects.nodes[] | select((.name==$NAME) and (.team.id==$TEAM)) | .id' | head -n1)
           fi
 
           if [ -n "$PROJECT_ID" ]; then
