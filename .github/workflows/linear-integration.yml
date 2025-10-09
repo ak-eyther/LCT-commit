@@ -1,0 +1,114 @@
+name: Linear Issue Creation from AI Reviews
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  create-linear-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if comment is from AI reviewer
+        id: check_comment
+        run: |
+          COMMENT_BODY="${{ github.event.comment.body }}"
+          COMMENT_USER="${{ github.event.comment.user.login }}"
+          
+          # Check for Sentinel AI reviewer patterns
+          if [[ "$COMMENT_BODY" == *"🔴 CRITICAL"* ]] || \
+             [[ "$COMMENT_BODY" == *"🟠 HIGH"* ]] || \
+             [[ "$COMMENT_BODY" == *"🟡 MEDIUM"* ]] || \
+             [[ "$COMMENT_BODY" == *"🟢 LOW"* ]] || \
+             [[ "$COMMENT_BODY" == *"Sentinel"* ]] || \
+             [[ "$COMMENT_BODY" == *"AI_REVIEWER"* ]] || \
+             [[ "$COMMENT_USER" == *"sentinel"* ]] || \
+             [[ "$COMMENT_USER" == *"ai-bot"* ]]; then
+            echo "AI reviewer comment detected."
+            echo "ai_comment=true" >> $GITHUB_OUTPUT
+          else
+            echo "Not an AI reviewer comment."
+            echo "ai_comment=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Extract priority and create Linear issue
+        if: steps.check_comment.outputs.ai_comment == 'true'
+        run: |
+          COMMENT_BODY="${{ github.event.comment.body }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_URL="${{ github.event.pull_request.html_url }}"
+          COMMENT_URL="${{ github.event.comment.html_url }}"
+          
+          # Extract priority from comment
+          if [[ "$COMMENT_BODY" == *"🔴 CRITICAL"* ]]; then
+            PRIORITY=1
+            PRIORITY_TEXT="CRITICAL"
+          elif [[ "$COMMENT_BODY" == *"🟠 HIGH"* ]]; then
+            PRIORITY=2
+            PRIORITY_TEXT="HIGH"
+          elif [[ "$COMMENT_BODY" == *"🟡 MEDIUM"* ]]; then
+            PRIORITY=3
+            PRIORITY_TEXT="MEDIUM"
+          elif [[ "$COMMENT_BODY" == *"🟢 LOW"* ]]; then
+            PRIORITY=4
+            PRIORITY_TEXT="LOW"
+          else
+            PRIORITY=3
+            PRIORITY_TEXT="MEDIUM"
+          fi
+          
+          # Create issue title
+          ISSUE_TITLE="[AI Review] $PRIORITY_TEXT: PR #$PR_NUMBER - $PR_TITLE"
+          
+          # Create issue description
+          ISSUE_DESCRIPTION="## AI Code Review Issue
+          
+**Priority:** $PRIORITY_TEXT
+**Source:** GitHub PR #$PR_NUMBER
+**PR Title:** $PR_TITLE
+**PR Link:** $PR_URL
+**Comment Link:** $COMMENT_URL
+
+### AI Reviewer Comment:
+\`\`\`
+$COMMENT_BODY
+\`\`\`
+
+### Context
+This issue was automatically created from an AI code review comment. Please review the PR and address the identified issue.
+
+---
+*Created by Linear GitHub Integration*"
+
+          # Create Linear issue
+          curl -X POST https://api.linear.app/graphql \
+            -H "Content-Type: application/json" \
+            -H "Authorization: ${{ secrets.LINEAR_API_KEY }}" \
+            -d "{
+              \"query\": \"mutation IssueCreate(\$input: IssueCreateInput!) { issueCreate(input: \$input) { success issue { id identifier title url } } }\",
+              \"variables\": {
+                \"input\": {
+                  \"teamId\": \"${{ secrets.LINEAR_TEAM_ID }}\",
+                  \"title\": \"$ISSUE_TITLE\",
+                  \"description\": \"$ISSUE_DESCRIPTION\",
+                  \"priority\": $PRIORITY
+                }
+              }
+            }" | jq -r '.data.issueCreate.issue.identifier'
+
+      - name: Comment on PR with Linear issue link
+        if: steps.check_comment.outputs.ai_comment == 'true'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueId = '${{ steps.create-linear-issue.outputs.issue_id }}';
+            if (issueId && issueId !== 'null') {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `🔗 **Linear Issue Created:** ${issueId}\n\nThis AI review comment has been automatically converted to a Linear issue for tracking.`
+              });
+            }

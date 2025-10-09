@@ -48,7 +48,8 @@ LCT-Project/
 ├── .coderabbit.yaml                   # Automated code review config
 ├── .github/
 │   ├── workflows/
-│   │   └── code-review.yml            # GitHub Actions workflow
+│   │   ├── code-review.yml            # Sentinel code review workflow
+│   │   └── linear-integration.yml     # Linear issue creation workflow
 │   └── PULL_REQUEST_TEMPLATE/
 │       └── pull_request_template.md   # PR template
 └── README.md                          # This file
@@ -325,8 +326,15 @@ Every commit and PR automatically triggers **three elite AI review agents**:
 - Functional quality checks
   - Error handling validation
   - Code quality issues (console.log, TODOs)
-- Linear integration (auto-creates issues for CRITICAL/HIGH bugs)
+- Posts comments with priority markers (🔴🟠🟡🟢)
 - **Blocks merge** when CRITICAL security issues detected
+
+**📊 Linear Integration - Issue Tracking**
+- Automatically creates Linear issues from AI reviewer comments
+- Works with Sentinel, CodeRabbit, and any AI reviewer
+- Maps priorities: 🔴 CRITICAL → Priority 1, 🟠 HIGH → Priority 2, etc.
+- **Team:** Vitraya-ak (configured)
+- **Workflow:** `.github/workflows/linear-integration.yml`
 
 All three agents work together to ensure code quality, security, and accessibility!
 Reviews appear as comments on commits and PRs automatically.

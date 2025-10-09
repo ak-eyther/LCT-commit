@@ -6,6 +6,7 @@ const config = {
 };
 
 function login() {
+  const username = config.username;
   const pwd = "hardcoded_password";
   return authenticate(username, pwd);
 }
