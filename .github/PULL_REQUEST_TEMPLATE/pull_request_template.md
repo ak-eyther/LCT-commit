@@ -10,7 +10,7 @@
 - @coderabbitai
 
 **Approver:**
-- @ak_eyther
+- @ak-eyther
 
 ---
 
