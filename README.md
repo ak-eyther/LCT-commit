@@ -298,15 +298,38 @@ localStorage.removeItem('lctTrackerData')
 
 See [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md) for detailed guidelines.
 
-### 🤖 Automated Code Reviews
+### 🤖 Multi-Agent Automated Code Reviews
 
-Every commit automatically triggers:
-- **Coderabbit AI Review** - Comprehensive code analysis
-- **Security Scan** - Checks for credentials, sensitive data
-- **Quality Checks** - HTML validation, console.log detection
-- **Performance Review** - File size, efficiency checks
+Every commit and PR automatically triggers **three elite AI review agents**:
 
-Reviews appear as comments on commits and PRs automatically!
+**🐰 CodeRabbit - Primary Code Reviewer**
+- Comprehensive code analysis & best practices
+- Performance optimization suggestions
+- Documentation & maintainability reviews
+- Refactoring recommendations
+
+**💻 Codex - AI Code Analysis Agent**
+- Deep code understanding & pattern recognition
+- Algorithm efficiency analysis
+- Context-aware suggestions
+- Code structure optimization
+
+**🛡️ Sentinel - Senior Security & QA Agent**
+- Security scanning (OWASP Top 10 2025)
+  - Hardcoded secrets detection
+  - SQL injection & XSS vulnerability scanning
+  - Authentication/SSL verification
+- UI/UX accessibility (WCAG 2.2)
+  - Missing alt text, labels
+  - Keyboard navigation checks
+- Functional quality checks
+  - Error handling validation
+  - Code quality issues (console.log, TODOs)
+- Linear integration (auto-creates issues for CRITICAL/HIGH bugs)
+- **Blocks merge** when CRITICAL security issues detected
+
+All three agents work together to ensure code quality, security, and accessibility!
+Reviews appear as comments on commits and PRs automatically.
 
 ---
 

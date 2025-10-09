@@ -47,7 +47,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '🐰 **CodeRabbit AI Review Complete!**\n\nCheck the PR comments for detailed feedback on:\n- Code quality\n- Best practices\n- Performance improvements\n- Documentation suggestions\n\n_CodeRabbit is your primary code reviewer providing comprehensive analysis._'
+              body: '🐰 **CodeRabbit AI Review Complete!**\n\nCheck the PR comments for detailed feedback on:\n- Code quality\n- Best practices\n- Performance improvements\n- Documentation suggestions\n\n_Part of our multi-agent review system (CodeRabbit + Codex + Sentinel)_'
             })
 
   # Sentinel - Senior Security & QA Agent
@@ -662,7 +662,8 @@ ${severity === 'critical' ? '⛔ BLOCKS PR MERGE - Critical security vulnerabili
 
 **Active Review Agents:**
 🐰 CodeRabbit - Code quality & best practices
-🛡️ Sentinel - Security, UI/UX & functionality checks
+💻 Codex - Deep code analysis & patterns
+🛡️ Sentinel - Security, UI/UX & functionality
 
 ✅ Comprehensive code analysis in progress...
 
@@ -670,5 +671,5 @@ Results will appear in this thread shortly.
 
 ---
 📋 **LCT-Vitraya Healthcare Claims Project**
-*Powered by CodeRabbit + Sentinel*`
+*Powered by CodeRabbit + Codex + Sentinel*`
             })
