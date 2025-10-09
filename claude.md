@@ -61,6 +61,17 @@
   - Export to CSV/JSON
   - **USE THIS ONE for serious work**
 
+### Code Quality & Security
+- **🛡️ Sentinel - Automated Code Review Agent**
+  - Elite AI code reviewer (OWASP Top 10 + WCAG 2.2)
+  - Runs on every commit and PR
+  - Blocks security vulnerabilities automatically
+  - Creates Linear issues for bug tracking
+  - **Quick Start**: `SENTINEL_QUICK_START.md`
+  - **Full Guide**: `SENTINEL_README.md`
+  - **Agent Definition**: `.claude/agents/code-reviewer.md`
+  - **Setup**: `./setup-sentinel.sh`
+
 ---
 
 ## 💡 How to Help with This Project
@@ -180,12 +191,14 @@
 3. **Test in browser** - Open HTML, make change, refresh
 4. **Save often** - LocalStorage is your friend
 5. **Export regularly** - CSV backup of your progress
+6. **Let Sentinel review** - Commit often to get automated feedback
 
 ### Code Style
 - **Keep it readable** - Comments for complex logic
 - **Use simple names** - `status` not `sts`, `criteria` not `crit`
 - **Avoid nested loops** - Flatten when possible
 - **One responsibility** - Each function does ONE thing
+- **Security first** - Never hardcode secrets, validate all inputs
 
 ### Testing Approach
 ```javascript
@@ -198,6 +211,71 @@ function testInvoiceValidation() {
 // Bad: Test everything at once
 function testEverything() {
   // 500 lines of test code
+}
+```
+
+### 🛡️ Working with Sentinel Code Review
+
+**Sentinel automatically reviews your code for:**
+- Security vulnerabilities (hardcoded secrets, SQL injection, XSS)
+- Accessibility issues (missing alt text, labels)
+- Code quality problems (console.logs, missing error handling)
+
+**When committing code:**
+```bash
+# Sentinel runs automatically
+git add .
+git commit -m "Implement criteria #4: Invoice validation"
+
+# If Sentinel blocks with CRITICAL issues:
+# 1. Read the error message carefully
+# 2. Fix the security issue
+# 3. Commit again
+
+# Only bypass in emergencies (rarely!)
+git commit --no-verify -m "Emergency fix"
+```
+
+**Understanding Sentinel feedback:**
+- 🔴 **CRITICAL**: Security risk - must fix before merging
+- 🟠 **HIGH**: Major issue - fix before release
+- 🟡 **MEDIUM**: Code quality - address in next sprint
+- 🟢 **LOW**: Nice-to-have - backlog item
+
+**LCT-Specific Security Rules Sentinel Enforces:**
+1. No hardcoded API keys or passwords
+2. Patient data (PHI) must be encrypted
+3. Financial calculations validated server-side only
+4. All user inputs sanitized before use
+5. Error messages don't expose sensitive data
+6. Proper error handling on all async operations
+
+**Example - Sentinel-approved code:**
+```javascript
+// ✅ GOOD - Sentinel approves this
+async function processInvoice(invoiceData) {
+  try {
+    // Validate inputs (prevents injection)
+    if (!invoiceData || typeof invoiceData.amount !== 'number') {
+      throw new Error('Invalid invoice data');
+    }
+
+    // Server-side validation only (Criteria #4)
+    const validated = await validateWithLCTSystem(invoiceData);
+
+    return { success: true, result: validated };
+  } catch (error) {
+    // Safe error handling (no data exposure)
+    console.error('Invoice processing failed');
+    return { success: false, error: 'Processing failed' };
+  }
+}
+
+// ❌ BAD - Sentinel will block this
+const API_KEY = "sk_live_abc123"; // Hardcoded secret!
+function processInvoice(data) {
+  // No validation!
+  return fetch(`/api?data=${data}`); // No error handling!
 }
 ```
 

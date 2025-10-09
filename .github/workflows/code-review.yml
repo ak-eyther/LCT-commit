@@ -1,18 +1,28 @@
-name: Automated Code Review
+name: Multi-Agent Code Review
 
 on:
   push:
     branches:
       - main
+      - qa
+      - develop
       - feature/**
       - fix/**
   pull_request:
     branches:
       - main
+      - qa
+      - develop
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
 
 jobs:
+  # CodeRabbit - Primary AI Code Reviewer
   coderabbit-review:
-    name: Coderabbit AI Review
+    name: CodeRabbit AI Review
     runs-on: ubuntu-latest
 
     steps:
@@ -21,23 +31,516 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Coderabbit Review
+      - name: CodeRabbit Review
         uses: coderabbitai/coderabbit-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Coderabbit will automatically review based on .coderabbit.yaml config
+          # CodeRabbit will automatically review based on .coderabbit.yaml config
 
-      - name: Comment with Review Summary
+      - name: Comment with CodeRabbit Summary
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '🤖 **Coderabbit AI Review Complete!**\n\nCheck the PR comments for detailed feedback on:\n- Code quality\n- Security issues\n- Performance improvements\n- Best practices\n- Documentation\n\n✅ Review the suggestions and make updates as needed.'
+              body: '🐰 **CodeRabbit AI Review Complete!**\n\nCheck the PR comments for detailed feedback on:\n- Code quality\n- Best practices\n- Performance improvements\n- Documentation suggestions\n\n_CodeRabbit is your primary code reviewer providing comprehensive analysis._'
             })
+
+  # Sentinel - Senior Security & QA Agent
+  sentinel-security-review:
+    name: Sentinel Security & QA Review
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            **/*.js
+            **/*.ts
+            **/*.tsx
+            **/*.jsx
+            **/*.vue
+            **/*.html
+            **/*.css
+            **/*.scss
+            **/*.py
+            **/*.java
+
+      - name: Run Elite Code Review
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/github-script@v7
+        env:
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            // Read the elite code review agent guidelines
+            const agentGuide = fs.readFileSync('.claude/agents/code-reviewer.md', 'utf8');
+
+            const changedFiles = process.env.CHANGED_FILES.split(' ');
+            let criticalIssues = [];
+            let highIssues = [];
+            let mediumIssues = [];
+            let reviewComments = [];
+
+            console.log(`🔍 Reviewing ${changedFiles.length} changed files...`);
+
+            for (const file of changedFiles) {
+              if (!fs.existsSync(file)) continue;
+
+              const content = fs.readFileSync(file, 'utf8');
+              const lines = content.split('\n');
+
+              // Security Checks
+              const securityIssues = performSecurityScan(file, content, lines);
+              criticalIssues.push(...securityIssues.critical);
+              highIssues.push(...securityIssues.high);
+              mediumIssues.push(...securityIssues.medium);
+
+              // UI/UX Checks (for HTML/CSS/JS files)
+              if (file.match(/\.(html|css|jsx?|tsx?)$/)) {
+                const uiIssues = performUIChecks(file, content, lines);
+                highIssues.push(...uiIssues.high);
+                mediumIssues.push(...uiIssues.medium);
+              }
+
+              // Functional Checks
+              const functionalIssues = performFunctionalChecks(file, content, lines);
+              highIssues.push(...functionalIssues.high);
+              mediumIssues.push(...functionalIssues.medium);
+            }
+
+            // Security scan functions
+            function performSecurityScan(file, content, lines) {
+              const issues = { critical: [], high: [], medium: [] };
+
+              // Check for hardcoded secrets
+              const secretPatterns = [
+                { pattern: /(?:api[_-]?key|apikey|api[_-]?secret)\s*[:=]\s*['"][^'"]{20,}['"]/gi, severity: 'critical', type: 'Hardcoded API Key' },
+                { pattern: /(?:password|passwd|pwd)\s*[:=]\s*['"][^'"]+['"]/gi, severity: 'critical', type: 'Hardcoded Password' },
+                { pattern: /(?:secret|token)\s*[:=]\s*['"][^'"]{20,}['"]/gi, severity: 'critical', type: 'Hardcoded Secret' },
+                { pattern: /sk_live_[a-zA-Z0-9]{24,}/g, severity: 'critical', type: 'Stripe Live Key' },
+                { pattern: /AKIA[0-9A-Z]{16}/g, severity: 'critical', type: 'AWS Access Key' }
+              ];
+
+              secretPatterns.forEach(({ pattern, severity, type }) => {
+                const matches = content.matchAll(pattern);
+                for (const match of matches) {
+                  const lineNum = content.substring(0, match.index).split('\n').length;
+                  issues[severity].push({
+                    file,
+                    line: lineNum,
+                    type,
+                    message: `🔴 CRITICAL: ${type} detected`,
+                    code: lines[lineNum - 1]?.trim()
+                  });
+                }
+              });
+
+              // Check for SQL injection vulnerabilities
+              const sqlPatterns = [
+                /query\s*=\s*['"`]SELECT.*\+.*['"`]/gi,
+                /execute\(['"`]SELECT.*\+.*['"`]\)/gi,
+                /query\(['"`].*\$\{.*\}.*['"`]\)/gi
+              ];
+
+              sqlPatterns.forEach(pattern => {
+                const matches = content.matchAll(pattern);
+                for (const match of matches) {
+                  const lineNum = content.substring(0, match.index).split('\n').length;
+                  issues.critical.push({
+                    file,
+                    line: lineNum,
+                    type: 'SQL Injection',
+                    message: '🔴 CRITICAL: Potential SQL injection vulnerability',
+                    code: lines[lineNum - 1]?.trim()
+                  });
+                }
+              });
+
+              // Check for XSS vulnerabilities
+              if (file.match(/\.(html|jsx?|tsx?)$/)) {
+                const xssPatterns = [
+                  { pattern: /innerHTML\s*=\s*(?!['"`])/g, severity: 'critical', type: 'XSS via innerHTML' },
+                  { pattern: /dangerouslySetInnerHTML/g, severity: 'high', type: 'React dangerouslySetInnerHTML' },
+                  { pattern: /eval\s*\(/g, severity: 'critical', type: 'eval() usage' },
+                  { pattern: /document\.write\s*\(/g, severity: 'high', type: 'document.write usage' }
+                ];
+
+                xssPatterns.forEach(({ pattern, severity, type }) => {
+                  const matches = content.matchAll(pattern);
+                  for (const match of matches) {
+                    const lineNum = content.substring(0, match.index).split('\n').length;
+                    issues[severity].push({
+                      file,
+                      line: lineNum,
+                      type,
+                      message: `${severity === 'critical' ? '🔴 CRITICAL' : '🟠 HIGH'}: ${type}`,
+                      code: lines[lineNum - 1]?.trim()
+                    });
+                  }
+                });
+              }
+
+              // Check for disabled authentication
+              const authPatterns = [
+                { pattern: /auth.*=.*false/gi, type: 'Disabled Authentication' },
+                { pattern: /rejectUnauthorized\s*:\s*false/gi, type: 'Disabled SSL Verification' },
+                { pattern: /validateStatus.*=>/gi, type: 'Custom Status Validation' }
+              ];
+
+              authPatterns.forEach(({ pattern, type }) => {
+                if (pattern.test(content)) {
+                  const matches = content.matchAll(pattern);
+                  for (const match of matches) {
+                    const lineNum = content.substring(0, match.index).split('\n').length;
+                    issues.critical.push({
+                      file,
+                      line: lineNum,
+                      type,
+                      message: `🔴 CRITICAL: ${type}`,
+                      code: lines[lineNum - 1]?.trim()
+                    });
+                  }
+                }
+              });
+
+              return issues;
+            }
+
+            function performUIChecks(file, content, lines) {
+              const issues = { high: [], medium: [] };
+
+              // Accessibility checks
+              if (file.match(/\.html$/)) {
+                // Check for images without alt text
+                const imgMatches = content.matchAll(/<img(?![^>]*alt=)[^>]*>/gi);
+                for (const match of imgMatches) {
+                  const lineNum = content.substring(0, match.index).split('\n').length;
+                  issues.high.push({
+                    file,
+                    line: lineNum,
+                    type: 'Accessibility',
+                    message: '🟠 HIGH: Image missing alt attribute',
+                    code: lines[lineNum - 1]?.trim()
+                  });
+                }
+
+                // Check for inputs without labels
+                const inputMatches = content.matchAll(/<input(?![^>]*(?:aria-label|aria-labelledby))[^>]*>/gi);
+                for (const match of inputMatches) {
+                  const lineNum = content.substring(0, match.index).split('\n').length;
+                  issues.high.push({
+                    file,
+                    line: lineNum,
+                    type: 'Accessibility',
+                    message: '🟠 HIGH: Input missing label or aria-label',
+                    code: lines[lineNum - 1]?.trim()
+                  });
+                }
+              }
+
+              // Check for focus: none
+              if (content.match(/outline\s*:\s*none|outline\s*:\s*0/)) {
+                const matches = content.matchAll(/outline\s*:\s*(?:none|0)/g);
+                for (const match of matches) {
+                  const lineNum = content.substring(0, match.index).split('\n').length;
+                  issues.medium.push({
+                    file,
+                    line: lineNum,
+                    type: 'Accessibility',
+                    message: '🟡 MEDIUM: Focus indicator removed (outline: none)',
+                    code: lines[lineNum - 1]?.trim()
+                  });
+                }
+              }
+
+              return issues;
+            }
+
+            function performFunctionalChecks(file, content, lines) {
+              const issues = { high: [], medium: [] };
+
+              // Check for console.log in production code
+              const consoleMatches = content.matchAll(/console\.(log|debug|info)/g);
+              for (const match of consoleMatches) {
+                const lineNum = content.substring(0, match.index).split('\n').length;
+                issues.medium.push({
+                  file,
+                  line: lineNum,
+                  type: 'Code Quality',
+                  message: '🟡 MEDIUM: console.log statement (remove for production)',
+                  code: lines[lineNum - 1]?.trim()
+                });
+              }
+
+              // Check for TODO/FIXME comments
+              const todoMatches = content.matchAll(/\/\/\s*(TODO|FIXME|HACK):?\s*(.+)/gi);
+              for (const match of todoMatches) {
+                const lineNum = content.substring(0, match.index).split('\n').length;
+                issues.medium.push({
+                  file,
+                  line: lineNum,
+                  type: 'Technical Debt',
+                  message: `🟡 MEDIUM: ${match[1]}: ${match[2]}`,
+                  code: lines[lineNum - 1]?.trim()
+                });
+              }
+
+              // Check for missing error handling
+              const asyncMatches = content.matchAll(/async\s+function\s+\w+\s*\([^)]*\)\s*\{[^}]*\}/gs);
+              for (const match of asyncMatches) {
+                if (!match[0].includes('try') && !match[0].includes('catch')) {
+                  const lineNum = content.substring(0, match.index).split('\n').length;
+                  issues.high.push({
+                    file,
+                    line: lineNum,
+                    type: 'Error Handling',
+                    message: '🟠 HIGH: Async function without try-catch',
+                    code: lines[lineNum - 1]?.trim()
+                  });
+                }
+              }
+
+              return issues;
+            }
+
+            // Generate review summary
+            let summary = `## 🛡️ Sentinel Security & QA Review\n\n`;
+            summary += `**Commit**: ${context.sha.substring(0, 7)}\n`;
+            summary += `**Files Reviewed**: ${changedFiles.length}\n\n`;
+
+            if (criticalIssues.length > 0) {
+              summary += `### 🔴 CRITICAL Issues (${criticalIssues.length})\n\n`;
+              summary += `⛔ **PR BLOCKED** - Must fix before merge\n\n`;
+              criticalIssues.forEach(issue => {
+                summary += `- **${issue.type}** in \`${issue.file}:${issue.line}\`\n`;
+                summary += `  ${issue.message}\n`;
+                summary += `  \`\`\`\n  ${issue.code}\n  \`\`\`\n\n`;
+              });
+            }
+
+            if (highIssues.length > 0) {
+              summary += `### 🟠 HIGH Issues (${highIssues.length})\n\n`;
+              highIssues.slice(0, 10).forEach(issue => {
+                summary += `- **${issue.type}** in \`${issue.file}:${issue.line}\`\n`;
+                summary += `  ${issue.message}\n\n`;
+              });
+              if (highIssues.length > 10) {
+                summary += `_... and ${highIssues.length - 10} more high issues_\n\n`;
+              }
+            }
+
+            if (mediumIssues.length > 0) {
+              summary += `### 🟡 MEDIUM Issues (${mediumIssues.length})\n\n`;
+              summary += `<details><summary>Click to expand</summary>\n\n`;
+              mediumIssues.slice(0, 15).forEach(issue => {
+                summary += `- **${issue.type}** in \`${issue.file}:${issue.line}\` - ${issue.message}\n`;
+              });
+              if (mediumIssues.length > 15) {
+                summary += `_... and ${mediumIssues.length - 15} more medium issues_\n`;
+              }
+              summary += `\n</details>\n\n`;
+            }
+
+            if (criticalIssues.length === 0 && highIssues.length === 0 && mediumIssues.length === 0) {
+              summary += `### ✅ All Checks Passed!\n\n`;
+              summary += `No security, UI, or functional issues detected.\n\n`;
+            }
+
+            summary += `---\n`;
+            summary += `📋 **LCT Healthcare Claims Project**\n`;
+            summary += `🔐 Security · 🎨 UI/UX · ⚙️ Functionality\n\n`;
+            summary += `_Senior QA Agent: Sentinel v1.0.0 (works alongside CodeRabbit)_\n`;
+
+            // Post summary comment
+            if (context.eventName === 'pull_request') {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: summary
+              });
+
+              // Post inline comments for critical and high issues
+              const inlineIssues = [...criticalIssues, ...highIssues.slice(0, 10)];
+              for (const issue of inlineIssues) {
+                try {
+                  await github.rest.pulls.createReviewComment({
+                    pull_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    body: `${issue.message}\n\n**Type**: ${issue.type}\n**Severity**: ${criticalIssues.includes(issue) ? 'CRITICAL' : 'HIGH'}`,
+                    path: issue.file,
+                    line: issue.line,
+                    side: 'RIGHT'
+                  });
+                } catch (error) {
+                  console.log(`Could not post inline comment: ${error.message}`);
+                }
+              }
+            } else {
+              // For push events, post as commit comment
+              await github.rest.repos.createCommitComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: context.sha,
+                body: summary
+              });
+            }
+
+            // Create Linear issues for CRITICAL and HIGH severity bugs
+            async function createLinearIssue(issue, severity) {
+              const LINEAR_API_KEY = process.env.LINEAR_API_KEY;
+              const LINEAR_TEAM_ID = process.env.LINEAR_TEAM_ID;
+
+              if (!LINEAR_API_KEY || !LINEAR_TEAM_ID) {
+                console.log('⚠️  Linear credentials not configured - skipping issue creation');
+                return null;
+              }
+
+              const priorityMap = {
+                'critical': 1, // Urgent
+                'high': 2,     // High
+                'medium': 3,   // Medium
+                'low': 4       // Low
+              };
+
+              const title = `[Sentinel] ${issue.type} in ${issue.file.split('/').pop()}:${issue.line}`;
+              const description = `🛡️ **Sentinel Code Review Alert**
+
+**Severity:** ${severity.toUpperCase()}
+**Category:** ${issue.type}
+**File:** \`${issue.file}:${issue.line}\`
+**Commit:** ${context.sha.substring(0, 7)}
+**PR:** ${context.eventName === 'pull_request' ? `#${context.issue.number}` : 'N/A'}
+
+## Issue Details
+${issue.message}
+
+## Code Location
+\`\`\`
+${issue.code}
+\`\`\`
+
+## Impact
+${severity === 'critical' ? '⛔ BLOCKS PR MERGE - Critical security vulnerability' : '🟠 HIGH priority - Must fix before release'}
+
+## Related LCT Context
+- Healthcare claims processing system
+- PHI/PII data protection required
+- Financial accuracy critical
+
+---
+**Auto-generated by:** Sentinel v1.0.0
+**Detection Time:** ${new Date().toISOString()}
+**GitHub:** ${context.payload.pull_request?.html_url || context.payload.repository.html_url}`;
+
+              try {
+                const response = await fetch('https://api.linear.app/graphql', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': LINEAR_API_KEY
+                  },
+                  body: JSON.stringify({
+                    query: `
+                      mutation CreateIssue($title: String!, $description: String!, $teamId: String!, $priority: Int!) {
+                        issueCreate(input: {
+                          title: $title
+                          description: $description
+                          teamId: $teamId
+                          priority: $priority
+                          labelIds: []
+                        }) {
+                          success
+                          issue {
+                            id
+                            identifier
+                            url
+                          }
+                        }
+                      }
+                    `,
+                    variables: {
+                      title,
+                      description,
+                      teamId: LINEAR_TEAM_ID,
+                      priority: priorityMap[severity] || 3
+                    }
+                  })
+                });
+
+                const result = await response.json();
+                if (result.data?.issueCreate?.success) {
+                  const linearIssue = result.data.issueCreate.issue;
+                  console.log(`✅ Created Linear issue: ${linearIssue.identifier} - ${linearIssue.url}`);
+                  return linearIssue;
+                } else {
+                  console.log(`⚠️  Failed to create Linear issue: ${JSON.stringify(result.errors)}`);
+                  return null;
+                }
+              } catch (error) {
+                console.log(`⚠️  Error creating Linear issue: ${error.message}`);
+                return null;
+              }
+            }
+
+            // Create Linear issues for critical and high priority issues
+            const linearIssues = [];
+            for (const issue of criticalIssues) {
+              const linearIssue = await createLinearIssue(issue, 'critical');
+              if (linearIssue) {
+                linearIssues.push(linearIssue);
+              }
+            }
+
+            for (const issue of highIssues.slice(0, 5)) { // Limit to 5 high issues to avoid spam
+              const linearIssue = await createLinearIssue(issue, 'high');
+              if (linearIssue) {
+                linearIssues.push(linearIssue);
+              }
+            }
+
+            // Add Linear issue links to summary
+            if (linearIssues.length > 0) {
+              summary += `\n### 📊 Linear Issues Created\n\n`;
+              linearIssues.forEach(issue => {
+                summary += `- [${issue.identifier}](${issue.url})\n`;
+              });
+              summary += `\n`;
+            }
+
+            // Fail the build if critical issues found
+            if (criticalIssues.length > 0) {
+              core.setFailed(`❌ Found ${criticalIssues.length} CRITICAL security issues. Fix before merging.`);
+            }
+
+      - name: Create Linear Issues
+        if: always() && (env.LINEAR_API_KEY != '' && env.LINEAR_TEAM_ID != '')
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          LINEAR_TEAM_ID: ${{ secrets.LINEAR_TEAM_ID }}
+        run: echo "Linear integration handled in main script"
 
   lint-check:
     name: Basic Code Quality Check
@@ -151,19 +654,21 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: context.sha,
-              body: `🤖 **Automated Code Review Triggered**
+              body: `🤖 **Multi-Agent Code Review Activated**
 
 **Commit:** ${sha}
 **Author:** ${author}
 **Message:** ${message}
 
-✅ Coderabbit AI is reviewing this commit...
-✅ Security checks running...
-✅ Code quality checks in progress...
+**Active Review Agents:**
+🐰 CodeRabbit - Code quality & best practices
+🛡️ Sentinel - Security, UI/UX & functionality checks
+
+✅ Comprehensive code analysis in progress...
 
 Results will appear in this thread shortly.
 
 ---
-📋 **LCT Success Matrix Project** - Healthcare Claims Adjudication
-*Automated review by Coderabbit & GitHub Actions*`
+📋 **LCT-Vitraya Healthcare Claims Project**
+*Powered by CodeRabbit + Sentinel*`
             })
