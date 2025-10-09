@@ -517,11 +517,11 @@
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="showTab('goals')">Goals & Collaboration</button>
-            <button class="tab" onclick="showTab('org-chart')">Org Chart</button>
-            <button class="tab" onclick="showTab('leadership')">Leadership Team</button>
-            <button class="tab" onclick="showTab('engineering')">Product & Engineering</button>
-            <button class="tab" onclick="showTab('lct-team')">LCT Team</button>
+            <button class="tab active" onclick="showTab('goals', event)">Goals & Collaboration</button>
+            <button class="tab" onclick="showTab('org-chart', event)">Org Chart</button>
+            <button class="tab" onclick="showTab('leadership', event)">Leadership Team</button>
+            <button class="tab" onclick="showTab('engineering', event)">Product & Engineering</button>
+            <button class="tab" onclick="showTab('lct-team', event)">LCT Team</button>
         </div>
 
         <!-- GOALS & COLLABORATION TAB -->
@@ -1464,7 +1464,7 @@
     </div>
 
     <script>
-        function showTab(tabName) {
+        function showTab(tabName, event) {
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
