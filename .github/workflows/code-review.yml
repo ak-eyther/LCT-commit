@@ -87,11 +87,14 @@ jobs:
         uses: actions/github-script@v7
         env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          LINEAR_TEAM_ID: ${{ secrets.LINEAR_TEAM_ID }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             const path = require('path');
+            const core = require('@actions/core');
 
             // Read the elite code review agent guidelines
             const agentGuide = fs.readFileSync('.claude/agents/code-reviewer.md', 'utf8');
@@ -395,12 +398,15 @@ jobs:
 
               // Post inline comments for critical and high issues
               const inlineIssues = [...criticalIssues, ...highIssues.slice(0, 10)];
+              const prHeadSha = context.payload.pull_request.head.sha;
+
               for (const issue of inlineIssues) {
                 try {
                   await github.rest.pulls.createReviewComment({
                     pull_number: context.issue.number,
                     owner: context.repo.owner,
                     repo: context.repo.repo,
+                    commit_id: prHeadSha,
                     body: `${issue.message}\n\n**Type**: ${issue.type}\n**Severity**: ${criticalIssues.includes(issue) ? 'CRITICAL' : 'HIGH'}`,
                     path: issue.file,
                     line: issue.line,
