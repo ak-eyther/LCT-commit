@@ -10,22 +10,19 @@ jobs:
   create-linear-issue:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Check if comment is from AI reviewer
         id: check_comment
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          COMMENT_USER: ${{ github.event.comment.user.login }}
         run: |
-          COMMENT_BODY="${{ github.event.comment.body }}"
-          COMMENT_USER="${{ github.event.comment.user.login }}"
-          
           # Check for Sentinel AI reviewer patterns
-          if [[ "$COMMENT_BODY" == *"🔴 CRITICAL"* ]] || \
-             [[ "$COMMENT_BODY" == *"🟠 HIGH"* ]] || \
-             [[ "$COMMENT_BODY" == *"🟡 MEDIUM"* ]] || \
-             [[ "$COMMENT_BODY" == *"🟢 LOW"* ]] || \
-             [[ "$COMMENT_BODY" == *"Sentinel"* ]] || \
-             [[ "$COMMENT_BODY" == *"AI_REVIEWER"* ]] || \
-             [[ "$COMMENT_USER" == *"sentinel"* ]] || \
-             [[ "$COMMENT_USER" == *"ai-bot"* ]]; then
-            echo "AI reviewer comment detected."
+          if echo "$COMMENT_BODY" | grep -qE '🔴 CRITICAL|🟠 HIGH|🟡 MEDIUM|🟢 LOW|Sentinel|AI_REVIEWER' || \
+             echo "$COMMENT_USER" | grep -qE 'sentinel|ai-bot|coderabbitai'; then
+            echo "AI reviewer comment detected from user: $COMMENT_USER"
             echo "ai_comment=true" >> $GITHUB_OUTPUT
           else
             echo "Not an AI reviewer comment."
@@ -34,86 +31,136 @@ jobs:
 
       - name: Extract priority and create Linear issue
         if: steps.check_comment.outputs.ai_comment == 'true'
+        id: create_issue
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number }}
+          PR_TITLE: ${{ github.event.pull_request.title || github.event.issue.title }}
+          PR_URL: ${{ github.event.pull_request.html_url || github.event.issue.html_url }}
+          COMMENT_URL: ${{ github.event.comment.html_url }}
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          LINEAR_TEAM_ID: ${{ secrets.LINEAR_TEAM_ID }}
+          LINEAR_PROJECT_ID: ${{ secrets.LINEAR_PROJECT_ID }}
         run: |
-          COMMENT_BODY="${{ github.event.comment.body }}"
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_URL="${{ github.event.pull_request.html_url }}"
-          COMMENT_URL="${{ github.event.comment.html_url }}"
-          TEAM_ID_SECRET="${{ secrets.LINEAR_TEAM_ID }}"
-          LINEAR_KEY="${{ secrets.LINEAR_API_KEY }}"
-          
+          # Save comment body to file to avoid bash injection
+          echo "$COMMENT_BODY" > /tmp/comment_body.txt
+
           # Extract priority from comment
-          if [[ "$COMMENT_BODY" == *"🔴 CRITICAL"* ]]; then
+          if echo "$COMMENT_BODY" | grep -q '🔴 CRITICAL'; then
             PRIORITY=1
             PRIORITY_TEXT="CRITICAL"
-          elif [[ "$COMMENT_BODY" == *"🟠 HIGH"* ]]; then
+          elif echo "$COMMENT_BODY" | grep -qE '🟠 HIGH|🟠 Major'; then
             PRIORITY=2
             PRIORITY_TEXT="HIGH"
-          elif [[ "$COMMENT_BODY" == *"🟡 MEDIUM"* ]]; then
+          elif echo "$COMMENT_BODY" | grep -q '🟡 MEDIUM'; then
             PRIORITY=3
             PRIORITY_TEXT="MEDIUM"
-          elif [[ "$COMMENT_BODY" == *"🟢 LOW"* ]]; then
+          elif echo "$COMMENT_BODY" | grep -q '🟢 LOW'; then
             PRIORITY=4
             PRIORITY_TEXT="LOW"
           else
             PRIORITY=3
             PRIORITY_TEXT="MEDIUM"
           fi
-          
-          # Create issue title
+
+          echo "Detected priority: $PRIORITY_TEXT (Priority $PRIORITY)"
+
+          # Create issue title (escape quotes)
           ISSUE_TITLE="[AI Review] $PRIORITY_TEXT: PR #$PR_NUMBER - $PR_TITLE"
-          
-          # Create issue description using external script to avoid YAML parsing issues
-          ISSUE_DESCRIPTION=$(./.github/scripts/build-issue-description.sh "$PRIORITY_TEXT" "$PR_NUMBER" "$PR_TITLE" "$PR_URL" "$COMMENT_URL" "$COMMENT_BODY")
+
+          # Build issue description (escape for JSON)
+          ISSUE_DESC="## AI Code Review Issue
+
+**Priority:** $PRIORITY_TEXT
+**Source:** GitHub PR #$PR_NUMBER
+**PR Title:** $PR_TITLE
+**PR Link:** $PR_URL
+**Comment Link:** $COMMENT_URL
+
+### AI Reviewer Comment:
+\`\`\`
+$(cat /tmp/comment_body.txt)
+\`\`\`
+
+### Context
+This issue was automatically created from an AI code review comment. Please review the PR and address the identified issue.
+
+---
+*Created by Linear GitHub Integration*"
+
+          # Escape for JSON (using jq)
+          ISSUE_TITLE_JSON=$(echo "$ISSUE_TITLE" | jq -Rs .)
+          ISSUE_DESC_JSON=$(echo "$ISSUE_DESC" | jq -Rs .)
 
           # Resolve Linear project (prefer secret, else auto-discover by name "LCT commit")
-          PROJECT_ID="${{ secrets.LINEAR_PROJECT_ID }}"
+          PROJECT_ID="$LINEAR_PROJECT_ID"
           if [ -z "$PROJECT_ID" ]; then
+            echo "No LINEAR_PROJECT_ID secret found, attempting auto-discovery..."
             PROJECT_ID=$(curl -s -X POST https://api.linear.app/graphql \
               -H "Content-Type: application/json" \
-              -H "Authorization: $LINEAR_KEY" \
-              -d '{
-                "query": "{ projects(first: 100) { nodes { id name team { id name } } } }"
-              }' | jq -r --arg NAME "LCT commit" --arg TEAM "$TEAM_ID_SECRET" '.data.projects.nodes[] | select((.name==$NAME) and (.team.id==$TEAM)) | .id' | head -n1)
+              -H "Authorization: $LINEAR_API_KEY" \
+              -d "{\"query\": \"{ projects(first: 100) { nodes { id name team { id } } } }\"}" \
+              | jq -r --arg NAME "LCT commit" --arg TEAM "$LINEAR_TEAM_ID" \
+                '.data.projects.nodes[] | select((.name==$NAME) and (.team.id==$TEAM)) | .id' | head -n1)
           fi
 
           if [ -n "$PROJECT_ID" ]; then
             echo "Resolved Linear project: $PROJECT_ID"
-            PROJECT_FIELD="\"projectId\": \"$PROJECT_ID\","
+            PROJECT_FIELD=", \"projectId\": \"$PROJECT_ID\""
           else
             echo "No Linear project matched; creating issue without project linkage"
             PROJECT_FIELD=""
           fi
 
-          # Create Linear issue
-          curl -X POST https://api.linear.app/graphql \
+          # Create Linear issue using GraphQL mutation
+          RESPONSE=$(curl -s -X POST https://api.linear.app/graphql \
             -H "Content-Type: application/json" \
-            -H "Authorization: ${{ secrets.LINEAR_API_KEY }}" \
+            -H "Authorization: $LINEAR_API_KEY" \
             -d "{
               \"query\": \"mutation IssueCreate(\$input: IssueCreateInput!) { issueCreate(input: \$input) { success issue { id identifier title url } } }\",
               \"variables\": {
                 \"input\": {
-                  \"teamId\": \"${{ secrets.LINEAR_TEAM_ID }}\",
-                  \"title\": \"$ISSUE_TITLE\",
-                  \"description\": \"$ISSUE_DESCRIPTION\",
-                  ${PROJECT_FIELD}
+                  \"teamId\": \"$LINEAR_TEAM_ID\",
+                  \"title\": $ISSUE_TITLE_JSON,
+                  \"description\": $ISSUE_DESC_JSON,
                   \"priority\": $PRIORITY
+                  $PROJECT_FIELD
                 }
               }
-            }" | jq -r '.data.issueCreate.issue.identifier'
+            }")
+
+          echo "Linear API Response:"
+          echo "$RESPONSE" | jq '.'
+
+          # Extract issue identifier
+          ISSUE_ID=$(echo "$RESPONSE" | jq -r '.data.issueCreate.issue.identifier // empty')
+          ISSUE_URL=$(echo "$RESPONSE" | jq -r '.data.issueCreate.issue.url // empty')
+
+          if [ -n "$ISSUE_ID" ]; then
+            echo "✅ Created Linear issue: $ISSUE_ID"
+            echo "issue_id=$ISSUE_ID" >> $GITHUB_OUTPUT
+            echo "issue_url=$ISSUE_URL" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Failed to create Linear issue"
+            echo "$RESPONSE" | jq '.errors // empty'
+            exit 1
+          fi
 
       - name: Comment on PR with Linear issue link
-        if: steps.check_comment.outputs.ai_comment == 'true'
-        uses: actions/github-script@v6
+        if: steps.check_comment.outputs.ai_comment == 'true' && steps.create_issue.outputs.issue_id
+        uses: actions/github-script@v7
         with:
           script: |
-            const issueId = '${{ steps.create-linear-issue.outputs.issue_id }}';
+            const issueId = '${{ steps.create_issue.outputs.issue_id }}';
+            const issueUrl = '${{ steps.create_issue.outputs.issue_url }}';
+
             if (issueId && issueId !== 'null') {
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
+              const prNumber = context.payload.pull_request?.number || context.payload.issue?.number;
+
+              await github.rest.issues.createComment({
+                issue_number: prNumber,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `🔗 **Linear Issue Created:** ${issueId}\n\nThis AI review comment has been automatically converted to a Linear issue for tracking.`
+                body: `🔗 **Linear Issue Created:** [${issueId}](${issueUrl})\n\nThis AI review comment has been automatically converted to a Linear issue for tracking.`
               });
             }
