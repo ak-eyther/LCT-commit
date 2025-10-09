@@ -522,17 +522,40 @@ jobs:
                   })
                 });
 
-                const result = await response.json();
+                // Check for HTTP errors (non-2xx responses)
+                if (!response.ok) {
+                  let errorBody = '';
+                  try {
+                    errorBody = await response.text();
+                  } catch (e) {
+                    errorBody = 'Unable to read error response';
+                  }
+                  console.log(`⚠️  HTTP Error ${response.status} ${response.statusText}: ${errorBody.substring(0, 200)}`);
+                  return null;
+                }
+
+                // Safely parse JSON response
+                let result;
+                try {
+                  result = await response.json();
+                } catch (parseError) {
+                  console.log(`⚠️  Failed to parse Linear API response as JSON: ${parseError.message}`);
+                  return null;
+                }
+
+                // Check for successful issue creation
                 if (result.data?.issueCreate?.success) {
                   const linearIssue = result.data.issueCreate.issue;
                   console.log(`✅ Created Linear issue: ${linearIssue.identifier} - ${linearIssue.url}`);
                   return linearIssue;
                 } else {
-                  console.log(`⚠️  Failed to create Linear issue: ${JSON.stringify(result.errors)}`);
+                  const errorMsg = result.errors ? JSON.stringify(result.errors) : 'Unknown error';
+                  console.log(`⚠️  Failed to create Linear issue: ${errorMsg}`);
                   return null;
                 }
               } catch (error) {
-                console.log(`⚠️  Error creating Linear issue: ${error.message}`);
+                // Catch network failures and other unexpected errors
+                console.log(`⚠️  Network error creating Linear issue: ${error.message}`);
                 return null;
               }
             }
