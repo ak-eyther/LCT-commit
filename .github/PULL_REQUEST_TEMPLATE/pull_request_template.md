@@ -3,6 +3,17 @@
 
 
 
+## 👥 Reviewers & Approvers
+<!-- Auto-assigned reviewers - DO NOT REMOVE -->
+**Reviewers:**
+- @codex
+- @coderabbitai
+
+**Approver:**
+- @ak-eyther
+
+---
+
 ## 🎯 Related Criteria
 <!-- Which of the 31 LCT Success Matrix criteria does this address? -->
 <!-- Check all that apply, or mark N/A if infrastructure/docs only -->
