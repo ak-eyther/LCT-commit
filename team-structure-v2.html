@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitraya & LCT - Organization Structure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+            --primary: 221.2 83.2% 53.3%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96.1%;
+            --secondary-foreground: 222.2 47.4% 11.2%;
+            --muted: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96.1%;
+            --accent-foreground: 222.2 47.4% 11.2%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 221.2 83.2% 53.3%;
+            --radius: 0.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .header {
+            background: linear-gradient(135deg, hsl(221.2 83.2% 53.3%) 0%, hsl(262.1 83.3% 57.8%) 100%);
+            color: white;
+            padding: 3rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: calc(var(--radius) + 2px);
+            padding: 1.25rem;
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: hsl(var(--primary));
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: hsl(var(--foreground));
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-subtext {
+            font-size: 0.8rem;
+            color: hsl(var(--muted-foreground));
+            font-weight: 500;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid hsl(var(--border));
+            overflow-x: auto;
+            padding-bottom: 0;
+        }
+
+        .tab {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            background: transparent;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: hsl(var(--muted-foreground));
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: hsl(var(--foreground));
+            background: hsl(var(--accent));
+        }
+
+        .tab.active {
+            color: hsl(var(--primary));
+            border-bottom-color: hsl(var(--primary));
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.2s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: calc(var(--radius) + 2px);
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            margin-bottom: 1rem;
+            padding-bottom: 0.625rem;
+            border-bottom: 1px solid hsl(var(--border));
+            letter-spacing: -0.01em;
+        }
+
+        .org-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 0.875rem;
+        }
+
+        .person-card {
+            background: hsl(var(--background));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 1rem;
+            transition: all 0.2s;
+        }
+
+        .person-card:hover {
+            border-color: hsl(var(--primary));
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .person-card.leadership {
+            border-left: 3px solid hsl(var(--destructive));
+        }
+
+        .person-card.business {
+            border-left: 3px solid hsl(262.1 83.3% 57.8%);
+        }
+
+        .person-card.product {
+            border-left: 3px solid hsl(142.1 76.2% 36.3%);
+        }
+
+        .person-card.engineering {
+            border-left: 3px solid hsl(221.2 83.2% 53.3%);
+        }
+
+        .person-card.lct {
+            border-left: 3px solid hsl(142.1 70.6% 45.3%);
+        }
+
+        .person-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.01em;
+        }
+
+        .person-title {
+            font-size: 0.8125rem;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: calc(var(--radius) - 2px);
+            padding: 0.25rem 0.625rem;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            margin-top: 0.5rem;
+            margin-right: 0.375rem;
+        }
+
+        .badge-leadership {
+            background: hsl(0 84.2% 60.2% / 0.1);
+            color: hsl(0 84.2% 40%);
+        }
+
+        .badge-warning {
+            background: hsl(48 96% 53% / 0.1);
+            color: hsl(25 95% 53%);
+        }
+
+        .badge-info {
+            background: hsl(221.2 83.2% 53.3% / 0.1);
+            color: hsl(221.2 83.2% 45%);
+        }
+
+        .badge-success {
+            background: hsl(142.1 76.2% 36.3% / 0.1);
+            color: hsl(142.1 76.2% 30%);
+        }
+
+        .badge-purple {
+            background: hsl(262.1 83.3% 57.8% / 0.1);
+            color: hsl(262.1 83.3% 47.8%);
+        }
+
+        .reporting {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid hsl(var(--border));
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+            font-weight: 500;
+        }
+
+        .reporting strong {
+            color: hsl(var(--foreground));
+            font-weight: 600;
+        }
+
+        .responsibilities {
+            list-style: none;
+            padding: 0;
+            margin-top: 0.625rem;
+            font-size: 0.75rem;
+        }
+
+        .responsibilities li {
+            color: hsl(var(--muted-foreground));
+            padding: 0.25rem 0;
+            padding-left: 1rem;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .responsibilities li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: hsl(var(--primary));
+            font-weight: 600;
+        }
+
+        .collab-note {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: hsl(var(--accent));
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: hsl(var(--muted-foreground));
+            border-left: 2px solid hsl(var(--primary));
+        }
+
+        .collab-note strong {
+            color: hsl(var(--foreground));
+            font-weight: 600;
+        }
+
+        /* Visual Org Chart */
+        .visual-org-chart {
+            background: hsl(var(--card));
+            padding: 2rem;
+            border-radius: var(--radius);
+            overflow-x: auto;
+        }
+
+        .org-level {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.75rem;
+            position: relative;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .org-box {
+            background: hsl(var(--background));
+            border: 2px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 0.875rem 1rem;
+            min-width: 180px;
+            max-width: 200px;
+            text-align: center;
+            position: relative;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .org-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            border-color: hsl(var(--primary));
+        }
+
+        .org-box.ceo {
+            border-color: hsl(262.1 83.3% 57.8%);
+            background: linear-gradient(135deg, hsl(262.1 83.3% 57.8% / 0.05) 0%, hsl(262.1 83.3% 57.8% / 0.1) 100%);
+        }
+
+        .org-box.leadership {
+            border-color: hsl(0 84.2% 60.2%);
+            background: linear-gradient(135deg, hsl(0 84.2% 60.2% / 0.05) 0%, hsl(0 84.2% 60.2% / 0.1) 100%);
+        }
+
+        .org-box.manager {
+            border-color: hsl(221.2 83.2% 53.3%);
+            background: linear-gradient(135deg, hsl(221.2 83.2% 53.3% / 0.05) 0%, hsl(221.2 83.2% 53.3% / 0.1) 100%);
+        }
+
+        .org-box.engineer {
+            border-color: hsl(142.1 76.2% 36.3%);
+            background: linear-gradient(135deg, hsl(142.1 76.2% 36.3% / 0.05) 0%, hsl(142.1 76.2% 36.3% / 0.1) 100%);
+        }
+
+        .org-box.lct-team {
+            border-color: hsl(142.1 70.6% 45.3%);
+            background: linear-gradient(135deg, hsl(142.1 70.6% 45.3% / 0.05) 0%, hsl(142.1 70.6% 45.3% / 0.1) 100%);
+        }
+
+        .org-box-name {
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+
+        .org-box-title {
+            font-size: 0.6875rem;
+            color: hsl(var(--muted-foreground));
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .org-connector {
+            position: absolute;
+            border-left: 2px solid hsl(var(--border));
+            height: 25px;
+            top: -25px;
+            left: 50%;
+        }
+
+        .section-divider {
+            margin: 2rem 0;
+            padding-top: 1.5rem;
+            border-top: 2px dashed hsl(var(--border));
+        }
+
+        .section-divider h3 {
+            text-align: center;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1.5rem;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .legend {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: hsl(var(--muted));
+            border-radius: var(--radius);
+            border: 1px solid hsl(var(--border));
+        }
+
+        .legend h4 {
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: hsl(var(--foreground));
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            border: 2px solid;
+        }
+
+        .legend-label {
+            font-size: 0.8125rem;
+            color: hsl(var(--muted-foreground));
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .org-grid {
+                grid-template-columns: 1fr;
+            }
+            .tabs {
+                gap: 0;
+            }
+            .tab {
+                padding: 0.625rem 1rem;
+                font-size: 0.8125rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Vitraya Technologies & LCT Group Africa</h1>
+        <p>Organization Structure & Team Directory • Updated October 2025</p>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">LCT Pod Team</div>
+                <div class="stat-value">15</div>
+                <div class="stat-subtext">Vitraya Members</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">LCT Africa</div>
+                <div class="stat-value">3</div>
+                <div class="stat-subtext">Key Contacts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active PODs</div>
+                <div class="stat-value">6</div>
+                <div class="stat-subtext">Projects Running</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Key Leaders</div>
+                <div class="stat-value">5</div>
+                <div class="stat-subtext">Executive Team</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('goals')">Goals & Collaboration</button>
+            <button class="tab" onclick="showTab('org-chart')">Org Chart</button>
+            <button class="tab" onclick="showTab('leadership')">Leadership Team</button>
+            <button class="tab" onclick="showTab('engineering')">Product & Engineering</button>
+            <button class="tab" onclick="showTab('lct-team')">LCT Team</button>
+        </div>
+
+        <!-- GOALS & COLLABORATION TAB -->
+        <div id="goals" class="tab-content active">
+            <!-- Project Summary -->
+            <div class="section" style="background: linear-gradient(135deg, hsl(262.1 83.3% 57.8% / 0.08) 0%, hsl(221.2 83.2% 53.3% / 0.08) 100%); border: 2px solid hsl(262.1 83.3% 57.8%);">
+                <h2 class="section-title" style="color: hsl(262.1 83.3% 47.8%);">🎯 LCT Africa Project Summary</h2>
+                <p style="font-size: 0.875rem; line-height: 1.6; color: hsl(var(--foreground));">
+                    <strong>Vitraya Technologies</strong> (India) partnering with <strong>LCT Group Africa</strong> (Kenya) to deliver <strong>AI-powered claims adjudication</strong> services for healthcare schemes. Automating claims processing, reducing fraud, delivering cost savings through advanced medical NLP and AI.
+                </p>
+            </div>
+
+            <!-- Opportunity Size -->
+            <div class="section">
+                <h2 class="section-title">💰 Market Opportunity</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0.875rem; margin-bottom: 1rem;">
+                    <div style="background: linear-gradient(135deg, hsl(142.1 76.2% 36.3% / 0.1) 0%, hsl(142.1 76.2% 36.3% / 0.05) 100%); padding: 0.875rem; border-radius: 6px; border-left: 4px solid hsl(142.1 76.2% 36.3%);">
+                        <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: hsl(142.1 76.2% 30%); margin-bottom: 0.375rem;">Phase 1-2: Immediate</div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: hsl(var(--foreground)); margin-bottom: 0.25rem;">1B KES</div>
+                        <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">11 LCT schemes ($6.9M USD)</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, hsl(221.2 83.2% 53.3% / 0.1) 0%, hsl(221.2 83.2% 53.3% / 0.05) 100%); padding: 0.875rem; border-radius: 6px; border-left: 4px solid hsl(221.2 83.2% 53.3%);">
+                        <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: hsl(221.2 83.2% 45%); margin-bottom: 0.375rem;">Phase 2: Liaison Group</div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: hsl(var(--foreground)); margin-bottom: 0.25rem;">1.5B KES</div>
+                        <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">TPA opportunity ($10.3M USD)</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, hsl(262.1 83.3% 57.8% / 0.1) 0%, hsl(262.1 83.3% 57.8% / 0.05) 100%); padding: 0.875rem; border-radius: 6px; border-left: 4px solid hsl(262.1 83.3% 57.8%);">
+                        <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: hsl(262.1 83.3% 47.8%); margin-bottom: 0.375rem;">Phase 3: Corporate</div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: hsl(var(--foreground)); margin-bottom: 0.25rem;">4.5B KES</div>
+                        <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">Self-funded schemes ($31M USD)</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, hsl(48 96% 53% / 0.15) 0%, hsl(48 96% 53% / 0.08) 100%); padding: 0.875rem; border-radius: 6px; border-left: 4px solid hsl(25 95% 53%);">
+                        <div style="font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: hsl(25 95% 43%); margin-bottom: 0.375rem;">Total Addressable</div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: hsl(var(--foreground)); margin-bottom: 0.25rem;">7B+ KES</div>
+                        <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">Near-term market ($48M USD)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Reality -->
+            <div class="section" style="background: linear-gradient(135deg, hsl(0 84.2% 60.2% / 0.05) 0%, hsl(48 96% 53% / 0.05) 100%); border-left: 4px solid hsl(0 84.2% 60.2%);">
+                <h2 class="section-title" style="color: hsl(0 84.2% 50%);">📍 Current Status (October 2025)</h2>
+                <div style="display: grid; gap: 0.75rem; font-size: 0.8rem;">
+                    <div style="padding: 0.625rem; background: hsl(var(--card)); border-radius: 4px;">
+                        <strong style="color: hsl(0 84.2% 60.2%);">Revenue Reality:</strong> ₹0 across July-September 2025 (Target: ₹20L/month) - Still in pilot, not billing
+                    </div>
+                    <div style="padding: 0.625rem; background: hsl(var(--card)); border-radius: 4px;">
+                        <strong style="color: hsl(0 84.2% 60.2%);">Key Blocker:</strong> Product quality below LCT's commercial standards - invoice digitization, savings calculations need fixing
+                    </div>
+                    <div style="padding: 0.625rem; background: hsl(var(--card)); border-radius: 4px;">
+                        <strong style="color: hsl(142.1 76.2% 36.3%);">What's Working:</strong> 847 claims/week, 19.8% savings, fraud detection functional, team structure complete
+                    </div>
+                    <div style="padding: 0.625rem; background: hsl(var(--card)); border-radius: 4px;">
+                        <strong style="color: hsl(48 96% 53% / 0.8);">Critical Path:</strong> Achieve 90%+ quality on MTRH → Build trust → November billing → Scale to ₹50L/month by March 2026
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategic Roadmap -->
+            <div class="section">
+                <h2 class="section-title">🚀 Strategic Roadmap & Phases</h2>
+                <div style="display: grid; gap: 0.875rem;">
+                    <div style="background: hsl(var(--muted)); padding: 0.875rem; border-radius: 6px; border-left: 4px solid hsl(262.1 83.3% 57.8%);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <strong style="font-size: 0.875rem; color: hsl(var(--foreground));">Phase 1: Prove Quality (Oct-Nov 2025)</strong>
+                            <span style="background: hsl(48 96% 53%); color: hsl(25 95% 20%); padding: 0.125rem 0.5rem; border-radius: 12px; font-size: 0.7rem; font-weight: 700;">⏳ CURRENT</span>
+                        </div>
+                        <ul style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); list-style: none; padding: 0; margin: 0;">
+                            <li style="padding: 0.25rem 0; padding-left: 1rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: hsl(262.1 83.3% 57.8%);">→</span>
+                                Achieve 90%+ OPD quality on MTRH scheme
+                            </li>
+                            <li style="padding: 0.25rem 0; padding-left: 1rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: hsl(262.1 83.3% 57.8%);">→</span>
+                                Demonstrate consistent 10-15% savings | Start billing discussions
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div style="background: hsl(var(--muted)); padding: 0.875rem; border-radius: 6px; border-left: 4px solid hsl(142.1 76.2% 36.3%);">
+                        <strong style="font-size: 0.875rem; color: hsl(var(--foreground)); display: block; margin-bottom: 0.5rem;">Phase 2: Scale LCT Capitation (Dec 2025 - Mar 2026)</strong>
+                        <ul style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); list-style: none; padding: 0; margin: 0;">
+                            <li style="padding: 0.25rem 0; padding-left: 1rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: hsl(142.1 76.2% 36.3%);">→</span>
+                                Scale to all 11 LCT schemes | Launch IPD adjudication | FinTech model (24hr payments)
+                            </li>
+                            <li style="padding: 0.25rem 0; padding-left: 1rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: hsl(142.1 76.2% 36.3%);">→</span>
+                                Target: ₹1B KES annual run rate | Revenue: ₹10L→₹50L/month growth
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div style="background: hsl(var(--muted)); padding: 0.875rem; border-radius: 6px; border-left: 4px solid hsl(221.2 83.2% 53.3%);">
+                        <strong style="font-size: 0.875rem; color: hsl(var(--foreground)); display: block; margin-bottom: 0.5rem;">Phase 3-5: Market Expansion (Q1 2026+)</strong>
+                        <ul style="font-size: 0.75rem; color: hsl(var(--muted-foreground)); list-style: none; padding: 0; margin: 0;">
+                            <li style="padding: 0.25rem 0; padding-left: 1rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: hsl(221.2 83.2% 53.3%);">→</span>
+                                <strong>Q1 2026:</strong> Liaison partnership - Judiciary scheme (₹1B KES)
+                            </li>
+                            <li style="padding: 0.25rem 0; padding-left: 1rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: hsl(221.2 83.2% 53.3%);">→</span>
+                                <strong>Q2-Q3:</strong> Corporate self-funded (Kenya Power, Kenyan, KRA) - ₹4.5B KES
+                            </li>
+                            <li style="padding: 0.25rem 0; padding-left: 1rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: hsl(221.2 83.2% 53.3%);">→</span>
+                                <strong>Q4+:</strong> Insurance transformation - full AI adjudication for Jubilee, Britam (largest opportunity)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Primary Goal -->
+            <div class="section" style="background: linear-gradient(135deg, hsl(221.2 83.2% 53.3% / 0.05) 0%, hsl(262.1 83.3% 57.8% / 0.05) 100%); border-left: 4px solid hsl(var(--primary));">
+                <h2 class="section-title">🎯 Immediate Focus: 90% Adjudication Accuracy</h2>
+                <div style="display: grid; gap: 1rem; font-size: 0.875rem;">
+                    <div style="padding: 0.75rem; background: hsl(var(--card)); border-radius: 6px; border-left: 3px solid hsl(142.1 76.2% 36.3%);">
+                        <strong style="color: hsl(var(--foreground));">Current Status:</strong> Pilot phase - NOT commercial/billing yet (₹0 revenue)
+                    </div>
+                    <div style="padding: 0.75rem; background: hsl(var(--card)); border-radius: 6px; border-left: 3px solid hsl(0 84.2% 60.2%);">
+                        <strong style="color: hsl(var(--foreground));">Blocker:</strong> LCT requires proven 90%+ accuracy before commercial billing phase
+                    </div>
+                    <div style="padding: 0.75rem; background: hsl(var(--card)); border-radius: 6px; border-left: 3px solid hsl(48 96% 53%);">
+                        <strong style="color: hsl(var(--foreground));">Stakes:</strong> October 2025 is make-or-break - success unlocks ₹7B+ KES market, failure = pilot purgatory
+                    </div>
+                    <div style="padding: 0.75rem; background: hsl(var(--card)); border-radius: 6px; border-left: 3px solid hsl(262.1 83.3% 57.8%);">
+                        <strong style="color: hsl(var(--foreground));">Success Metrics:</strong> 31 evaluation criteria (4 CRITICAL, 17 High) | 847 claims/week | 19.8% savings | MTRH scheme excellence
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">🔄 Critical Collaboration Flows</h2>
+                <div style="display: grid; gap: 1rem;">
+
+                    <!-- Market to Product Flow -->
+                    <div style="background: hsl(var(--muted)); padding: 1rem; border-radius: 8px; border: 2px solid hsl(var(--border));">
+                        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem; color: hsl(var(--foreground));">
+                            📊 Market Intelligence → Product Development Flow
+                        </h3>
+                        <div style="display: grid; gap: 0.5rem; font-size: 0.8rem; line-height: 1.5;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(142.1 70.6% 45.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">1</span>
+                                <span><strong>Vinita (On-ground)</strong> identifies challenges: provider upload issues, tariff validation gaps, claim delays, scheme requirements</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(221.2 83.2% 53.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">2</span>
+                                <span><strong>Vinita → Atharv</strong> translates field insights into product requirements with business impact analysis</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(262.1 83.3% 57.8%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">3</span>
+                                <span><strong>Atharv</strong> prioritizes features against 31 criteria, creates detailed specs, coordinates stakeholders (Jotham, Irene, Bharat)</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(142.1 76.2% 36.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">4</span>
+                                <span><strong>Ashwin</strong> converts Atharv's vision into user stories, acceptance criteria, data requirements</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(221.2 83.2% 53.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">5</span>
+                                <span><strong>Atharv ↔ Vidya</strong> feasibility discussion: technical constraints, effort estimates, architecture impacts</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(0 84.2% 60.2%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">6</span>
+                                <span><strong>Arif (Escalation)</strong> approves resource allocation if complex/high-cost feature</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Engineering Execution Flow -->
+                    <div style="background: hsl(var(--muted)); padding: 1rem; border-radius: 8px; border: 2px solid hsl(var(--border));">
+                        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem; color: hsl(var(--foreground));">
+                            ⚙️ Engineering Execution Flow
+                        </h3>
+                        <div style="display: grid; gap: 0.5rem; font-size: 0.8rem; line-height: 1.5;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(221.2 83.2% 53.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">1</span>
+                                <span><strong>Vidya (Architect)</strong> designs technical solution: API design, database schemas, system architecture</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(142.1 76.2% 36.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">2</span>
+                                <span><strong>Anand/Anmol</strong> implement features: frontend (React), backend (Node.js), database (PostgreSQL)</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(262.1 83.3% 57.8%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">3</span>
+                                <span><strong>Harshit (QA)</strong> validates against 31 criteria, tests fraud scenarios, ensures quality gates</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(48 96% 53%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">4</span>
+                                <span><strong>Gerald (Nairobi)</strong> coordinates deployment with Anthony (LCT), handles integration testing, monitors production</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(142.1 70.6% 45.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">5</span>
+                                <span><strong>Irene (Claims QA)</strong> validates clinical accuracy of AI decisions, provides go/no-go on adjudication quality</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(0 84.2% 60.2%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">6</span>
+                                <span><strong>Shashank (Oversight)</strong> reviews architecture decisions, ensures engineering standards, manages capacity</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quality Assurance Flow -->
+                    <div style="background: hsl(var(--muted)); padding: 1rem; border-radius: 8px; border: 2px solid hsl(var(--border));">
+                        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem; color: hsl(var(--foreground));">
+                            ✅ Clinical Quality & Audit Flow
+                        </h3>
+                        <div style="display: grid; gap: 0.5rem; font-size: 0.8rem; line-height: 1.5;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(142.1 70.6% 45.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">1</span>
+                                <span><strong>Irene (LCT Claims Auditor)</strong> defines clinical accuracy requirements, claim audit protocols for Kenya medical codes</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(262.1 83.3% 57.8%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">2</span>
+                                <span><strong>Irene ↔ Bharat</strong> align on claim edit/audit standards, medical necessity criteria, fraud detection rules</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(221.2 83.2% 53.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">3</span>
+                                <span><strong>Bharat</strong> manages Dr. Annu & Dr. Gargi (medical auditors) for clinical review of edge cases</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(142.1 76.2% 36.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">4</span>
+                                <span><strong>Medical Auditors</strong> validate AI decisions, identify patterns requiring algorithmic updates</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(48 96% 53%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">5</span>
+                                <span><strong>Feedback Loop</strong> medical insights → Atharv (product requirements) → Vidya (algorithm tuning)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Strategic Decision Flow -->
+                    <div style="background: hsl(var(--muted)); padding: 1rem; border-radius: 8px; border: 2px solid hsl(var(--border));">
+                        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem; color: hsl(var(--foreground));">
+                            🎯 Strategic Decision & Escalation Flow
+                        </h3>
+                        <div style="display: grid; gap: 0.5rem; font-size: 0.8rem; line-height: 1.5;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(142.1 70.6% 45.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">1</span>
+                                <span><strong>Jotham (LCT CEO)</strong> sets business priorities: 90% quality gate, scheme requirements, FinTech timeline</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(0 84.2% 60.2%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">2</span>
+                                <span><strong>Jotham ↔ Arif</strong> strategic alignment meetings: progress reviews, escalation resolution, roadmap adjustments</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(221.2 83.2% 53.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">3</span>
+                                <span><strong>Arif</strong> translates business needs into team directives: resource reallocation, priority shifts, timeline commitments</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(262.1 83.3% 57.8%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">4</span>
+                                <span><strong>Arif ↔ Shashank/Atharv/Vinita</strong> coordinates execution: engineering capacity, product priorities, sales readiness</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: hsl(142.1 76.2% 36.3%); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600;">5</span>
+                                <span><strong>Mrinal (CEO)</strong> final approval for major decisions: pricing, contracts, strategic partnerships, hiring</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Critical Dependencies -->
+                    <div style="background: linear-gradient(135deg, hsl(0 84.2% 60.2% / 0.1) 0%, hsl(48 96% 53% / 0.1) 100%); padding: 1rem; border-radius: 8px; border: 2px solid hsl(0 84.2% 60.2%);">
+                        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem; color: hsl(0 84.2% 40%);">
+                            ⚠️ Critical Dependencies & Risks
+                        </h3>
+                        <ul style="list-style: none; padding: 0; font-size: 0.8rem; line-height: 1.6;">
+                            <li style="padding: 0.375rem 0; padding-left: 1.25rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: hsl(0 84.2% 60.2%); font-weight: 700;">⚠</span>
+                                <strong>Vidya Leaving (2 months):</strong> Knowledge transfer to Anand/Gerald critical - architecture docs, tech decisions, system knowledge
+                            </li>
+                            <li style="padding: 0.375rem 0; padding-left: 1.25rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: hsl(0 84.2% 60.2%); font-weight: 700;">⚠</span>
+                                <strong>Gerald (Single Point):</strong> Only Vitraya engineer in Nairobi - backup/redundancy needed for production support
+                            </li>
+                            <li style="padding: 0.375rem 0; padding-left: 1.25rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: hsl(0 84.2% 60.2%); font-weight: 700;">⚠</span>
+                                <strong>Vinita → Atharv Gap:</strong> If field insights not captured, product misses market needs - requires structured feedback loops
+                            </li>
+                            <li style="padding: 0.375rem 0; padding-left: 1.25rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: hsl(0 84.2% 60.2%); font-weight: 700;">⚠</span>
+                                <strong>Irene's Approval:</strong> Quality gatekeeper - if 31 criteria not met, commercial launch blocked indefinitely
+                            </li>
+                            <li style="padding: 0.375rem 0; padding-left: 1.25rem; position: relative;">
+                                <span style="position: absolute; left: 0; color: hsl(0 84.2% 60.2%); font-weight: 700;">⚠</span>
+                                <strong>Shashank-Arif Alignment:</strong> Engineering priorities must sync with business timelines - soft reporting line critical
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ORG CHART TAB -->
+        <div id="org-chart" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">Visual Organizational Chart</h2>
+                <div class="visual-org-chart">
+                    <h3 style="text-align: center; color: hsl(var(--foreground)); margin-bottom: 1.5rem; font-size: 1.125rem; font-weight: 700; letter-spacing: -0.02em;">Vitraya Technologies</h3>
+
+                    <!-- Level 1: CEO -->
+                    <div class="org-level">
+                        <div class="org-box ceo">
+                            <div class="org-box-name">Mrinal Sinha</div>
+                            <div class="org-box-title">CEO, Vitraya</div>
+                            <span class="badge badge-purple">CEO</span>
+                        </div>
+                    </div>
+
+                    <!-- Level 2: Key Leadership -->
+                    <div class="org-level">
+                        <div class="org-box leadership">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Arif Khan</div>
+                            <div class="org-box-title">VP, Africa Business</div>
+                            <span class="badge badge-leadership">Leadership</span>
+                        </div>
+                        <div class="org-box leadership">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Shashank Vivek</div>
+                            <div class="org-box-title">VP Engineering</div>
+                            <span class="badge badge-leadership">Leadership</span>
+                        </div>
+                        <div class="org-box leadership">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Vinita Saini</div>
+                            <div class="org-box-title">GM, Africa Sales</div>
+                            <span class="badge badge-leadership">Leadership</span>
+                        </div>
+                    </div>
+
+                    <!-- Level 3: Managers -->
+                    <div class="org-level">
+                        <div class="org-box manager">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Bharat Pandey</div>
+                            <div class="org-box-title">Sr Manager, Edit/Audit</div>
+                            <span class="badge badge-info">Manager</span>
+                        </div>
+                        <div class="org-box manager">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Atharv Kulkarni</div>
+                            <div class="org-box-title">Product Manager</div>
+                            <span class="badge badge-success">Product</span>
+                        </div>
+                        <div class="org-box manager">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Vidya Ratan</div>
+                            <div class="org-box-title">Sr Tech Lead</div>
+                            <span class="badge badge-warning">⚠️ 2 Months</span>
+                        </div>
+                        <div class="org-box manager">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Varsha Vashishta</div>
+                            <div class="org-box-title">Product Designer</div>
+                            <span class="badge badge-purple">Shared</span>
+                        </div>
+                    </div>
+
+                    <!-- Level 3: Team Members -->
+                    <div class="org-level">
+                        <div class="org-box engineer">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Dr. Annu</div>
+                            <div class="org-box-title">Medical Auditor</div>
+                            <span class="badge badge-purple">Audit</span>
+                        </div>
+                        <div class="org-box engineer">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Dr. Gargi</div>
+                            <div class="org-box-title">Medical Auditor</div>
+                            <span class="badge badge-purple">Audit</span>
+                        </div>
+                        <div class="org-box engineer">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Ashwin</div>
+                            <div class="org-box-title">BA / Associate PM</div>
+                            <span class="badge badge-success">Product</span>
+                        </div>
+                        <div class="org-box engineer">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Anand</div>
+                            <div class="org-box-title">Engineer</div>
+                            <span class="badge badge-success">Engineer</span>
+                        </div>
+                        <div class="org-box engineer">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Gerald</div>
+                            <div class="org-box-title">Engineer & Tech PM</div>
+                            <span class="badge badge-warning">📍 Nairobi</span>
+                        </div>
+                        <div class="org-box engineer">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Anmol</div>
+                            <div class="org-box-title">Engineer</div>
+                            <span class="badge badge-success">Engineer</span>
+                        </div>
+                        <div class="org-box engineer">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Harshit Rathor</div>
+                            <div class="org-box-title">QA Engineer</div>
+                            <span class="badge badge-info">QA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LCT Team Separate -->
+                <div class="visual-org-chart" style="margin-top: 2.5rem;">
+                    <h3 style="text-align: center; color: hsl(142.1 70.6% 45.3%); margin-bottom: 1.5rem; font-size: 1.125rem; font-weight: 700; letter-spacing: -0.02em;">🇰🇪 LCT Group Africa (Independent Organization)</h3>
+
+                    <div class="org-level">
+                        <div class="org-box lct-team">
+                            <div class="org-box-name">Jotham</div>
+                            <div class="org-box-title">CEO, LCT Africa</div>
+                            <span class="badge badge-success">Leadership</span>
+                        </div>
+                    </div>
+
+                    <div class="org-level">
+                        <div class="org-box lct-team">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Anthony</div>
+                            <div class="org-box-title">Technical Team Lead</div>
+                            <span class="badge badge-info">Technical</span>
+                        </div>
+                        <div class="org-box lct-team">
+                            <div class="org-connector"></div>
+                            <div class="org-box-name">Irene</div>
+                            <div class="org-box-title">QA & Product Owner</div>
+                            <span class="badge badge-success">Operations</span>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="legend">
+                        <h4>Chart Legend</h4>
+                        <div class="legend-grid">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: linear-gradient(135deg, hsl(262.1 83.3% 57.8% / 0.2), hsl(262.1 83.3% 57.8% / 0.3)); border-color: hsl(262.1 83.3% 57.8%);"></div>
+                                <span class="legend-label">CEO Level</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: linear-gradient(135deg, hsl(0 84.2% 60.2% / 0.2), hsl(0 84.2% 60.2% / 0.3)); border-color: hsl(0 84.2% 60.2%);"></div>
+                                <span class="legend-label">Key Leadership</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: linear-gradient(135deg, hsl(221.2 83.2% 53.3% / 0.2), hsl(221.2 83.2% 53.3% / 0.3)); border-color: hsl(221.2 83.2% 53.3%);"></div>
+                                <span class="legend-label">Managers</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: linear-gradient(135deg, hsl(142.1 76.2% 36.3% / 0.2), hsl(142.1 76.2% 36.3% / 0.3)); border-color: hsl(142.1 76.2% 36.3%);"></div>
+                                <span class="legend-label">Engineers & LCT</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OVERVIEW TAB -->
+        <div id="overview" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">Key Leadership</h2>
+                <div class="org-grid">
+                    <div class="person-card leadership">
+                        <div class="person-name">Mrinal Sinha</div>
+                        <div class="person-title">CEO, Vitraya Technologies</div>
+                        <span class="badge badge-purple">Executive</span>
+                        <ul class="responsibilities">
+                            <li>Ultimate decision authority</li>
+                            <li>Overall company strategy</li>
+                            <li>P&L ownership for Vitraya</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card leadership">
+                        <div class="person-name">Arif Khan</div>
+                        <div class="person-title">VP, Vitraya Technologies</div>
+                        <span class="badge badge-leadership">Key Leadership</span>
+                        <ul class="responsibilities">
+                            <li>P&L ownership for Africa operations</li>
+                            <li>Product delivery & strategy for Africa</li>
+                            <li>LCT client relationship management</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card leadership">
+                        <div class="person-name">Shashank Vivek</div>
+                        <div class="person-title">VP Engineering, Vitraya Technologies</div>
+                        <span class="badge badge-leadership">Key Leadership</span>
+                        <ul class="responsibilities">
+                            <li>All tech leads report to him</li>
+                            <li>Technical oversight across all PODs</li>
+                            <li>Engineering standards & resource management</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card leadership">
+                        <div class="person-name">Vinita Saini</div>
+                        <div class="person-title">GM, Africa (Sales & BD)</div>
+                        <span class="badge badge-leadership">Key Leadership</span>
+                        <ul class="responsibilities">
+                            <li>Sales strategy for African market</li>
+                            <li>New scheme identification & acquisition</li>
+                            <li>Partnership negotiations</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card lct">
+                        <div class="person-name">Jotham</div>
+                        <div class="person-title">CEO, LCT Group Africa</div>
+                        <span class="badge badge-success">Leadership</span>
+                        <span class="badge badge-warning">📍 Nairobi</span>
+                        <ul class="responsibilities">
+                            <li>CEO & overall leadership of LCT Africa</li>
+                            <li>Strategic direction & scheme management</li>
+                            <li>Primary business contact with Arif Khan</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUSINESS & LEADERSHIP TAB -->
+        <div id="leadership" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">Executive Leadership</h2>
+                <div class="org-grid">
+                    <div class="person-card leadership">
+                        <div class="person-name">Mrinal Sinha</div>
+                        <div class="person-title">CEO, Vitraya Technologies</div>
+                        <span class="badge badge-purple">Executive</span>
+                        <ul class="responsibilities">
+                            <li>Ultimate decision-making authority</li>
+                            <li>Overall company strategy and vision</li>
+                            <li>P&L ownership for entire organization</li>
+                            <li>Major business partnerships</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card leadership">
+                        <div class="person-name">Arif Khan</div>
+                        <div class="person-title">VP, Vitraya Technologies</div>
+                        <span class="badge badge-leadership">Key Leadership</span>
+                        <div class="reporting"><strong>Reports to:</strong> Mrinal Sinha</div>
+                        <ul class="responsibilities">
+                            <li>Complete P&L ownership for Africa operations - revenue, costs, margins</li>
+                            <li>Product delivery & strategy: oversees product roadmap aligned with market needs</li>
+                            <li>Strategic leadership for LCT engagement: primary escalation point for critical decisions</li>
+                            <li>Team leadership & resource allocation across 15-member LCT pod</li>
+                            <li>Cross-functional alignment: works with Shashank (engineering), Vinita (sales), Atharv (product)</li>
+                            <li>Client relationship management with Jotham (LCT CEO) for strategic initiatives</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card leadership">
+                        <div class="person-name">Shashank Vivek</div>
+                        <div class="person-title">VP Engineering, Vitraya Technologies</div>
+                        <span class="badge badge-leadership">Key Leadership</span>
+                        <div class="reporting"><strong>Reports to:</strong> Mrinal Sinha • <strong>Soft line to:</strong> Arif (Africa alignment)</div>
+                        <ul class="responsibilities">
+                            <li>VP Engineering for entire Vitraya: manages all tech leads across 6 PODs (Star Health, ABHI, Niva Bupa, Bajaj, LCT, GIC)</li>
+                            <li>Direct reports: Vidya Ratan (Sr Tech Lead), Gerald (Nairobi), Anand, Anmol (engineers)</li>
+                            <li>Technical oversight: architecture decisions, code quality, deployment pipelines</li>
+                            <li>Engineering standards & best practices: establishes frameworks, conducts reviews</li>
+                            <li>Resource management: hiring, skill development, capacity planning</li>
+                            <li>Soft reporting to Arif ensures Africa business needs align with engineering execution</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card leadership">
+                        <div class="person-name">Vinita Saini</div>
+                        <div class="person-title">GM, Africa (Sales & BD)</div>
+                        <span class="badge badge-leadership">Key Leadership</span>
+                        <div class="reporting"><strong>Reports to:</strong> Arif Khan</div>
+                        <ul class="responsibilities">
+                            <li>Sales strategy for African market: designs go-to-market approach for Kenya insurance sector</li>
+                            <li>New scheme identification & acquisition: targets 1.5B KES Liaison Group, 4.5B KES corporate schemes</li>
+                            <li>Partnership negotiations: handles contracts, pricing, SLAs with schemes & hospitals</li>
+                            <li>Revenue growth & market expansion: drives commercial phase post-90% quality achievement</li>
+                            <li>On-ground market intelligence: identifies operational challenges, regulatory issues, provider concerns</li>
+                            <li>Works with Atharv to translate field insights into product requirements & feature prioritization</li>
+                        </ul>
+                        <div class="collab-note"><strong>Key Collaboration:</strong> Channels on-ground challenges from Kenya market (provider pain points, scheme requirements, regulatory hurdles) to Atharv for product roadmap integration</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRODUCT & ENGINEERING TAB -->
+        <div id="engineering" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">Edit & Audit Team</h2>
+                <div class="org-grid">
+                    <div class="person-card business">
+                        <div class="person-name">Bharat Pandey</div>
+                        <div class="person-title">Sr Manager - Claims Edit/Audit Lead</div>
+                        <span class="badge badge-info">Manager</span>
+                        <div class="reporting"><strong>Reports to:</strong> Arif Khan</div>
+                        <ul class="responsibilities">
+                            <li>Edit & Audit team leadership for LCT pod: manages Dr. Annu & Dr. Gargi (medical auditors)</li>
+                            <li>Hospital partnerships for India operations (Star Health, ABHI, Niva Bupa, Bajaj) - NOT LCT Africa</li>
+                            <li>Claims processing quality assurance: ensures clinical accuracy, fraud detection, tariff validation</li>
+                            <li>Coordinates with Irene (LCT) on audit/edit requirements and claim processing workflows</li>
+                            <li>Develops audit protocols: defines criteria for claim approval/rejection based on medical necessity</li>
+                            <li>Training & capacity building: upskills audit team on Kenya-specific medical codes, tariff structures</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card business">
+                        <div class="person-name">Dr. Annu</div>
+                        <div class="person-title">Medical Auditor</div>
+                        <span class="badge badge-purple">Medical Audit</span>
+                        <div class="reporting"><strong>Reports to:</strong> Bharat Pandey</div>
+                        <ul class="responsibilities">
+                            <li>Medical adjudication review</li>
+                            <li>Clinical accuracy validation</li>
+                            <li>Healthcare claims audit</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card business">
+                        <div class="person-name">Dr. Gargi</div>
+                        <div class="person-title">Medical Auditor</div>
+                        <span class="badge badge-purple">Medical Audit</span>
+                        <div class="reporting"><strong>Reports to:</strong> Bharat Pandey</div>
+                        <ul class="responsibilities">
+                            <li>Medical adjudication review</li>
+                            <li>Clinical accuracy validation</li>
+                            <li>Healthcare claims audit</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Product Management</h2>
+                <div class="org-grid">
+                    <div class="person-card product">
+                        <div class="person-name">Atharv Kulkarni</div>
+                        <div class="person-title">Product Manager</div>
+                        <span class="badge badge-success">LCT Primary</span>
+                        <span class="badge badge-info">GIC Secondary</span>
+                        <div class="reporting"><strong>Reports to:</strong> Arif Khan</div>
+                        <ul class="responsibilities">
+                            <li>Product strategy & features for LCT: defines product vision, user journeys, feature specifications</li>
+                            <li>Roadmap planning & prioritization: balances 31 quality criteria, fraud detection, FinTech capabilities</li>
+                            <li>Translates on-ground challenges into product solutions: works with Vinita to convert field insights (provider upload issues, claim processing delays, tariff validation gaps) into prioritized features</li>
+                            <li>Stakeholder management: coordinates with Jotham, Irene (LCT), Vidya (tech), Bharat (edit/audit) for feature alignment</li>
+                            <li>User research & feedback loops: conducts interviews with claims processors, providers, scheme managers</li>
+                            <li>Acting PM for GIC project: applies LCT learnings to new client onboarding</li>
+                            <li>Success metrics tracking: monitors 90% adjudication accuracy target, 19.8% savings rate, claim processing velocity</li>
+                        </ul>
+                        <div class="collab-note"><strong>Vinita → Atharv Pipeline:</strong> Vinita identifies market challenges (e.g., "hospitals struggle with document uploads"), Atharv converts to product requirements (e.g., "build mobile-first upload with offline capability"), prioritizes based on business impact, coordinates with Vidya for technical feasibility</div>
+                    </div>
+
+                    <div class="person-card product">
+                        <div class="person-name">Ashwin</div>
+                        <div class="person-title">Business Analyst / Associate PM</div>
+                        <span class="badge badge-success">LCT BA</span>
+                        <span class="badge badge-info">GIC Assoc PM</span>
+                        <div class="reporting"><strong>Reports to:</strong> Atharv Kulkarni</div>
+                        <ul class="responsibilities">
+                            <li>Requirements gathering & documentation: translates Atharv's product vision into detailed user stories, acceptance criteria</li>
+                            <li>Data analysis & reporting: tracks claim volumes, savings rates, adjudication accuracy, processing times</li>
+                            <li>Stakeholder interviews: conducts sessions with LCT team, providers to understand pain points</li>
+                            <li>Process mapping: documents current vs. desired workflows for claims processing, provider onboarding</li>
+                            <li>Associate PM for GIC: shadows Atharv, manages backlog, coordinates with engineering team</li>
+                            <li>Quality metrics dashboard: builds & maintains tracking for 31 success criteria completion</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card product">
+                        <div class="person-name">Varsha Vashishta</div>
+                        <div class="person-title">Product Designer</div>
+                        <span class="badge badge-purple">Shared Resource</span>
+                        <ul class="responsibilities">
+                            <li>Edit/Audit portal design for LCT</li>
+                            <li>OPD portal UI/UX</li>
+                            <li>GIC project design</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Engineering Team</h2>
+                <div class="org-grid">
+                    <div class="person-card engineering">
+                        <div class="person-name">Vidya Ratan</div>
+                        <div class="person-title">Sr Technical Lead & Solution Architect</div>
+                        <span class="badge badge-warning">⚠️ Leaving in 2 Months</span>
+                        <div class="reporting"><strong>Hard Reports to:</strong> Shashank Vivek<br><strong>Soft Reports to:</strong> Arif Khan</div>
+                        <ul class="responsibilities">
+                            <li>Technical architecture for LCT: designs system architecture, API contracts, database schemas</li>
+                            <li>Team leadership: manages Anand, Anmol, Gerald (engineers), Harshit (QA) - conducts code reviews, sprint planning</li>
+                            <li>Solution design: translates Atharv's product requirements into technical specifications & implementation plans</li>
+                            <li>Tech stack decisions: React, Node.js, PostgreSQL, Prisma ORM, cloud infrastructure</li>
+                            <li>Coordinates with Anthony (LCT Tech Lead) on integration points, API design, data exchange protocols</li>
+                            <li>Acting Tech Lead for GIC: applies LCT architecture patterns to new client implementation</li>
+                            <li>Knowledge transfer: documenting systems for transition as departure approaches in 2 months</li>
+                        </ul>
+                        <div class="collab-note"><strong>Succession Planning Critical:</strong> Vidya leaving in 2 months requires immediate documentation, knowledge transfer to Anand/Gerald, architecture reviews with Shashank</div>
+                    </div>
+
+                    <div class="person-card engineering">
+                        <div class="person-name">Anand</div>
+                        <div class="person-title">Engineer</div>
+                        <span class="badge badge-success">LCT Primary</span>
+                        <span class="badge badge-info">GIC Lead Dev</span>
+                        <div class="reporting"><strong>Reports to:</strong> Shashank Vivek</div>
+                        <ul class="responsibilities">
+                            <li>Software development for LCT: implements features from Vidya's technical specs</li>
+                            <li>Lead Developer for GIC project: owns full-stack development, mentors junior engineers</li>
+                            <li>Key contributor: likely successor candidate for tech lead role post-Vidya departure</li>
+                            <li>Full-stack capabilities: React frontend, Node.js backend, PostgreSQL database operations</li>
+                            <li>Code quality: writes unit tests, conducts peer reviews, maintains documentation</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card engineering">
+                        <div class="person-name">Gerald</div>
+                        <div class="person-title">Engineer & Technical PM</div>
+                        <span class="badge badge-warning">📍 Nairobi, Kenya</span>
+                        <div class="reporting"><strong>Reports to:</strong> Shashank Vivek</div>
+                        <ul class="responsibilities">
+                            <li>Technical PM for ALL LCT integration work: owns end-to-end technical delivery in Nairobi</li>
+                            <li>On-ground liaison with LCT team: daily coordination with Anthony (LCT Tech Lead) on APIs, deployments, issues</li>
+                            <li>Bridge role: translates technical requirements between India engineering team & Kenya operations</li>
+                            <li>System integration: handles data pipelines, API integrations, infrastructure setup at LCT offices</li>
+                            <li>Incident response: first point of contact for production issues, escalates to Vidya/Shashank when needed</li>
+                            <li>Training & support: trains LCT staff on system usage, troubleshoots technical issues locally</li>
+                        </ul>
+                        <div class="collab-note"><strong>Critical On-Ground Role:</strong> Only Vitraya engineer physically in Nairobi - essential for rapid response, cultural bridge, hands-on integration work</div>
+                    </div>
+
+                    <div class="person-card engineering">
+                        <div class="person-name">Anmol</div>
+                        <div class="person-title">Engineer</div>
+                        <span class="badge badge-success">Engineer</span>
+                        <div class="reporting"><strong>Reports to:</strong> Shashank Vivek</div>
+                        <ul class="responsibilities">
+                            <li>Software development for LCT: focuses on backend services, API development</li>
+                            <li>Feature implementation: works on claims processing logic, fraud detection algorithms, tariff validation</li>
+                            <li>Code maintenance: bug fixes, performance optimization, technical debt reduction</li>
+                            <li>Supports Vidya & Anand: assists with complex features, handles production deployments</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card engineering">
+                        <div class="person-name">Harshit Rathor</div>
+                        <div class="person-title">QA Engineer (Dedicated to LCT)</div>
+                        <span class="badge badge-info">100% LCT</span>
+                        <div class="reporting"><strong>Reports to:</strong> Vidya Ratan</div>
+                        <ul class="responsibilities">
+                            <li>Quality assurance for LCT: 100% dedicated - critical for achieving 90% adjudication accuracy target</li>
+                            <li>Test case development: creates comprehensive test suites covering 31 success criteria, fraud scenarios, edge cases</li>
+                            <li>Manual & automated testing: functional testing, regression testing, integration testing, UAT support</li>
+                            <li>Bug tracking & triage: manages defect lifecycle, prioritizes fixes with Vidya, coordinates releases with Gerald</li>
+                            <li>Quality metrics: tracks defect density, test coverage, release readiness, performance benchmarks</li>
+                            <li>Works with Irene (LCT QA Lead) on acceptance criteria, production validation, user feedback loops</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LCT TEAM TAB -->
+        <div id="lct-team" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">LCT Group Africa Team</h2>
+                <div class="org-grid">
+                    <div class="person-card lct">
+                        <div class="person-name">Jotham</div>
+                        <div class="person-title">CEO, LCT Group Africa</div>
+                        <span class="badge badge-success">Leadership</span>
+                        <span class="badge badge-warning">📍 Nairobi, Kenya</span>
+                        <ul class="responsibilities">
+                            <li>CEO & overall leadership of LCT: owns 1B KES scheme portfolio (MTRH + 10 others)</li>
+                            <li>Strategic direction: drives 90% quality target, FinTech model expansion (24hr payment, 10-15% discount capture)</li>
+                            <li>Primary business contact with Arif Khan: strategic discussions, escalations, partnership decisions</li>
+                            <li>Scheme relationship management: maintains relationships with hospital administrators, scheme trustees</li>
+                            <li>Product input: works with Atharv on product roadmap priorities based on scheme feedback</li>
+                            <li>Commercial decisions: pricing, contract terms, service level commitments with Vinita's support</li>
+                            <li>Quality gate: created 31 evaluation criteria - final authority on moving from pilot to commercial phase</li>
+                        </ul>
+                        <div class="collab-note"><strong>Decision Authority:</strong> Jotham's approval of 90% quality achievement is critical blocker for revenue generation - currently in pilot phase (no billing)</div>
+                    </div>
+
+                    <div class="person-card lct">
+                        <div class="person-name">Anthony</div>
+                        <div class="person-title">Technical Team Lead</div>
+                        <span class="badge badge-info">Technical</span>
+                        <span class="badge badge-warning">📍 Nairobi, Kenya</span>
+                        <ul class="responsibilities">
+                            <li>Technical operations for LCT systems: manages local infrastructure, servers, network, databases</li>
+                            <li>Daily coordination with Gerald (Vitraya): API integrations, deployment coordination, incident response</li>
+                            <li>Architecture collaboration with Vidya Ratan: reviews technical designs, provides infrastructure constraints, feedback</li>
+                            <li>System integration: ensures Vitraya platform integrates with LCT's existing systems (accounting, scheme portals)</li>
+                            <li>Production support: monitors system health, troubleshoots issues, manages backups & disaster recovery</li>
+                            <li>Security & compliance: ensures data protection, Kenya regulatory compliance, audit trails</li>
+                        </ul>
+                        <div class="collab-note"><strong>Gerald ↔ Anthony Bridge:</strong> This collaboration is critical - Gerald (Nairobi-based Vitraya) works daily with Anthony on all technical integration, reducing India-Kenya communication delays</div>
+                    </div>
+
+                    <div class="person-card lct">
+                        <div class="person-name">Irene</div>
+                        <div class="person-title">QA & Claims Processing Lead, Product Owner</div>
+                        <span class="badge badge-success">Operations</span>
+                        <span class="badge badge-warning">📍 Nairobi, Kenya</span>
+                        <ul class="responsibilities">
+                            <li>Claims quality assurance: validates AI adjudication decisions against clinical standards, ensures medical accuracy, monitors 90% target</li>
+                            <li>Product owner for LCT operations: created the 31 evaluation criteria, defines acceptance for claim processing features</li>
+                            <li>Claims processing oversight: manages claims processing team, handles complex medical escalations, resolves edge cases</li>
+                            <li>Works with Bharat (Edit/Audit) on claim audit requirements, medical necessity protocols, fraud detection rules</li>
+                            <li>Works with Vinita on scheme requirements, provider feedback, operational bottlenecks from claims perspective</li>
+                            <li>Claims UAT & validation: validates AI decisions on real claims before production approval, provides feedback to Atharv on clinical accuracy requirements</li>
+                            <li>Reporting: tracks key metrics (847 claims/week, 19.8% savings, fraud detection rates, adjudication accuracy)</li>
+                        </ul>
+                        <div class="collab-note"><strong>Clinical Quality Gatekeeper:</strong> Irene validates that Vitraya's AI meets LCT's clinical adjudication standards - her approval on 31 criteria essential for commercial launch. Focus: Medical accuracy, NOT technical QA</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Key Collaboration Points</h2>
+                <div class="org-grid">
+                    <div class="person-card">
+                        <div class="person-name">Technical Integration</div>
+                        <ul class="responsibilities">
+                            <li>Gerald (Nairobi) ↔ Anthony (LCT) - Daily technical coordination</li>
+                            <li>Vidya Ratan (India) ↔ Anthony (LCT) - Architecture decisions</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card">
+                        <div class="person-name">Business & Product</div>
+                        <ul class="responsibilities">
+                            <li>Arif Khan ↔ Jotham - Strategic discussions</li>
+                            <li>Atharv Kulkarni ↔ Jotham - Product requirements</li>
+                            <li>Vinita Saini ↔ Jotham - Sales & partnerships</li>
+                        </ul>
+                    </div>
+
+                    <div class="person-card">
+                        <div class="person-name">Operations</div>
+                        <ul class="responsibilities">
+                            <li>Bharat Pandey ↔ Irene - Claim audit/edit requirements</li>
+                            <li>Bharat manages Edit & Audit team for LCT</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK CONTACTS TAB -->
+        <div id="contacts" class="tab-content">
+            <div class="section">
+                <h2 class="section-title">Quick Contact Reference</h2>
+
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 0.875rem; font-weight: 700; margin-bottom: 1rem; color: hsl(var(--muted-foreground)); text-transform: uppercase; letter-spacing: 0.05em;">Business & Strategy</h3>
+                    <div class="org-grid">
+                        <div class="person-card business">
+                            <div class="person-title" style="font-size: 0.75rem; margin-bottom: 0.5rem;">Africa Business Strategy</div>
+                            <div class="person-name">Arif Khan</div>
+                            <div class="person-title">VP</div>
+                        </div>
+                        <div class="person-card business">
+                            <div class="person-title" style="font-size: 0.75rem; margin-bottom: 0.5rem;">Sales & New Schemes</div>
+                            <div class="person-name">Vinita Saini</div>
+                            <div class="person-title">GM, Africa</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 0.875rem; font-weight: 700; margin-bottom: 1rem; color: hsl(var(--muted-foreground)); text-transform: uppercase; letter-spacing: 0.05em;">Product & Requirements</h3>
+                    <div class="org-grid">
+                        <div class="person-card product">
+                            <div class="person-title" style="font-size: 0.75rem; margin-bottom: 0.5rem;">LCT Product Features</div>
+                            <div class="person-name">Atharv Kulkarni</div>
+                            <div class="person-title">Product Manager</div>
+                        </div>
+                        <div class="person-card product">
+                            <div class="person-title" style="font-size: 0.75rem; margin-bottom: 0.5rem;">Product Requirements</div>
+                            <div class="person-name">Ashwin</div>
+                            <div class="person-title">Business Analyst</div>
+                        </div>
+                        <div class="person-card product">
+                            <div class="person-title" style="font-size: 0.75rem; margin-bottom: 0.5rem;">Product Design/UI/UX</div>
+                            <div class="person-name">Varsha Vashishta</div>
+                            <div class="person-title">Product Designer</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 0.875rem; font-weight: 700; margin-bottom: 1rem; color: hsl(var(--muted-foreground)); text-transform: uppercase; letter-spacing: 0.05em;">Technical & Engineering</h3>
+                    <div class="org-grid">
+                        <div class="person-card engineering">
+                            <div class="person-title" style="font-size: 0.75rem; margin-bottom: 0.5rem;">LCT Technical Architecture</div>
+                            <div class="person-name">Vidya Ratan</div>
+                            <div class="person-title">Sr Technical Lead</div>
+                        </div>
+                        <div class="person-card engineering">
+                            <div class="person-title" style="font-size: 0.75rem; margin-bottom: 0.5rem;">Engineering Leadership</div>
+                            <div class="person-name">Shashank Vivek</div>
+                            <div class="person-title">VP Engineering</div>
+                        </div>
+                        <div class="person-card engineering">
+                            <div class="person-title" style="font-size: 0.75rem; margin-bottom: 0.5rem;">LCT Integration (On-ground)</div>
+                            <div class="person-name">Gerald</div>
+                            <div class="person-title">Tech PM (Nairobi)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="font-size: 0.875rem; font-weight: 700; margin-bottom: 1rem; color: hsl(var(--muted-foreground)); text-transform: uppercase; letter-spacing: 0.05em;">LCT Africa Team</h3>
+                    <div class="org-grid">
+                        <div class="person-card lct">
+                            <div class="person-title" style="font-size: 0.75rem; margin-bottom: 0.5rem;">LCT Business Operations</div>
+                            <div class="person-name">Jotham</div>
+                            <div class="person-title">CEO, LCT Africa</div>
+                        </div>
+                        <div class="person-card lct">
+                            <div class="person-title" style="font-size: 0.75rem; margin-bottom: 0.5rem;">LCT Technical Operations</div>
+                            <div class="person-name">Anthony</div>
+                            <div class="person-title">Technical Team Lead</div>
+                        </div>
+                        <div class="person-card lct">
+                            <div class="person-title" style="font-size: 0.75rem; margin-bottom: 0.5rem;">LCT Claims & Product</div>
+                            <div class="person-name">Irene</div>
+                            <div class="person-title">QA & Product Owner</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
