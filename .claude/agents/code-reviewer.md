@@ -162,7 +162,8 @@ db.query(query, [userId]);
 **Red Flags:**
 ```javascript
 // CRITICAL: Hardcoded credentials
-const API_KEY = "sk_live_51H8xYz...";
+const API_KEY = process.env.STRIPE_API_KEY; // ✅ Use environment variables
+// NEVER: const API_KEY = "sk_test_xxxxx"; // Hardcoded secret
 
 // CRITICAL: Weak password hashing
 const hash = md5(password);
