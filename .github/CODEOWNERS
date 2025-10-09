@@ -6,20 +6,20 @@
 *       @codex @coderabbitai
 
 # Specific approval required from project lead
-*       @ak-eyther
+*       @ak_eyther
 
 # HTML/CSS/JS files (frontend)
-*.html  @codex @coderabbitai @ak-eyther
-*.css   @codex @coderabbitai @ak-eyther
-*.js    @codex @coderabbitai @ak-eyther
+*.html  @codex @coderabbitai @ak_eyther
+*.css   @codex @coderabbitai @ak_eyther
+*.js    @codex @coderabbitai @ak_eyther
 
 # Configuration files
-*.json  @ak-eyther
-*.yaml  @ak-eyther
-*.yml   @ak-eyther
+*.json  @ak_eyther
+*.yaml  @ak_eyther
+*.yml   @ak_eyther
 
 # Documentation files
-*.md    @ak-eyther
+*.md    @ak_eyther
 
 # GitHub workflows and templates
-.github/        @ak-eyther
+.github/        @ak_eyther
