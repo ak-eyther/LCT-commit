@@ -62,25 +62,8 @@ jobs:
           # Create issue title
           ISSUE_TITLE="[AI Review] $PRIORITY_TEXT: PR #$PR_NUMBER - $PR_TITLE"
           
-          # Create issue description
-          ISSUE_DESCRIPTION="## AI Code Review Issue
-          
-**Priority:** $PRIORITY_TEXT
-**Source:** GitHub PR #$PR_NUMBER
-**PR Title:** $PR_TITLE
-**PR Link:** $PR_URL
-**Comment Link:** $COMMENT_URL
-
-### AI Reviewer Comment:
-\`\`\`
-$COMMENT_BODY
-\`\`\`
-
-### Context
-This issue was automatically created from an AI code review comment. Please review the PR and address the identified issue.
-
----
-*Created by Linear GitHub Integration*"
+          # Create issue description using external script to avoid YAML parsing issues
+          ISSUE_DESCRIPTION=$(./.github/scripts/build-issue-description.sh "$PRIORITY_TEXT" "$PR_NUMBER" "$PR_TITLE" "$PR_URL" "$COMMENT_URL" "$COMMENT_BODY")
 
           # Create Linear issue
           curl -X POST https://api.linear.app/graphql \
