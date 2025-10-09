@@ -1,0 +1,25 @@
+# Code Owners for LCT-Vitraya Project
+# These users will be automatically requested for review when someone opens a pull request
+
+# Default owners for everything in the repo
+# These owners will be requested for review unless a later match takes precedence
+*       @codex @coderabbitai
+
+# Specific approval required from project lead
+*       @ak-eyther
+
+# HTML/CSS/JS files (frontend)
+*.html  @codex @coderabbitai @ak-eyther
+*.css   @codex @coderabbitai @ak-eyther
+*.js    @codex @coderabbitai @ak-eyther
+
+# Configuration files
+*.json  @ak-eyther
+*.yaml  @ak-eyther
+*.yml   @ak-eyther
+
+# Documentation files
+*.md    @ak-eyther
+
+# GitHub workflows and templates
+.github/        @ak-eyther
