@@ -40,6 +40,8 @@ jobs:
           PR_TITLE="${{ github.event.pull_request.title }}"
           PR_URL="${{ github.event.pull_request.html_url }}"
           COMMENT_URL="${{ github.event.comment.html_url }}"
+          TEAM_ID_SECRET="${{ secrets.LINEAR_TEAM_ID }}"
+          LINEAR_KEY="${{ secrets.LINEAR_API_KEY }}"
           
           # Extract priority from comment
           if [[ "$COMMENT_BODY" == *"🔴 CRITICAL"* ]]; then
@@ -65,6 +67,25 @@ jobs:
           # Create issue description using external script to avoid YAML parsing issues
           ISSUE_DESCRIPTION=$(./.github/scripts/build-issue-description.sh "$PRIORITY_TEXT" "$PR_NUMBER" "$PR_TITLE" "$PR_URL" "$COMMENT_URL" "$COMMENT_BODY")
 
+          # Resolve Linear project (prefer secret, else auto-discover by name "LCT Commit")
+          PROJECT_ID="${{ secrets.LINEAR_PROJECT_ID }}"
+          if [ -z "$PROJECT_ID" ]; then
+            PROJECT_ID=$(curl -s -X POST https://api.linear.app/graphql \
+              -H "Content-Type: application/json" \
+              -H "Authorization: $LINEAR_KEY" \
+              -d '{
+                "query": "{ projects(first: 100) { nodes { id name team { id name } } } }"
+              }' | jq -r --arg NAME "LCT Commit" --arg TEAM "$TEAM_ID_SECRET" '.data.projects.nodes[] | select((.name==$NAME) and (.team.id==$TEAM)) | .id' | head -n1)
+          fi
+
+          if [ -n "$PROJECT_ID" ]; then
+            echo "Resolved Linear project: $PROJECT_ID"
+            PROJECT_FIELD="\"projectId\": \"$PROJECT_ID\","
+          else
+            echo "No Linear project matched; creating issue without project linkage"
+            PROJECT_FIELD=""
+          fi
+
           # Create Linear issue
           curl -X POST https://api.linear.app/graphql \
             -H "Content-Type: application/json" \
@@ -76,6 +97,7 @@ jobs:
                   \"teamId\": \"${{ secrets.LINEAR_TEAM_ID }}\",
                   \"title\": \"$ISSUE_TITLE\",
                   \"description\": \"$ISSUE_DESCRIPTION\",
+                  ${PROJECT_FIELD}
                   \"priority\": $PRIORITY
                 }
               }
