@@ -2,21 +2,17 @@
 # These users will be automatically requested for review when someone opens a pull request
 
 # Default owners for everything in the repo
-# All three reviewers will be requested unless a more specific rule matches
+# All three reviewers (@codex, @coderabbitai, @ak_eyther) will be requested
+# unless a more specific rule below takes precedence (last matching pattern wins)
 *       @codex @coderabbitai @ak_eyther
 
-# HTML/CSS/JS files (frontend)
-*.html  @codex @coderabbitai @ak_eyther
-*.css   @codex @coderabbitai @ak_eyther
-*.js    @codex @coderabbitai @ak_eyther
-
-# Configuration files
+# Configuration files - only project lead reviews critical config
 *.json  @ak_eyther
 *.yaml  @ak_eyther
 *.yml   @ak_eyther
 
-# Documentation files
+# Documentation files - only project lead reviews docs
 *.md    @ak_eyther
 
-# GitHub workflows and templates
+# GitHub workflows and templates - only project lead reviews infrastructure
 .github/        @ak_eyther
