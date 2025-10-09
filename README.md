@@ -2,7 +2,7 @@
 
 > AI-powered healthcare claims processing system for Kenya - Quality tracking and monitoring dashboard
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/lct-project)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ak-eyther/LCT-commit)
 
 ---
 
