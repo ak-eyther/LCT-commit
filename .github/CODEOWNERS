@@ -2,11 +2,8 @@
 # These users will be automatically requested for review when someone opens a pull request
 
 # Default owners for everything in the repo
-# These owners will be requested for review unless a later match takes precedence
-*       @codex @coderabbitai
-
-# Specific approval required from project lead
-*       @ak_eyther
+# All three reviewers will be requested unless a more specific rule matches
+*       @codex @coderabbitai @ak_eyther
 
 # HTML/CSS/JS files (frontend)
 *.html  @codex @coderabbitai @ak_eyther
