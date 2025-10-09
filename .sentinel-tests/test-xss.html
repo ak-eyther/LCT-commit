@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <div id="content"></div>
+  <script>
+    // This should be detected as CRITICAL
+    const userInput = window.location.hash.substring(1);
+    document.getElementById('content').innerHTML = userInput;
+
+    // Also dangerous
+    eval(userProvidedCode);
+    document.write(unsafeContent);
+  </script>
+</body>
+</html>

@@ -17,6 +17,149 @@ You are assisting with a **mission-critical healthcare project** in Kenya. Your 
 
 ---
 
+## 🛡️ Sentinel - Automated Code Review Agent
+
+**New Addition:** The project now has an automated code review agent called **Sentinel** that protects code quality and security.
+
+### What is Sentinel?
+
+Sentinel is an elite AI-powered code review agent that automatically:
+- 🔐 Detects security vulnerabilities (OWASP Top 10 2025)
+- 🎨 Checks UI/UX accessibility (WCAG 2.2)
+- ⚙️ Finds functional bugs and edge cases
+- 📊 Creates Linear issues for tracking
+- ⛔ Blocks commits/PRs with CRITICAL security issues
+
+### How It Works
+
+**Local Pre-Commit Hook:**
+- Runs on every `git commit`
+- Blocks CRITICAL security issues
+- Warns about HIGH/MEDIUM issues
+- Located: `.git/hooks/pre-commit`
+
+**GitHub Actions (PR Review):**
+- Analyzes all changed files on PR
+- Posts detailed review comments
+- Adds inline code comments
+- Creates Linear issues automatically
+- Blocks merge if CRITICAL issues found
+
+**GitHub Actions (Push to Main/QA/Develop):**
+- Reviews commits to protected branches
+- Posts commit comments
+- Creates Linear issues for tracking
+
+### When Working on Code
+
+**Before Committing:**
+```bash
+# Sentinel will automatically check your code
+git add .
+git commit -m "Your message"
+
+# If blocked, fix the issues and try again
+# To bypass (use sparingly): git commit --no-verify
+```
+
+**Understanding Sentinel Feedback:**
+- 🔴 **CRITICAL**: Must fix immediately (blocks commit/PR)
+- 🟠 **HIGH**: Should fix before release
+- 🟡 **MEDIUM**: Fix in next sprint
+- 🟢 **LOW**: Nice-to-have improvements
+
+### Common Sentinel Detections
+
+**Security (CRITICAL):**
+- Hardcoded API keys, passwords, secrets
+- SQL injection vulnerabilities
+- XSS (Cross-Site Scripting) risks
+- Disabled authentication/SSL
+- `eval()` on user input
+
+**Accessibility (HIGH):**
+- Images without alt text
+- Inputs without labels
+- Removed focus indicators
+
+**Code Quality (MEDIUM):**
+- `console.log` statements
+- TODO/FIXME comments
+- Missing error handling
+
+### Sentinel Documentation
+
+- **Quick Start**: `SENTINEL_QUICK_START.md` (3-minute read)
+- **Full Guide**: `SENTINEL_README.md` (comprehensive)
+- **Agent Definition**: `.claude/agents/code-reviewer.md` (technical)
+- **Setup Script**: `./setup-sentinel.sh` (automated setup)
+
+### Working With Sentinel
+
+**Best Practices:**
+1. Don't bypass security warnings without understanding them
+2. Read Sentinel comments carefully
+3. Fix CRITICAL issues before pushing
+4. Ask for help if you don't understand an issue
+5. Learn from the feedback to write better code
+
+**If Sentinel is Wrong (False Positive):**
+1. Add a comment explaining why it's safe
+2. Use `git commit --no-verify` for that specific commit
+3. Consider reporting to improve Sentinel's accuracy
+
+### Integration with LCT Project
+
+Sentinel has deep context about this project:
+- Understands PHI/PII protection requirements
+- Knows about financial validation rules
+- Aware of 90% accuracy goal
+- Validates against 31 success criteria
+- Protects healthcare data compliance
+
+**Example - Sentinel protecting invoice validation:**
+```javascript
+// ❌ BAD - Client-side validation only
+function calculateSavings(billed, approved) {
+  return billed - approved; // No checks!
+}
+
+// ✅ GOOD - Sentinel approves
+function calculateSavings(billed, approved) {
+  // Validate inputs (LCT Criteria #6)
+  if (typeof billed !== 'number' || typeof approved !== 'number') {
+    throw new Error('Amounts must be numbers');
+  }
+
+  if (approved > billed) {
+    throw new Error('Approved cannot exceed billed amount');
+  }
+
+  if (billed < 0 || approved < 0) {
+    throw new Error('Amounts must be non-negative');
+  }
+
+  return billed - approved;
+}
+```
+
+### Sentinel and the 31 Criteria
+
+Sentinel helps achieve the 90% accuracy goal by:
+- Preventing security vulnerabilities that could expose PHI
+- Ensuring accessibility for all users
+- Catching logic errors in financial calculations
+- Enforcing best practices for healthcare data
+- Maintaining code quality across the team
+
+**Criteria Alignment:**
+- **Criteria #4 (CRITICAL)**: Invoice validation - Sentinel checks calculation logic
+- **Criteria #6 (CRITICAL)**: Tariff validation - Sentinel ensures server-side checks
+- **Criteria #11 (CRITICAL)**: Fraud detection - Sentinel protects algorithm integrity
+- **All criteria**: Code quality supports accuracy goals
+
+---
+
 ## ⚡ Quick Context (Read First)
 
 ### Project Summary
