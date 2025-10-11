@@ -1,0 +1,16 @@
+name: Test Comment Trigger
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Event
+        run: |
+          echo "Event triggered!"
+          echo "Event type: ${{ github.event_name }}"
+          echo "Comment: ${{ github.event.comment.body }}"
+          echo "User: ${{ github.event.comment.user.login }}"
