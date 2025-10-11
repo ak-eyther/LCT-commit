@@ -56,3 +56,6 @@ test-linear-*.sh
 # Test files with hardcoded credentials
 /tmp/test_linear*.sh
 /tmp/create_linear*.sh
+
+# Duplicate directory (removed)
+LCT-commit/
