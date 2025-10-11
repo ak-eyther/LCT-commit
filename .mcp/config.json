@@ -5,7 +5,7 @@
       "args": ["@modelcontextprotocol/server-linear"],
       "env": {
         "LINEAR_API_KEY": "${LINEAR_API_KEY}",
-        "LINEAR_TEAM_ID": "b5835b14-c3cd-4048-b42a-7a7502647f4b"
+        "LINEAR_TEAM_ID": "${LINEAR_TEAM_ID}"
       }
     },
     "vercel": {
@@ -41,7 +41,7 @@
       ]
     },
     "linear": {
-      "teamId": "b5835b14-c3cd-4048-b42a-7a7502647f4b",
+      "teamId": "${LINEAR_TEAM_ID}",
       "projectName": "LCT commit",
       "priorities": {
         "critical": 1,
