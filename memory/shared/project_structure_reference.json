@@ -1,0 +1,122 @@
+{
+  "memory_id": "project_structure_reference",
+  "category": "shared",
+  "type": "insight",
+  "timestamp": "2025-10-12T01:50:00Z",
+  "version": "2.0.0",
+  "content": {
+    "title": "LCT Commit Project Structure - Reference Guide",
+    "description": "Authoritative reference for all agents about project file organization",
+    "structure": {
+      "applications": {
+        "path": "src/app/",
+        "description": "All HTML application files",
+        "files": [
+          "index.html - Main tracker dashboard",
+          "reports.html - Analytics and progress reports",
+          "documentation.html - Documentation viewer",
+          "settings.html - Settings and data management",
+          "team-structure-v2.html - Team organization chart"
+        ],
+        "note": "All HTML apps use localStorage with key 'lctTrackerData'"
+      },
+      "documentation": {
+        "path": "docs/",
+        "description": "All project documentation",
+        "files": [
+          "agents.md - AI agent instructions",
+          "BRANCHING_STRATEGY.md - Git workflow",
+          "SECURITY_BEST_PRACTICES.md - Security guidelines",
+          "SENTINEL_README.md - Sentinel code reviewer docs",
+          "SENTINEL_QUICK_START.md - Quick start guide",
+          "SENTINEL_TESTING.md - Testing guide",
+          "TESTING_RESULTS.md - Test results",
+          "MCP_SETUP.md - MCP server setup",
+          "BUILDING_TOOLS.md - Tool development",
+          "FUNCTIONS_LIBRARY.md - Function reference",
+          "TEAM_ONBOARDING.md - Onboarding guide"
+        ],
+        "subdirectories": {
+          "agents/": "Agent definition files (primary-developer.md, code-reviewer-sentinel.md, etc.)"
+        },
+        "exceptions": [
+          "README.md - At root (project overview)",
+          "CLAUDE.md - At root (AI assistant guide, CAPITALIZED)"
+        ]
+      },
+      "tests": {
+        "path": "tests/",
+        "description": "All test files organized by type",
+        "subdirectories": {
+          "unit/": "Unit tests (test-agent-demo.js, test-linear-workflow.js, test_results.json)",
+          "integration/": "Integration tests (TEST_LINEAR_*.md)",
+          "sentinel/": "Security test cases (10 files testing OWASP vulnerabilities)"
+        },
+        "note": "Sentinel tests moved from .sentinel-tests/ to tests/sentinel/"
+      },
+      "scripts": {
+        "path": "scripts/",
+        "description": "Automation and utility scripts",
+        "key_scripts": [
+          "agent_memory_integration.py - Memory system integration",
+          "mem0ai_integration.py - mem0ai integration",
+          "memory_aware_agent.py - Memory-aware agent base",
+          "agent-setup.sh - Agent system setup",
+          "test-complete-system.py - System tests"
+        ],
+        "note": "Root-level scripts: setup-sentinel.sh, test-sentinel.sh"
+      },
+      "memory": {
+        "path": "memory/",
+        "description": "AI agent memory system",
+        "subdirectories": {
+          "project/": "Long-term project context",
+          "development/": "Development patterns and learnings",
+          "agents/": "Agent-specific memories",
+          "shared/": "Cross-agent shared knowledge"
+        },
+        "schema": "memory/schema.json"
+      },
+      "configuration": {
+        "root_configs": [
+          "vercel.json - Deployment config (routes / to /src/app/index.html)",
+          ".gitignore - Git exclusions (includes .claude/plugins/)",
+          ".cursorrules - Cursor AI rules (NEW)",
+          ".coderabbit.yaml - CodeRabbit config",
+          "package.json - npm dependencies",
+          "env.example - Environment template"
+        ],
+        "claude_config": ".claude/ (agents/, commands/, hooks/, settings.local.json)",
+        "github_config": ".github/ (workflows/, CODEOWNERS)"
+      }
+    },
+    "quick_reference": {
+      "find_html_app": "src/app/",
+      "find_documentation": "docs/ (except README.md and CLAUDE.md at root)",
+      "find_tests": "tests/{unit,integration,sentinel}/",
+      "find_scripts": "scripts/ or root for setup-sentinel.sh",
+      "find_memory": "memory/{project,development,agents,shared}/"
+    },
+    "migration_checklist": {
+      "html_references": "Update to src/app/*.html",
+      "doc_references": "Update to docs/*.md (except root-level)",
+      "test_references": "Update to tests/*/",
+      "vercel_config": "Already updated with route rewrite",
+      "all_agents": "Read this memory for correct paths"
+    },
+    "tags": [
+      "structure",
+      "reference",
+      "file-paths",
+      "organization",
+      "all-agents"
+    ]
+  },
+  "metadata": {
+    "authoritative": true,
+    "version": "2.0.0",
+    "last_updated": "2025-10-12T01:50:00Z",
+    "pr_number": 20,
+    "applies_to": "all agents"
+  }
+}
