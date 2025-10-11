@@ -7,12 +7,36 @@
 
 ## 🤖 Agent System
 
-This project uses a hybrid agent architecture. For detailed agent definitions, see:
+This project uses a hybrid agent architecture with **automatic memory integration**. For detailed agent definitions, see:
 
 - **Primary Developer:** [docs/agents/primary-developer.md](docs/agents/primary-developer.md)
 - **Code Reviewer (Sentinel):** [docs/agents/code-reviewer-sentinel.md](docs/agents/code-reviewer-sentinel.md)
 - **Agent Registry:** [docs/agents/README.md](docs/agents/README.md)
 - **Agent Integrations:** [docs/agents/integrations.md](docs/agents/integrations.md)
+
+## 🧠 Automatic Memory Integration
+
+**This agent automatically uses the shared memory system:**
+
+### **Memory Operations (Automatic)**
+- **Store Decisions**: Automatically stores implementation choices and rationale
+- **Store Learnings**: Automatically stores successful teaching approaches
+- **Store Patterns**: Automatically stores coding patterns and best practices
+- **Retrieve Context**: Automatically retrieves relevant memories for current work
+- **Cross-Agent Learning**: Automatically shares insights with other agents
+
+### **Memory Triggers (Automatic)**
+- **On Feature Implementation**: Stores decision rationale and approach
+- **On Teaching Success**: Stores effective teaching patterns
+- **On Code Patterns**: Stores reusable code patterns
+- **On Problem Solving**: Stores solution approaches for future reference
+- **On User Preferences**: Stores user-specific preferences and context
+
+### **Memory Categories (Automatic)**
+- **Project Memories**: Business context, technical decisions, success criteria
+- **Development Memories**: Code patterns, feature history, bug resolutions
+- **Session Memories**: Current work, user preferences, active issues
+- **Shared Memories**: Cross-agent learnings and system insights
 
 ---
 
@@ -292,7 +316,7 @@ async function processInvoice(invoiceData) {
 }
 
 // ❌ BAD - Sentinel will block this
-const API_KEY = "sk_live_abc123"; // Hardcoded secret!
+const API_KEY = process.env.API_KEY; // Loaded from env, never hardcoded
 function processInvoice(data) {
   // No validation!
   return fetch(`/api?data=${data}`); // No error handling!
