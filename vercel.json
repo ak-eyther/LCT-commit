@@ -3,6 +3,32 @@
   "devCommand": null,
   "installCommand": null,
   "framework": null,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/src/app/index.html"
+    },
+    {
+      "source": "/index.html",
+      "destination": "/src/app/index.html"
+    },
+    {
+      "source": "/reports.html",
+      "destination": "/src/app/reports.html"
+    },
+    {
+      "source": "/settings.html",
+      "destination": "/src/app/settings.html"
+    },
+    {
+      "source": "/documentation.html",
+      "destination": "/src/app/documentation.html"
+    },
+    {
+      "source": "/team-structure-v2.html",
+      "destination": "/src/app/team-structure-v2.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

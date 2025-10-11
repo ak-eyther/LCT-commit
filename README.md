@@ -38,40 +38,64 @@
 ```
 LCT-commit/
 ├── 📄 Core Application Files
-│   ├── index.html                      # Main tracker dashboard ⭐
-│   ├── reports.html                    # Analytics & reports page
-│   ├── documentation.html              # Documentation viewer
-│   ├── settings.html                   # Settings & data management
-│   └── team-structure-v2.html          # Team organization chart
+│   └── src/
+│       └── app/
+│           ├── index.html              # Main tracker dashboard ⭐
+│           ├── reports.html            # Analytics & reports page
+│           ├── documentation.html      # Documentation viewer
+│           ├── settings.html           # Settings & data management
+│           └── team-structure-v2.html  # Team organization chart
 │
 ├── 📚 Documentation
 │   ├── README.md                       # Project overview (this file)
 │   ├── CLAUDE.md                       # Claude AI assistant guide
-│   ├── agents.md                       # AI agent instructions
-│   ├── BRANCHING_STRATEGY.md           # Git workflow guide
-│   ├── SECURITY_BEST_PRACTICES.md      # Security guidelines
-│   ├── SENTINEL_README.md              # Sentinel code review docs
-│   ├── SENTINEL_QUICK_START.md         # Sentinel quick guide
-│   └── SENTINEL_TESTING.md             # Sentinel testing guide
+│   └── docs/
+│       ├── README.md                   # Documentation index
+│       ├── agents.md                   # AI agent instructions
+│       ├── BRANCHING_STRATEGY.md       # Git workflow guide
+│       ├── SECURITY_BEST_PRACTICES.md  # Security guidelines
+│       ├── SENTINEL_README.md          # Sentinel code review docs
+│       ├── SENTINEL_QUICK_START.md     # Sentinel quick guide
+│       ├── SENTINEL_TESTING.md         # Sentinel testing guide
+│       ├── TESTING_RESULTS.md          # Test results & metrics
+│       ├── MCP_SETUP.md                # MCP server setup
+│       ├── BUILDING_TOOLS.md           # Tool development guide
+│       ├── FUNCTIONS_LIBRARY.md        # Function reference
+│       ├── TEAM_ONBOARDING.md          # Team onboarding
+│       └── agents/                     # Agent definitions
+│           ├── README.md               # Agent registry
+│           ├── primary-developer.md    # Developer agent
+│           ├── code-reviewer-sentinel.md  # Sentinel agent
+│           └── integrations.md         # Agent integrations
 │
-├── 📁 docs/
-│   ├── README.md                       # Documentation index
-│   ├── MCP_SETUP.md                    # MCP server setup
-│   ├── BUILDING_TOOLS.md               # Tool development guide
-│   ├── FUNCTIONS_LIBRARY.md            # Function reference
-│   ├── TEAM_ONBOARDING.md              # Team onboarding
-│   └── agents/                         # Agent definitions
-│       ├── README.md                   # Agent registry
-│       ├── primary-developer.md        # Developer agent
-│       ├── code-reviewer-sentinel.md   # Sentinel agent
-│       └── integrations.md             # Agent integrations
+├── 🧪 Testing
+│   └── tests/
+│       ├── unit/                       # Unit tests
+│       ├── integration/                # Integration tests
+│       └── sentinel/                   # Security test cases
+│
+├── 🛠️ Scripts & Automation
+│   ├── scripts/                        # Utility scripts
+│   │   ├── agent-setup.sh              # Agent system setup
+│   │   ├── memory_aware_agent.py       # AI memory integration
+│   │   └── test-complete-system.py     # Full system tests
+│   ├── setup-sentinel.sh               # Sentinel setup script
+│   └── test-sentinel.sh                # Sentinel test runner
+│
+├── 🧠 Memory System
+│   └── memory/                         # AI agent memory storage
+│       ├── project/                    # Project-level memories
+│       ├── development/                # Development memories
+│       └── agents/                     # Agent-specific memories
 │
 ├── ⚙️ Configuration
 │   ├── vercel.json                     # Vercel deployment config
 │   ├── .gitignore                      # Git ignore rules
 │   ├── .coderabbit.yaml                # CodeRabbit config
 │   ├── .claude/
-│   │   ├── agents/code-reviewer.md     # Claude-specific Sentinel config
+│   │   ├── agents/                     # Claude agent definitions
+│   │   ├── commands/                   # Slash commands
+│   │   ├── hooks/                      # Event hooks
 │   │   └── settings.local.json         # Local Claude settings
 │   └── .env.mcp.example                # MCP environment template
 │
@@ -83,17 +107,18 @@ LCT-commit/
 │       └── CODEOWNERS                  # Code ownership rules
 │
 └── 📦 Dependencies
-    └── package.json                    # (if using npm packages)
+    ├── package.json                    # npm packages
+    └── node_modules/                   # Installed dependencies
 ```
 
 ### 📄 Multi-Page Application
 
 The tracker is now a multi-page HTML application:
 
-- **`index.html`** - Main dashboard with 31 criteria tracker
-- **`reports.html`** - Analytics and progress reports
-- **`documentation.html`** - Complete project documentation
-- **`settings.html`** - Data import/export and management
+- **`src/app/index.html`** - Main dashboard with 31 criteria tracker
+- **`src/app/reports.html`** - Analytics and progress reports
+- **`src/app/documentation.html`** - Complete project documentation
+- **`src/app/settings.html`** - Data import/export and management
 
 All pages share data via `localStorage` - changes sync automatically!
 
@@ -152,11 +177,11 @@ All pages share data via `localStorage` - changes sync automatically!
 2. **Open in browser**
    ```bash
    # Simply open the main HTML file
-   open index.html
+   open src/app/index.html
    # Or on Windows
-   start index.html
+   start src/app/index.html
    # Or on Linux
-   xdg-open index.html
+   xdg-open src/app/index.html
    ```
 
 3. **Start using!**
@@ -291,7 +316,7 @@ git push -u origin feature/duplicate-detection
 # Merge via PR or directly to main
 ```
 
-See [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md) for complete workflow details.
+See [docs/BRANCHING_STRATEGY.md](./docs/BRANCHING_STRATEGY.md) for complete workflow details.
 
 ---
 
@@ -368,7 +393,7 @@ localStorage.removeItem('lctTrackerData')
    - Update as needed
    - Celebrate when merged! 🎉
 
-See [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md) for detailed guidelines.
+See [docs/BRANCHING_STRATEGY.md](./docs/BRANCHING_STRATEGY.md) for detailed guidelines.
 
 ### 🤖 Multi-Agent Automated Code Reviews
 
@@ -414,9 +439,9 @@ Reviews appear as comments on commits and PRs automatically.
 
 ## 📚 Documentation
 
-- **[claude.md](./claude.md)** - Claude AI assistant project guide
-- **[agents.md](./agents.md)** - AI agent instructions and patterns
-- **[BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md)** - Git workflow and best practices
+- **[CLAUDE.md](./CLAUDE.md)** - Claude AI assistant project guide
+- **[docs/agents.md](./docs/agents.md)** - AI agent instructions and patterns
+- **[docs/BRANCHING_STRATEGY.md](./docs/BRANCHING_STRATEGY.md)** - Git workflow and best practices
 - **[LCT_Vitraya_Complete_Project_Context.md](./LCT_Vitraya_Complete_Project_Context.md)** - Full business context
 
 ---
@@ -507,14 +532,14 @@ Track real-time progress by opening the tracker dashboard!
 
 For questions or issues:
 - Create an issue in this repository
-- Review existing documentation in `claude.md` and `agents.md`
+- Review existing documentation in `CLAUDE.md` and `docs/agents.md`
 - Contact project maintainers
 
 ---
 
 ## 🚀 Next Steps
 
-1. **Open the tracker**: `open index.html` in your browser
+1. **Open the tracker**: `open src/app/index.html` in your browser
 2. **Review the 31 criteria**: Understand what needs to be implemented
 3. **Focus on CRITICAL items first**: 4 must-have features
 4. **Track your progress**: Update status as you implement

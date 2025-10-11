@@ -1,0 +1,160 @@
+# LCT Commit - Cursor AI Rules
+# Project: LCT-Vitraya Healthcare Claims Adjudication System
+
+## Project Context
+- **Goal**: Achieve 90%+ adjudication accuracy by October 12, 2025
+- **Market**: 1 Billion KES immediate, 4.5 Billion KES potential
+- **Tech Stack**: HTML/CSS/JavaScript (no build process), Node.js scripts, Python utilities
+- **User Level**: Beginner-friendly code required
+
+## Project Structure (Updated October 2025)
+```
+LCT Commit/
+├── src/app/              # HTML applications (MAIN APPS)
+│   ├── index.html        # Main tracker dashboard
+│   ├── reports.html      # Analytics & reports
+│   ├── documentation.html
+│   ├── settings.html
+│   └── team-structure-v2.html
+├── docs/                 # All documentation
+│   ├── agents.md
+│   ├── BRANCHING_STRATEGY.md
+│   ├── SECURITY_BEST_PRACTICES.md
+│   ├── SENTINEL_README.md
+│   └── (other docs)
+├── tests/                # All tests
+│   ├── unit/
+│   ├── integration/
+│   └── sentinel/         # Security test cases
+├── scripts/              # Automation scripts
+├── memory/               # AI agent memory system
+├── .github/              # CI/CD workflows
+└── .claude/              # Claude Code configuration
+```
+
+## Critical File Paths (IMPORTANT)
+- **HTML Apps**: `src/app/*.html` (NOT root directory)
+- **Documentation**: `docs/*.md` (NOT root directory)
+- **Tests**: `tests/{unit,integration,sentinel}/` (NOT .sentinel-tests/)
+- **Main Config**: `CLAUDE.md` (capitalized), `README.md` (root)
+
+## Code Style Guidelines
+
+### General Principles
+1. **Beginner-Friendly**: Write simple, well-commented code
+2. **Security First**: Never hardcode secrets, validate all inputs
+3. **Accessibility**: Follow WCAG 2.2 (alt text, labels, keyboard nav)
+4. **Error Handling**: Always wrap async operations in try-catch
+
+### HTML/CSS/JavaScript
+- Keep HTML semantic and accessible
+- Use vanilla JavaScript (no frameworks needed)
+- Save data to localStorage with key: `lctTrackerData`
+- No console.log in production code
+- Add comments for complex logic
+
+### Python Scripts
+- Use type hints
+- Add docstrings
+- Follow PEP 8
+- Handle errors gracefully
+
+### Shell Scripts
+- Use bash shebang: `#!/bin/bash`
+- Set `set -e` for error handling
+- Add comments for complex commands
+
+## Security Rules (ENFORCED BY SENTINEL)
+
+### CRITICAL - Never Allow
+- Hardcoded API keys, passwords, tokens (20+ chars)
+- SQL injection vulnerabilities (string concatenation in queries)
+- XSS vulnerabilities (innerHTML with user input, eval())
+- Disabled SSL verification (rejectUnauthorized: false)
+
+### HIGH Priority
+- Missing error handling on async/await
+- Missing accessibility (alt text, labels, ARIA)
+- Console.log statements in production
+- TODO/FIXME/HACK comments
+
+### Code Review Process
+- All commits reviewed by Sentinel (pre-commit hook)
+- All PRs reviewed by 3 AI agents: Sentinel, CodeRabbit, Codex
+- CRITICAL issues block merge
+- Security findings auto-create Linear issues
+
+## LCT Success Criteria
+Focus on 31 criteria across 5 categories:
+1. **Clinical Accuracy** (3 criteria)
+2. **Financial & Policy** (6 criteria, 2 CRITICAL)
+3. **Fraud Detection** (18 criteria, 2 CRITICAL)
+4. **Vetting Completeness** (2 criteria)
+5. **Process Efficiency** (2 criteria)
+
+### CRITICAL Priority (Must Work Perfectly)
+1. Invoice amount precedence (LCT → ETIMS → Document)
+2. Tariff and price validation
+3. Repeated service detection
+4. Cross-provider duplicate service detection
+
+## Development Workflow
+1. **Branch**: Create feature branch from main
+2. **Code**: Write beginner-friendly code
+3. **Test**: Test locally in browser
+4. **Commit**: Sentinel reviews automatically
+5. **PR**: Create PR (3 AI agents review)
+6. **Merge**: Merge to main after approval
+7. **Deploy**: Auto-deploys to Vercel
+
+## Memory System
+- Uses JSON-based memory in `memory/` directory
+- Categories: project, development, sessions, shared
+- Always store important decisions and learnings
+- Update memory when file paths change
+
+## Common Tasks
+
+### Running the App
+```bash
+# Just open the HTML file - no build needed!
+open src/app/index.html
+```
+
+### Testing Security
+```bash
+./test-sentinel.sh  # Run security tests
+```
+
+### Setting Up Sentinel
+```bash
+./setup-sentinel.sh  # One-time setup
+```
+
+## Things to Remember
+- This is for BEGINNERS - keep code simple!
+- Security is CRITICAL - patient data is involved
+- Every feature relates to the 31 criteria
+- October 12, 2025 deadline is approaching
+- 90% accuracy unlocks 1 Billion KES market
+
+## File References
+- Main guide: `CLAUDE.md` (root directory)
+- Documentation: `docs/` directory
+- Agent definitions: `docs/agents/`
+- Workflow: `docs/BRANCHING_STRATEGY.md`
+- Security guide: `docs/SECURITY_BEST_PRACTICES.md`
+
+## When Suggesting Changes
+1. Check if it relates to the 31 criteria
+2. Ensure it's beginner-friendly
+3. Add proper error handling
+4. Follow security best practices
+5. Update documentation if needed
+6. Use correct file paths (src/app/, docs/, tests/)
+
+---
+
+**Last Updated**: October 12, 2025 (Project Restructure)
+**Version**: 2.0.0
+**Maintainer**: LCT-Vitraya Partnership
