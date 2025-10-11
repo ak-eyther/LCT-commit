@@ -43,10 +43,14 @@ npm install -g @modelcontextprotocol/server-vercel
    - Create new API key
    - Copy the key (starts with `lin_api_`)
 
-2. **Team ID** (already configured):
+2. **Team ID** (set in your environment):
 
    ```bash
-   LINEAR_TEAM_ID=b5835b14-c3cd-4048-b42a-7a7502647f4b
+   # Add to your .env file or export in your shell
+   LINEAR_TEAM_ID=your_team_id_here
+   
+   # For LCT/Vitraya team, get the team ID from Linear settings
+   # Team: Vitraya-ak
    ```
 
 3. **Project ID** (optional, will auto-discover):
@@ -85,7 +89,7 @@ npx @modelcontextprotocol/server-linear --test
 
 # Expected output:
 # ✅ Linear MCP server connected
-# ✅ Team: Vitraya-ak (b5835b14-c3cd-4048-b42a-7a7502647f4b)
+# ✅ Team: Vitraya-ak (your_team_id)
 # ✅ Project: LCT commit
 ```
 
@@ -131,7 +135,7 @@ for (const criteria of incompleteCriteria) {
     title: `[CRITICAL] ${criteria.name}`,
     description: criteria.explanation,
     priority: criteria.priority === 'CRITICAL' ? 1 : 2,
-    teamId: 'b5835b14-c3cd-4048-b42a-7a7502647f4b'
+    teamId: process.env.LINEAR_TEAM_ID
   });
 }
 ```
