@@ -1,6 +1,7 @@
-name: Linear Issue Creation from AI Reviews
+name: "Linear Issue Creation from AI Reviews"
 
 on:
+  workflow_dispatch:
   issue_comment:
     types: [created]
   pull_request_review_comment:
@@ -14,7 +15,7 @@ permissions:
 jobs:
   create-linear-issue:
     # Only run on comment events, not push/other events
-    if: github.event_name == 'issue_comment' || github.event_name == 'pull_request_review_comment'
+    if: ${{ github.event_name == 'issue_comment' || github.event_name == 'pull_request_review_comment' }}
     runs-on: ubuntu-latest
     steps:
       - name: Verify event type
@@ -84,25 +85,8 @@ jobs:
           # Create issue title (escape quotes)
           ISSUE_TITLE="[AI Review] $PRIORITY_TEXT: PR #$PR_NUMBER - $PR_TITLE"
 
-          # Build issue description (escape for JSON)
-          ISSUE_DESC="## AI Code Review Issue
-
-**Priority:** $PRIORITY_TEXT
-**Source:** GitHub PR #$PR_NUMBER
-**PR Title:** $PR_TITLE
-**PR Link:** $PR_URL
-**Comment Link:** $COMMENT_URL
-
-### AI Reviewer Comment:
-\`\`\`
-$(cat /tmp/comment_body.txt)
-\`\`\`
-
-### Context
-This issue was automatically created from an AI code review comment. Please review the PR and address the identified issue.
-
----
-*Created by Linear GitHub Integration*"
+          # Build issue description using \n escapes to avoid YAML parsing issues
+          ISSUE_DESC="## AI Code Review Issue\n\n**Priority:** $PRIORITY_TEXT\n**Source:** GitHub PR #$PR_NUMBER\n**PR Title:** $PR_TITLE\n**PR Link:** $PR_URL\n**Comment Link:** $COMMENT_URL\n\n### AI Reviewer Comment:\n\`\`\`\n$(cat /tmp/comment_body.txt)\n\`\`\`\n\n### Context\nThis issue was automatically created from an AI code review comment. Please review the PR and address the identified issue.\n\n---\n*Created by Linear GitHub Integration*"
 
           # Escape for JSON (using jq)
           ISSUE_TITLE_JSON=$(echo "$ISSUE_TITLE" | jq -Rs .)
