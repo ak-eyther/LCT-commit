@@ -1,6 +1,6 @@
 # Claude Assistant Guide for LCT-Vitraya Project
 
-**Last Updated:** October 7, 2025
+**Last Updated:** October 12, 2025
 **Project:** LCT Group & Vitraya Technologies Healthcare Claims Partnership
 
 ---
@@ -57,7 +57,7 @@ This project uses a hybrid agent architecture with **automatic memory integratio
 - **Blocker:** LCT wants proven 90%+ adjudication quality
 - **Volume:** ~850 claims/week, 19.8% average savings
 - **Main Scheme:** MTRH (Medical Training & Referral Hospital)
-- **Next Deadline:** October 7, 2025 - 90% quality target
+- **Next Deadline:** October 12, 2025 - 90% quality target
 
 ### The Business Model
 1. **Now:** LCT pays hospitals in 60 days
@@ -82,12 +82,14 @@ This project uses a hybrid agent architecture with **automatic memory integratio
   - Full business context, market analysis, team structure
   - Read this first for complete understanding
   - 150+ pages of consolidated meeting notes
+  - **Note:** File may not be present in all repository clones
 
 ### Implementation Trackers
 - **`lct-success-matrix-checklist.tsx`**
   - React component with 17 basic criteria
   - Interactive status tracking
   - Good for quick overview
+  - **Note:** File may not be present in all repository clones
 
 - **`lct-tracker-html.html`**
   - Complete standalone tracker with 31 criteria
@@ -95,6 +97,9 @@ This project uses a hybrid agent architecture with **automatic memory integratio
   - Saves data to localStorage
   - Export to CSV/JSON
   - **USE THIS ONE for serious work**
+  - **Note:** File may not be present in all repository clones
+
+**File Availability:** Some documentation and tracker files referenced above may not be available in all working copies of this repository. If a file is missing, please check with the project team or refer to the main project repository.
 
 ### Code Quality & Security
 - **🛡️ Sentinel - Automated Code Review Agent**
@@ -112,9 +117,10 @@ This project uses a hybrid agent architecture with **automatic memory integratio
   - Works with Sentinel, CodeRabbit, and any AI reviewer
   - Maps priorities: 🔴 CRITICAL → Priority 1, 🟠 HIGH → Priority 2, etc.
   - **Project**: LCT commit (all issues created under this project)
-  - **Team**: Vitraya-ak (ID: b5835b14-c3cd-4048-b42a-7a7502647f4b)
+  - **Team**: Vitraya-ak (Team ID stored securely in GitHub Secrets)
   - **Workflow**: `.github/workflows/linear-integration.yml`
   - **Setup**: GitHub Secrets (LINEAR_API_KEY, LINEAR_TEAM_ID)
+  - **Security Note**: Never commit team IDs, API keys, or credentials to version control
 
 ---
 
@@ -152,7 +158,7 @@ This project uses a hybrid agent architecture with **automatic memory integratio
 ## 🔍 Common Questions & Answers
 
 ### "What's the most important thing right now?"
-**Answer:** Achieving 90% adjudication accuracy by October 7, 2025. Everything else is secondary.
+**Answer:** Achieving 90% adjudication accuracy by October 12, 2025. Everything else is secondary.
 
 ### "Which criteria are CRITICAL?"
 **Answer:** 4 items:
@@ -174,7 +180,7 @@ This project uses a hybrid agent architecture with **automatic memory integratio
 - Quality concerns from LCT
 - Need consistent 90%+ accuracy proven
 - Until then = no commercial billing = no revenue
-- October 2025 is make-or-break month
+- October 12, 2025 is the critical deadline
 
 ### "What's the addressable market?"
 **Immediate:** 1B KES (11 LCT-controlled schemes)
@@ -377,7 +383,7 @@ Before finishing work:
 
 ## 🎯 Remember This Above All
 
-**The Goal:** Help LCT and Vitraya achieve 90% accuracy by October 7, 2025
+**The Goal:** Help LCT and Vitraya achieve 90% accuracy by October 12, 2025
 
 **The Why:** Unlock 1 Billion KES market immediately, 4.5 Billion KES long-term
 
@@ -390,7 +396,7 @@ Before finishing work:
 ## 📝 Notes Section (For Future Sessions)
 
 When returning to this project:
-1. Check date - is October 7, 2025 deadline passed?
+1. Check date - is October 12, 2025 deadline passed?
 2. Load HTML tracker - what's the completion %?
 3. Review CRITICAL items - are all 4 complete?
 4. Ask user for latest status update
@@ -405,3 +411,4 @@ When returning to this project:
 4. Ask specific questions about what to build
 
 **This project will transform healthcare in Kenya. Let's get it done. 🚀**
+- dont execute untill i have approved the plan
