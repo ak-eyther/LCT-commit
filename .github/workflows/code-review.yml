@@ -99,10 +99,10 @@ jobs:
             // Read the elite code review agent guidelines
             const agentGuide = fs.readFileSync('.claude/agents/code-reviewer.md', 'utf8');
 
-            // Split files correctly - tj-actions/changed-files uses space separator by default
+            // Split files correctly - tj-actions/changed-files outputs newline-separated files
             // Filter out empty strings and trim whitespace
             const changedFiles = process.env.CHANGED_FILES
-              .split(' ')
+              .split('\n')  // Split by newlines, not spaces
               .map(f => f.trim())
               .filter(f => f.length > 0);
 
@@ -701,9 +701,15 @@ jobs:
 
       - name: Create commit comment
         uses: actions/github-script@v7
+        env:
+          COMMIT_MESSAGE: ${{ steps.commit.outputs.message }}
+          COMMIT_AUTHOR: ${{ steps.commit.outputs.author }}
+          COMMIT_SHA: ${{ steps.commit.outputs.sha }}
         with:
           script: |
-            const { message, author, sha } = process.env;
+            const message = process.env.COMMIT_MESSAGE;
+            const author = process.env.COMMIT_AUTHOR;
+            const sha = process.env.COMMIT_SHA;
 
             github.rest.repos.createCommitComment({
               owner: context.repo.owner,
