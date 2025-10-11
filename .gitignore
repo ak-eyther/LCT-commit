@@ -40,6 +40,9 @@ Thumbs.db
 *.swo
 *~
 
+# Claude Code plugins (managed separately)
+.claude/plugins/
+
 # Temporary files
 *.tmp
 .cache/

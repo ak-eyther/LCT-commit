@@ -107,8 +107,8 @@ This project uses a hybrid agent architecture with **automatic memory integratio
   - Runs on every commit and PR
   - Blocks security vulnerabilities automatically
   - Posts GitHub comments with priority markers (🔴🟠🟡🟢)
-  - **Quick Start**: `SENTINEL_QUICK_START.md`
-  - **Full Guide**: `SENTINEL_README.md`
+  - **Quick Start**: `docs/SENTINEL_QUICK_START.md`
+  - **Full Guide**: `docs/SENTINEL_README.md`
   - **Agent Definition**: `.claude/agents/code-reviewer.md`
   - **Setup**: `./setup-sentinel.sh`
 
