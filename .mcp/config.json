@@ -1,0 +1,59 @@
+{
+  "mcpServers": {
+    "linear": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-linear"],
+      "env": {
+        "LINEAR_API_KEY": "${LINEAR_API_KEY}",
+        "LINEAR_TEAM_ID": "b5835b14-c3cd-4048-b42a-7a7502647f4b"
+      }
+    },
+    "vercel": {
+      "command": "npx", 
+      "args": ["@modelcontextprotocol/server-vercel"],
+      "env": {
+        "VERCEL_TOKEN": "${VERCEL_TOKEN}",
+        "VERCEL_PROJECT_ID": "${VERCEL_PROJECT_ID}",
+        "VERCEL_TEAM_ID": "${VERCEL_TEAM_ID}"
+      }
+    }
+  },
+  "project": {
+    "name": "LCT Commit",
+    "description": "Healthcare claims adjudication system for Kenya",
+    "team": "Vitraya Technologies (India) + LCT Group (Kenya)",
+    "deadline": "October 7, 2025",
+    "goal": "90% accuracy target",
+    "criteria": {
+      "total": 31,
+      "critical": 4,
+      "high": 17,
+      "medium": 8,
+      "low": 2
+    }
+  },
+  "integrations": {
+    "github": {
+      "repository": "ak-eyther/LCT-commit",
+      "workflows": [
+        ".github/workflows/code-review.yml",
+        ".github/workflows/linear-integration.yml"
+      ]
+    },
+    "linear": {
+      "teamId": "b5835b14-c3cd-4048-b42a-7a7502647f4b",
+      "projectName": "LCT commit",
+      "priorities": {
+        "critical": 1,
+        "high": 2,
+        "medium": 3,
+        "low": 4
+      }
+    },
+    "vercel": {
+      "projectName": "lct-commit",
+      "framework": "static",
+      "deployment": "automatic"
+    }
+  }
+}

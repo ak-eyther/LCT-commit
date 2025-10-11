@@ -1,4 +1,4 @@
-# AI Agent Instructions - LCT Success Matrix Project
+# AI Agent Instructions - LCT commit
 
 **Project Type:** Healthcare Claims Adjudication Tracker
 **User Level:** Beginner coder
@@ -108,7 +108,7 @@ git commit -m "Your message"
 2. Use `git commit --no-verify` for that specific commit
 3. Consider reporting to improve Sentinel's accuracy
 
-### Integration with LCT Project
+### Integration with LCT commit
 
 Sentinel has deep context about this project:
 - Understands PHI/PII protection requirements
@@ -644,7 +644,7 @@ function getProjectStatus() {
 
 ### Weekly Report Template
 ```markdown
-## LCT Project Status - Week of [Date]
+## LCT commit Status - Week of [Date]
 
 **Overall Progress:** X% (Y of 31 criteria complete)
 

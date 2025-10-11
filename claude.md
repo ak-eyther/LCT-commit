@@ -5,6 +5,17 @@
 
 ---
 
+## 🤖 Agent System
+
+This project uses a hybrid agent architecture. For detailed agent definitions, see:
+
+- **Primary Developer:** [docs/agents/primary-developer.md](docs/agents/primary-developer.md)
+- **Code Reviewer (Sentinel):** [docs/agents/code-reviewer-sentinel.md](docs/agents/code-reviewer-sentinel.md)
+- **Agent Registry:** [docs/agents/README.md](docs/agents/README.md)
+- **Agent Integrations:** [docs/agents/integrations.md](docs/agents/integrations.md)
+
+---
+
 ## 🎯 Project Overview in 30 Seconds
 
 **What:** AI-powered healthcare claims processing system for Kenya
@@ -66,11 +77,20 @@
   - Elite AI code reviewer (OWASP Top 10 + WCAG 2.2)
   - Runs on every commit and PR
   - Blocks security vulnerabilities automatically
-  - Creates Linear issues for bug tracking
+  - Posts GitHub comments with priority markers (🔴🟠🟡🟢)
   - **Quick Start**: `SENTINEL_QUICK_START.md`
   - **Full Guide**: `SENTINEL_README.md`
   - **Agent Definition**: `.claude/agents/code-reviewer.md`
   - **Setup**: `./setup-sentinel.sh`
+
+- **📊 Linear Integration - Issue Tracking**
+  - Automatically creates Linear issues from AI reviewer comments
+  - Works with Sentinel, CodeRabbit, and any AI reviewer
+  - Maps priorities: 🔴 CRITICAL → Priority 1, 🟠 HIGH → Priority 2, etc.
+  - **Project**: LCT commit (all issues created under this project)
+  - **Team**: Vitraya-ak (ID: b5835b14-c3cd-4048-b42a-7a7502647f4b)
+  - **Workflow**: `.github/workflows/linear-integration.yml`
+  - **Setup**: GitHub Secrets (LINEAR_API_KEY, LINEAR_TEAM_ID)
 
 ---
 

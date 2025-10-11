@@ -1,0 +1,19 @@
+{
+  "description": "On-demand documentation and comment generation",
+  "memory_responsibilities": [
+    "Store documentation patterns",
+    "Remember user feedback on docs",
+    "Track knowledge gaps",
+    "Learn from effective documentation"
+  ],
+  "memory_categories": [
+    "development",
+    "sessions",
+    "shared"
+  ],
+  "memory_types": [
+    "pattern",
+    "learning",
+    "preference"
+  ]
+}

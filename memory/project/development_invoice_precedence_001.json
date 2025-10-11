@@ -1,0 +1,22 @@
+{
+  "memory_id": "development_invoice_precedence_001",
+  "category": "development",
+  "type": "pattern",
+  "content": {
+    "title": "Invoice Amount Precedence Pattern",
+    "description": "Invoice amount precedence: LCT \u2192 ETIMS \u2192 Document. LCT amount always takes precedence (Criteria #4 - CRITICAL).",
+    "context": "Financial validation logic",
+    "tags": [
+      "invoice",
+      "validation",
+      "precedence"
+    ],
+    "priority": "high"
+  },
+  "metadata": {
+    "lct_criteria": "4",
+    "business_impact": "high",
+    "technical_complexity": "medium",
+    "user_skill_level": "beginner"
+  }
+}

@@ -1,14 +1,17 @@
-# LCT Success Matrix Tracker
+# LCT commit
 
-> AI-powered healthcare claims processing system for Kenya - Quality tracking and monitoring dashboard
+> AI-powered healthcare claims processing system for Kenya
+> Quality tracking and monitoring dashboard for 90% accuracy achievement
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/lct-project)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ak-eyther/LCT-commit)
+[![Claude Code](https://img.shields.io/badge/Built%20with-Claude%20Code-5B4FFF)](https://claude.ai/claude-code)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ---
 
 ## 📋 Overview
 
-The **LCT Success Matrix Tracker** is a comprehensive tool for tracking the implementation and progress of 31 evaluation criteria for healthcare claims adjudication in Kenya. This project is a collaboration between **LCT Group** (Kenya) and **Vitraya Technologies** (India).
+**LCT commit** is a comprehensive tracking system for implementing and monitoring 31 evaluation criteria for healthcare claims adjudication in Kenya. This project represents a critical partnership between **LCT Group** (Kenya) and **Vitraya Technologies** (India) to transform healthcare claims processing with AI-powered accuracy.
 
 ### Key Features
 - ✅ Track 31 evaluation criteria across 5 categories
@@ -18,6 +21,7 @@ The **LCT Success Matrix Tracker** is a comprehensive tool for tracking the impl
 - 📤 Export to CSV and JSON
 - 🎨 Clean, beginner-friendly UI
 - 🚀 Zero build process - pure HTML/CSS/JavaScript
+- 🔗 MCP Integration (Linear + Vercel) for enhanced automation
 
 ---
 
@@ -32,26 +36,54 @@ The **LCT Success Matrix Tracker** is a comprehensive tool for tracking the impl
 ## 🗂️ Project Structure
 
 ```
-LCT-Project/
-├── index.html                         # Main tracker (Dashboard + Checklist) ⭐
-├── reports.html                       # Reports & Analytics page
-├── documentation.html                 # Project documentation viewer
-├── settings.html                      # Settings & Data Management
-├── lct-success-matrix-checklist.tsx   # React component version
-├── LCT_Vitraya_Complete_Project_Context.md  # Full business context
-├── claude.md                          # Claude AI assistant guide
-├── agents.md                          # AI agent instructions
-├── BRANCHING_STRATEGY.md              # Git workflow guide
-├── vercel.json                        # Vercel deployment config
-├── .gitignore                         # Git ignore rules
-├── .vercelignore                      # Vercel deployment ignore
-├── .coderabbit.yaml                   # Automated code review config
-├── .github/
-│   ├── workflows/
-│   │   └── code-review.yml            # GitHub Actions workflow
-│   └── PULL_REQUEST_TEMPLATE/
-│       └── pull_request_template.md   # PR template
-└── README.md                          # This file
+LCT-commit/
+├── 📄 Core Application Files
+│   ├── index.html                      # Main tracker dashboard ⭐
+│   ├── reports.html                    # Analytics & reports page
+│   ├── documentation.html              # Documentation viewer
+│   ├── settings.html                   # Settings & data management
+│   └── team-structure-v2.html          # Team organization chart
+│
+├── 📚 Documentation
+│   ├── README.md                       # Project overview (this file)
+│   ├── CLAUDE.md                       # Claude AI assistant guide
+│   ├── agents.md                       # AI agent instructions
+│   ├── BRANCHING_STRATEGY.md           # Git workflow guide
+│   ├── SECURITY_BEST_PRACTICES.md      # Security guidelines
+│   ├── SENTINEL_README.md              # Sentinel code review docs
+│   ├── SENTINEL_QUICK_START.md         # Sentinel quick guide
+│   └── SENTINEL_TESTING.md             # Sentinel testing guide
+│
+├── 📁 docs/
+│   ├── README.md                       # Documentation index
+│   ├── MCP_SETUP.md                    # MCP server setup
+│   ├── BUILDING_TOOLS.md               # Tool development guide
+│   ├── FUNCTIONS_LIBRARY.md            # Function reference
+│   ├── TEAM_ONBOARDING.md              # Team onboarding
+│   └── agents/                         # Agent definitions
+│       ├── README.md                   # Agent registry
+│       ├── primary-developer.md        # Developer agent
+│       ├── code-reviewer-sentinel.md   # Sentinel agent
+│       └── integrations.md             # Agent integrations
+│
+├── ⚙️ Configuration
+│   ├── vercel.json                     # Vercel deployment config
+│   ├── .gitignore                      # Git ignore rules
+│   ├── .coderabbit.yaml                # CodeRabbit config
+│   ├── .claude/
+│   │   ├── agents/code-reviewer.md     # Claude-specific Sentinel config
+│   │   └── settings.local.json         # Local Claude settings
+│   └── .env.mcp.example                # MCP environment template
+│
+├── 🤖 Automation & CI/CD
+│   └── .github/
+│       ├── workflows/
+│       │   ├── code-review.yml         # Sentinel automated review
+│       │   └── linear-integration.yml  # Linear issue creation
+│       └── CODEOWNERS                  # Code ownership rules
+│
+└── 📦 Dependencies
+    └── package.json                    # (if using npm packages)
 ```
 
 ### 📄 Multi-Page Application
@@ -67,14 +99,54 @@ All pages share data via `localStorage` - changes sync automatically!
 
 ---
 
+## 🔗 MCP Integration
+
+**LCT Commit** includes Model Context Protocol (MCP) server integration for enhanced automation:
+
+### Available MCP Servers
+
+- **Linear MCP**: Advanced issue tracking and project management
+- **Vercel MCP**: Deployment automation and monitoring
+
+### Quick Setup
+
+1. **Install MCP servers**:
+   ```bash
+   npm install -g @modelcontextprotocol/server-linear
+   npm install -g @modelcontextprotocol/server-vercel
+   ```
+
+2. **Configure environment**:
+   ```bash
+   cp env.example .env
+   # Fill in your API keys
+   ```
+
+3. **Test connections**:
+   ```bash
+   npx @modelcontextprotocol/server-linear --test
+   npx @modelcontextprotocol/server-vercel --test
+   ```
+
+### Features
+
+- **Automated Linear Issues**: Create issues from Sentinel security findings
+- **Deployment Tracking**: Monitor Vercel deployments and update Linear
+- **Progress Reports**: Auto-generate weekly reports from 31 criteria status
+- **Priority Mapping**: 🔴 CRITICAL → Priority 1, 🟠 HIGH → Priority 2
+
+📖 **Full Setup Guide**: [docs/MCP_SETUP.md](./docs/MCP_SETUP.md)
+
+---
+
 ## 🚀 Getting Started
 
 ### Option 1: Local Development (Recommended for Beginners)
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd LCT-Project
+   git clone https://github.com/ak-eyther/LCT-commit.git
+   cd LCT-commit
    ```
 
 2. **Open in browser**
@@ -325,8 +397,15 @@ Every commit and PR automatically triggers **three elite AI review agents**:
 - Functional quality checks
   - Error handling validation
   - Code quality issues (console.log, TODOs)
-- Linear integration (auto-creates issues for CRITICAL/HIGH bugs)
+- Posts comments with priority markers (🔴🟠🟡🟢)
 - **Blocks merge** when CRITICAL security issues detected
+
+**📊 Linear Integration - Issue Tracking**
+- Automatically creates Linear issues from AI reviewer comments
+- Works with Sentinel, CodeRabbit, and any AI reviewer
+- Maps priorities: 🔴 CRITICAL → Priority 1, 🟠 HIGH → Priority 2, etc.
+- **Team:** Vitraya-ak (configured)
+- **Workflow:** `.github/workflows/linear-integration.yml`
 
 All three agents work together to ensure code quality, security, and accessibility!
 Reviews appear as comments on commits and PRs automatically.
@@ -435,10 +514,37 @@ For questions or issues:
 
 ## 🚀 Next Steps
 
-1. Open `lct-tracker-html.html` in browser
-2. Review the 31 criteria
-3. Focus on CRITICAL items first
-4. Track your progress
-5. Export regularly for backup
+1. **Open the tracker**: `open index.html` in your browser
+2. **Review the 31 criteria**: Understand what needs to be implemented
+3. **Focus on CRITICAL items first**: 4 must-have features
+4. **Track your progress**: Update status as you implement
+5. **Export regularly**: Backup your data to JSON/CSV
+
+---
+
+## 📈 Project Metrics
+
+- **31 Criteria** across 5 categories
+- **4 CRITICAL** priority items
+- **17 HIGH** priority items
+- **Goal**: 90% adjudication accuracy by October 7, 2025
+- **Market**: 1B KES immediate, 4.5B KES potential
+
+---
+
+## 🔗 Quick Links
+
+- **Live Demo**: [lct-commit.vercel.app](https://lct-commit.vercel.app)
+- **Repository**: [github.com/ak-eyther/LCT-commit](https://github.com/ak-eyther/LCT-commit)
+- **Documentation**: [docs/README.md](./docs/README.md)
+- **Team Onboarding**: [docs/TEAM_ONBOARDING.md](./docs/TEAM_ONBOARDING.md)
+
+---
 
 **Let's transform healthcare in Kenya! 🏥🇰🇪**
+
+---
+
+*Last Updated: October 11, 2025*
+*Version: 1.0.0*
+*Built with Claude Code*
