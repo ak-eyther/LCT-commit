@@ -13,8 +13,19 @@ permissions:
 
 jobs:
   create-linear-issue:
+    # Only run on comment events, not push/other events
+    if: github.event_name == 'issue_comment' || github.event_name == 'pull_request_review_comment'
     runs-on: ubuntu-latest
     steps:
+      - name: Verify event type
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Action: ${{ github.event.action }}"
+          if [ "${{ github.event_name }}" != "issue_comment" ] && [ "${{ github.event_name }}" != "pull_request_review_comment" ]; then
+            echo "❌ This workflow only runs on comment events"
+            exit 0
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
