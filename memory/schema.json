@@ -1,0 +1,57 @@
+{
+  "version": "1.0.0",
+  "created_at": "2025-10-11T13:08:25.044613",
+  "description": "LCT Commit Memory System Schema",
+  "categories": {
+    "project": {
+      "description": "Long-term project context and business requirements",
+      "persistence": "permanent",
+      "examples": [
+        "business_context",
+        "technical_decisions",
+        "success_criteria"
+      ]
+    },
+    "development": {
+      "description": "Mid-term development context and patterns",
+      "persistence": "semi-permanent",
+      "examples": [
+        "code_patterns",
+        "feature_history",
+        "bug_resolutions"
+      ]
+    },
+    "sessions": {
+      "description": "Short-term session context",
+      "persistence": "temporary",
+      "examples": [
+        "current_work",
+        "active_issues",
+        "user_preferences"
+      ]
+    },
+    "shared": {
+      "description": "Cross-agent shared knowledge",
+      "persistence": "permanent",
+      "examples": [
+        "agent_interactions",
+        "cross_agent_learnings",
+        "system_insights"
+      ]
+    }
+  },
+  "memory_types": {
+    "decision": "A decision made by an agent",
+    "learning": "Knowledge gained from experience",
+    "pattern": "A recurring pattern or best practice",
+    "preference": "User or system preference",
+    "issue": "A problem or blocker",
+    "insight": "A valuable insight or observation"
+  },
+  "metadata_fields": {
+    "lct_criteria": "Related LCT success criteria number",
+    "business_impact": "Impact on business goals (high/medium/low)",
+    "technical_complexity": "Technical complexity (high/medium/low)",
+    "user_skill_level": "Target user skill level (beginner/intermediate/advanced)"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "description": "Interactive coding assistant for LCT Commit project",
+  "memory_responsibilities": [
+    "Store coding patterns and best practices",
+    "Remember user preferences and skill level",
+    "Track feature implementation decisions",
+    "Learn from successful teaching approaches"
+  ],
+  "memory_categories": [
+    "development",
+    "sessions",
+    "shared"
+  ],
+  "memory_types": [
+    "decision",
+    "learning",
+    "pattern",
+    "preference"
+  ]
+}

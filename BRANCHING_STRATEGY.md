@@ -1,4 +1,4 @@
-# Branching Strategy - LCT Success Matrix Project
+# Branching Strategy - LCT commit
 
 ## 📋 Overview
 

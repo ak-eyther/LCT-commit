@@ -1,0 +1,22 @@
+{
+  "memory_id": "project_success_criteria_001",
+  "category": "project",
+  "type": "decision",
+  "content": {
+    "title": "31 Success Criteria Framework",
+    "description": "31 evaluation criteria across 5 categories: 4 CRITICAL, 17 HIGH, 10 MEDIUM/LOW. Priority order: CRITICAL \u2192 High \u2192 Medium \u2192 Low.",
+    "context": "Core success framework for all agents",
+    "tags": [
+      "criteria",
+      "priority",
+      "framework"
+    ],
+    "priority": "high"
+  },
+  "metadata": {
+    "lct_criteria": "all",
+    "business_impact": "high",
+    "technical_complexity": "medium",
+    "user_skill_level": "beginner"
+  }
+}

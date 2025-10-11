@@ -1,0 +1,18 @@
+{
+  "description": "Automated code review agent for security and quality",
+  "memory_responsibilities": [
+    "Store security patterns and vulnerabilities",
+    "Remember code quality standards",
+    "Track issue resolution patterns",
+    "Learn from false positives/negatives"
+  ],
+  "memory_categories": [
+    "development",
+    "shared"
+  ],
+  "memory_types": [
+    "pattern",
+    "learning",
+    "issue"
+  ]
+}

@@ -2,7 +2,7 @@
 
 **Version:** 1.0.0
 **Status:** Active
-**Project:** LCT-Vitraya Healthcare Claims Adjudication System
+**Project:** LCT commit
 
 ---
 
@@ -161,7 +161,7 @@ LINEAR_TEAM_ID=your-team-uuid
 - [SEN-124](https://linear.app/lct/issue/SEN-124)
 
 ---
-📋 **LCT-Vitraya Healthcare Claims Project**
+📋 **LCT commit**
 🔐 Security · 🎨 UI/UX · ⚙️ Functionality
 
 _Automated review using Sentinel v1.0.0_
@@ -229,9 +229,9 @@ Edit `.github/workflows/code-review.yml` to:
 
 ---
 
-## 🏥 LCT Project Context
+## 🏥 LCT commit Context
 
-Sentinel has deep knowledge of the LCT-Vitraya project:
+Sentinel has deep knowledge of the LCT commit project:
 
 ### Security Priorities
 - **PHI/PII Protection**: Patient data must be encrypted (AES-256-GCM)

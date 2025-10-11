@@ -174,7 +174,7 @@ vim .github/workflows/code-review.yml
 
 ---
 
-## 🎯 LCT Project Specific
+## 🎯 LCT commit Specific
 
 Sentinel knows about:
 - **PHI/PII Protection**: Patient data encryption requirements
@@ -218,4 +218,4 @@ Sentinel is now watching over your code, protecting the LCT-Vitraya platform and
 
 ---
 
-**Sentinel v1.0.0** | LCT-Vitraya Healthcare Claims Platform
+**Sentinel v1.0.0** | LCT commit

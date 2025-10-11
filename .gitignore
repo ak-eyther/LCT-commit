@@ -19,6 +19,8 @@ dist/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.mcp
+.claude_mcp_env
 
 # Logs
 npm-debug.log*

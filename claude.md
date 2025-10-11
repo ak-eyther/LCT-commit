@@ -5,6 +5,17 @@
 
 ---
 
+## 🤖 Agent System
+
+This project uses a hybrid agent architecture. For detailed agent definitions, see:
+
+- **Primary Developer:** [docs/agents/primary-developer.md](docs/agents/primary-developer.md)
+- **Code Reviewer (Sentinel):** [docs/agents/code-reviewer-sentinel.md](docs/agents/code-reviewer-sentinel.md)
+- **Agent Registry:** [docs/agents/README.md](docs/agents/README.md)
+- **Agent Integrations:** [docs/agents/integrations.md](docs/agents/integrations.md)
+
+---
+
 ## 🎯 Project Overview in 30 Seconds
 
 **What:** AI-powered healthcare claims processing system for Kenya
