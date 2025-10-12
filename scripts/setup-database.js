@@ -24,7 +24,7 @@ async function setupDatabase() {
       );
     `;
     
-    await sql`${sql.unsafe(createTableQuery)}`;
+    await sql.unsafe(createTableQuery);
     console.log('✅ Users table created successfully');
     
     // Create index on email for faster lookups
@@ -32,7 +32,7 @@ async function setupDatabase() {
       CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
     `;
     
-    await sql`${sql.unsafe(createIndexQuery)}`;
+    await sql.unsafe(createIndexQuery);
     console.log('✅ Email index created');
     
     console.log('🎉 Database setup complete!');
