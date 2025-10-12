@@ -6,11 +6,11 @@
  * Returns: { success: boolean, token?: string, error?: string }
  */
 
-import { sql } from '@vercel/postgres';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+const { sql } = require('@vercel/postgres');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ 
