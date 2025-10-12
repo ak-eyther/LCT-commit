@@ -19,7 +19,7 @@ async function setupMockDatabase() {
       "arif.khan@vitraya.com": {
         id: 1,
         email: "arif.khan@vitraya.com",
-        passwordHash: "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj5J5K5K5K5K", // Mock hash for "AkFk@#1897"
+        passwordHash: "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj5J5K5K5K5K", // Mock hash for development password
         createdAt: new Date().toISOString(),
         lastLogin: null
       }
@@ -34,7 +34,7 @@ async function setupMockDatabase() {
     console.log('📝 When deployed to Vercel, the real database will be used.');
     console.log('📝 Next steps:');
     console.log('   1. Test login at: /login.html');
-    console.log('   2. Use: arif.khan@vitraya.com / AkFk@#1897');
+    console.log('   2. Use: arif.khan@vitraya.com / [password in .env.local]');
     
   } catch (error) {
     console.error('❌ Mock database setup failed:', error.message);

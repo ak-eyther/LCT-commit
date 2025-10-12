@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe } = req.body;
 
     // Validate inputs
     if (!email || !password) {
@@ -63,14 +63,17 @@ export default async function handler(req, res) {
       });
     }
 
-    // Generate JWT token (expires in 1 hour)
+    // Generate JWT token with appropriate expiration
+    // Remember Me: 7 days, otherwise: 1 hour
+    const expiresIn = rememberMe ? '7d' : '1h';
+
     const token = jwt.sign(
-      { 
-        userId: user.id, 
-        email: user.email 
+      {
+        userId: user.id,
+        email: user.email
       },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn }
     );
 
     // Update last login timestamp

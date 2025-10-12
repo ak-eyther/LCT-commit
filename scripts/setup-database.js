@@ -49,7 +49,7 @@ async function setupDatabase() {
     
     console.log('🎉 Database setup complete!');
     console.log('📝 Next steps:');
-    console.log('   1. Run: node scripts/add-user.js "arif.khan@vitraya.com" "AkFk@#1897"');
+    console.log('   1. Run: node scripts/add-user.js "email@example.com" "your-secure-password"');
     console.log('   2. Test login at: /login.html');
     
   } catch (error) {

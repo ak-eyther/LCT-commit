@@ -30,6 +30,15 @@ export default async function handler(req, res) {
 
     const token = authHeader.substring(7); // Remove "Bearer " prefix
 
+    // Validate JWT_SECRET is configured
+    if (!process.env.JWT_SECRET) {
+      console.error('CRITICAL: JWT_SECRET is not configured');
+      return res.status(500).json({
+        success: false,
+        error: 'Server configuration error'
+      });
+    }
+
     // Verify JWT token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     

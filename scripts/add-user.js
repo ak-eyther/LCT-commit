@@ -96,7 +96,7 @@ const password = process.argv[3];
 
 if (!email || !password) {
   console.log('Usage: node scripts/add-user.js "email@example.com" "password"');
-  console.log('Example: node scripts/add-user.js "arif.khan@vitraya.com" "AkFk@#1897"');
+  console.log('Example: node scripts/add-user.js "email@example.com" "your-secure-password"');
   process.exit(1);
 }
 

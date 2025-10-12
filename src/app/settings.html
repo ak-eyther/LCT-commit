@@ -174,7 +174,7 @@
         <a href="reports.html">Reports</a>
         <a href="documentation.html">Documentation</a>
         <a href="settings.html" class="active">Settings</a>
-        <a href="#" onclick="logout()" style="color: #dc2626; margin-left: auto;">Logout</a>
+        <a href="#" id="logout-btn" style="color: #dc2626; margin-left: auto;">Logout</a>
     </nav>
 
     <div class="container">
@@ -188,15 +188,15 @@
             <div class="setting-group">
                 <h3>Export Data</h3>
                 <p>Download your progress data in different formats</p>
-                <button class="btn" onclick="exportJSON()">Export as JSON</button>
-                <button class="btn" onclick="exportCSV()">Export as CSV</button>
+                <button class="btn" id="export-json-btn">Export as JSON</button>
+                <button class="btn" id="export-csv-btn">Export as CSV</button>
             </div>
 
             <div class="setting-group">
                 <h3>Import Data</h3>
                 <p>Restore your progress from a previously exported file</p>
-                <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-                <button class="btn" onclick="document.getElementById('importFile').click()">Import from JSON</button>
+                <input type="file" id="importFile" accept=".json" style="display:none">
+                <button class="btn" id="import-btn">Import from JSON</button>
                 <div class="info-box">
                     💡 Importing will overwrite your current progress. Export first to create a backup!
                 </div>
@@ -205,7 +205,7 @@
             <div class="setting-group">
                 <h3>Clear All Data</h3>
                 <p>Remove all saved progress. This cannot be undone.</p>
-                <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
+                <button class="btn btn-danger" id="clear-data-btn">Clear All Data</button>
             </div>
         </div>
 
@@ -295,6 +295,38 @@
                 setTimeout(() => window.location.href = 'index.html', 1500);
             }
         }
+
+        // Event Listeners Setup
+        document.addEventListener('DOMContentLoaded', () => {
+            // Logout button
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+
+            // Export buttons
+            const exportJSONBtn = document.getElementById('export-json-btn');
+            const exportCSVBtn = document.getElementById('export-csv-btn');
+
+            if (exportJSONBtn) exportJSONBtn.addEventListener('click', exportJSON);
+            if (exportCSVBtn) exportCSVBtn.addEventListener('click', exportCSV);
+
+            // Import button
+            const importBtn = document.getElementById('import-btn');
+            const importFile = document.getElementById('importFile');
+
+            if (importBtn && importFile) {
+                importBtn.addEventListener('click', () => importFile.click());
+                importFile.addEventListener('change', importData);
+            }
+
+            // Clear data button
+            const clearBtn = document.getElementById('clear-data-btn');
+            if (clearBtn) clearBtn.addEventListener('click', clearAllData);
+        });
     </script>
 </body>
 </html>
