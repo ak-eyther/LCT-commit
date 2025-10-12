@@ -60,5 +60,7 @@ test-linear-*.sh
 /tmp/test_linear*.sh
 /tmp/create_linear*.sh
 
-# Duplicate directory (removed)
+# Prevent nested git clones (common mistake with multi-screen workflows)
 LCT-commit/
+LCT-commit-*/
+**/LCT-commit-*
