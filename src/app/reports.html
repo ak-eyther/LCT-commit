@@ -18,28 +18,29 @@
             line-height: 1.5;
         }
 
-        .nav {
+        .top-nav {
             background: white;
             border-bottom: 1px solid #e5e5e5;
             padding: 16px 24px;
             display: flex;
             gap: 24px;
             align-items: center;
+            margin-bottom: 0;
         }
 
-        .nav a {
-            color: #737373;
+        .top-nav a {
+            color: #525252;
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
             transition: color 0.15s;
         }
 
-        .nav a:hover {
+        .top-nav a:hover {
             color: #0a0a0a;
         }
 
-        .nav a.active {
+        .top-nav a.active {
             color: #0a0a0a;
             border-bottom: 2px solid #d97757;
         }
@@ -107,9 +108,10 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="nav">
+    <nav class="top-nav">
         <a href="index.html">Dashboard</a>
-        <a href="reports.html" class="active">Reports</a>
+        <a href="team-structure-v2.html">Team Structure</a>
+        <a href="reports.html" class="active" aria-current="page">Reports</a>
         <a href="documentation.html">Documentation</a>
         <a href="settings.html">Settings</a>
     </nav>
