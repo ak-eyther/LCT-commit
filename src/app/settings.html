@@ -174,7 +174,7 @@
         <a href="reports.html">Reports</a>
         <a href="documentation.html">Documentation</a>
         <a href="settings.html" class="active">Settings</a>
-        <a href="#" onclick="logout()" style="color: #dc2626; margin-left: auto;">Logout</a>
+        <a href="#" id="logout-link" style="color: #dc2626; margin-left: auto;">Logout</a>
     </nav>
 
     <div class="container">
@@ -222,6 +222,12 @@
 
     <script src="auth.js"></script>
     <script>
+        // Attach logout event listener after auth.js loads
+        document.getElementById('logout-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
+
         function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
