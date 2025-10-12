@@ -800,7 +800,7 @@ class ClaimsChart extends HTMLElement {
         }
 
         .bar:hover {
-          background: linear-gradient(to top, #2563eb, #3b82f6);
+          background: linear-gradient(to top, #d97757, #e89778);
           transform: translateY(-4px);
         }
 
