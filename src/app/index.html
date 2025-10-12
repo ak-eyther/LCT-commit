@@ -548,7 +548,7 @@
         <a href="reports.html">Reports</a>
         <a href="documentation.html">Documentation</a>
         <a href="settings.html">Settings</a>
-        <a href="#" onclick="logout()" style="color: #dc2626; margin-left: auto;">Logout</a>
+        <a href="#" id="logout-link" style="color: #dc2626; margin-left: auto;">Logout</a>
     </nav>
 
     <div class="container">
@@ -1290,6 +1290,17 @@
             // Redirect to login
             window.location.href = '/login.html';
         }
+
+        // Attach logout event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutLink = document.getElementById('logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+        });
 
         // Initialize
         renderDashboard();
