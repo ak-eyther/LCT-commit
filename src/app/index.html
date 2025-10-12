@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LCT Success Matrix Tracker</title>
+    <link rel="stylesheet" href="../assets/css/design-tokens.css">
     <style>
         * {
             margin: 0;
@@ -13,7 +14,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #fafafa;
+            background: #ffffff;
             color: #0a0a0a;
             line-height: 1.5;
         }
@@ -64,7 +65,7 @@
 
         .top-nav a.active {
             color: #0a0a0a;
-            border-bottom: 2px solid #0a0a0a;
+            border-bottom: 2px solid #d97757;
         }
 
         .nav {
@@ -92,7 +93,7 @@
 
         .nav-item.active {
             color: #0a0a0a;
-            border-bottom-color: #0a0a0a;
+            border-bottom-color: #d97757;
         }
 
         .page {
@@ -184,11 +185,11 @@
         .stat-card.completed .number { color: #16a34a; }
 
         .stat-card.progress {
-            background: #eff6ff;
-            border-color: #bfdbfe;
-            border-left: 3px solid #2563eb;
+            background: #fff5f0;
+            border-color: #fed7c4;
+            border-left: 3px solid #d97757;
         }
-        .stat-card.progress .number { color: #2563eb; }
+        .stat-card.progress .number { color: #d97757; }
 
         .stat-card.planned {
             background: #fffbeb;
@@ -212,11 +213,11 @@
         .stat-card.critical .number { color: #dc2626; }
 
         .stat-card.percentage {
-            background: #faf5ff;
-            border-color: #e9d5ff;
-            border-left: 3px solid #9333ea;
+            background: #fff5f0;
+            border-color: #fed7c4;
+            border-left: 3px solid #d97757;
         }
-        .stat-card.percentage .number { color: #9333ea; }
+        .stat-card.percentage .number { color: #d97757; }
 
         .dashboard-section {
             background: white;
@@ -492,7 +493,8 @@
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #a3a3a3;
+            border-color: #d97757;
+            box-shadow: 0 0 0 3px rgba(217, 119, 87, 0.1);
         }
 
         .form-group textarea {
@@ -1038,8 +1040,8 @@
                     <div class="count" style="color: #d97706;">${stats.priorityCounts.High}</div>
                     <div class="label">High</div>
                 </div>
-                <div class="priority-item" style="border-left: 3px solid #2563eb;">
-                    <div class="count" style="color: #2563eb;">${stats.priorityCounts.Medium}</div>
+                <div class="priority-item" style="border-left: 3px solid #737373;">
+                    <div class="count" style="color: #737373;">${stats.priorityCounts.Medium}</div>
                     <div class="label">Medium</div>
                 </div>
                 <div class="priority-item" style="border-left: 3px solid #737373;">
@@ -1058,8 +1060,8 @@
                         <div class="stats">
                             <span>Total: ${data.total}</span>
                             <span style="color: #16a34a;">Done: ${data.completed}</span>
-                            <span style="color: #2563eb;">Progress: ${data.inProgress}</span>
-                            <span style="color: #9333ea;">${pct}%</span>
+                            <span style="color: #737373;">Progress: ${data.inProgress}</span>
+                            <span style="color: #d97757;">${pct}%</span>
                         </div>
                     </div>
                 `;
