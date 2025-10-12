@@ -52,7 +52,7 @@
         }
 
         .top-nav a {
-            color: #737373;
+            color: #525252;
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
@@ -68,30 +68,30 @@
             border-bottom: 2px solid #d97757;
         }
 
-        .nav {
+        .page-nav {
             display: flex;
             gap: 4px;
             margin-bottom: 20px;
             border-bottom: 1px solid #e5e5e5;
         }
 
-        .nav-item {
+        .page-nav-item {
             padding: 8px 16px;
             border: none;
             background: transparent;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            color: #737373;
+            color: #525252;
             border-bottom: 2px solid transparent;
             transition: all 0.15s;
         }
 
-        .nav-item:hover {
+        .page-nav-item:hover {
             color: #0a0a0a;
         }
 
-        .nav-item.active {
+        .page-nav-item.active {
             color: #0a0a0a;
             border-bottom-color: #d97757;
         }
@@ -545,7 +545,7 @@
 <body>
     <!-- Top Navigation -->
     <nav class="top-nav">
-        <a href="index.html" class="active">Dashboard</a>
+        <a href="index.html" class="active" aria-current="page">Dashboard</a>
         <a href="team-structure-v2.html">Team Structure</a>
         <a href="reports.html">Reports</a>
         <a href="documentation.html">Documentation</a>
@@ -558,10 +558,10 @@
             <p>31 evaluation criteria with detailed explanations</p>
         </div>
 
-        <div class="nav">
-            <button class="nav-item active" onclick="switchPage('dashboard')">Dashboard</button>
-            <button class="nav-item" onclick="switchPage('checklist')">Checklist</button>
-        </div>
+        <nav class="page-nav">
+            <button class="page-nav-item active" onclick="switchPage('dashboard')">Dashboard</button>
+            <button class="page-nav-item" onclick="switchPage('checklist')">Checklist</button>
+        </nav>
 
         <!-- DASHBOARD PAGE -->
         <div id="dashboard-page" class="page active">
@@ -900,11 +900,11 @@
 
         function switchPage(page) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
+            document.querySelectorAll('.page-nav-item').forEach(n => n.classList.remove('active'));
+
             document.getElementById(`${page}-page`).classList.add('active');
             event.target.classList.add('active');
-            
+
             if (page === 'dashboard') {
                 renderDashboard();
             }
