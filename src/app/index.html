@@ -550,6 +550,7 @@
         <a href="reports.html">Reports</a>
         <a href="documentation.html">Documentation</a>
         <a href="settings.html">Settings</a>
+        <a href="#" id="logout-link" style="color: #dc2626; margin-left: auto;">Logout</a>
     </nav>
 
     <div class="container">
@@ -620,6 +621,37 @@
     <div class="toast" id="toast">Saved</div>
 
     <script>
+        // Authentication check - must be first
+        async function checkAuth() {
+            const token = localStorage.getItem('lctAuthToken');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+            
+            // Verify token with backend
+            try {
+                const response = await fetch('/api/auth/verify', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) {
+                    localStorage.removeItem('lctAuthToken');
+                    localStorage.removeItem('lctUser');
+                    localStorage.removeItem('lctRememberMe');
+                    window.location.href = '/login.html';
+                }
+            } catch (error) {
+                console.error('Auth verification failed:', error);
+                localStorage.removeItem('lctAuthToken');
+                localStorage.removeItem('lctUser');
+                localStorage.removeItem('lctRememberMe');
+                window.location.href = '/login.html';
+            }
+        }
+
+        // Run auth check on page load
+        checkAuth();
+
         const checklistData = [
             {
                 section: "1. Clinical Accuracy",
@@ -1231,6 +1263,44 @@
         document.addEventListener('change', function(e) {
             if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
                 saveData();
+            }
+        });
+
+        // Logout function
+        async function logout() {
+            const token = localStorage.getItem('lctAuthToken');
+            
+            // Call logout API (optional)
+            if (token) {
+                try {
+                    await fetch('/api/auth/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                } catch (error) {
+                    console.error('Logout API call failed:', error);
+                }
+            }
+            
+            // Clear local storage
+            localStorage.removeItem('lctAuthToken');
+            localStorage.removeItem('lctUser');
+            localStorage.removeItem('lctRememberMe');
+            
+            // Redirect to login
+            window.location.href = '/login.html';
+        }
+
+        // Attach logout event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutLink = document.getElementById('logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logout();
+                });
             }
         });
 

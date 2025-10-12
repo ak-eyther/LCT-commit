@@ -13,6 +13,10 @@
       "destination": "/src/app/index.html"
     },
     {
+      "source": "/login.html",
+      "destination": "/src/app/login.html"
+    },
+    {
       "source": "/reports.html",
       "destination": "/src/app/reports.html"
     },
