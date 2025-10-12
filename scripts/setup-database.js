@@ -7,11 +7,23 @@
  * Run with: node scripts/setup-database.js
  */
 
-const { sql } = require('@vercel/postgres');
+// Load environment variables from .env file
+require('dotenv').config();
+
+const { Client } = require('pg');
 
 async function setupDatabase() {
+  let client;
   try {
     console.log('🔧 Setting up LCT authentication database...');
+    
+    // Create database client with direct connection
+    client = new Client({
+      connectionString: process.env.POSTGRES_URL
+    });
+    
+    await client.connect();
+    console.log('✅ Connected to database');
     
     // Create users table
     const createTableQuery = `
@@ -24,7 +36,7 @@ async function setupDatabase() {
       );
     `;
     
-    await sql.unsafe(createTableQuery);
+    await client.query(createTableQuery);
     console.log('✅ Users table created successfully');
     
     // Create index on email for faster lookups
@@ -32,7 +44,7 @@ async function setupDatabase() {
       CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
     `;
     
-    await sql.unsafe(createIndexQuery);
+    await client.query(createIndexQuery);
     console.log('✅ Email index created');
     
     console.log('🎉 Database setup complete!');
@@ -44,9 +56,14 @@ async function setupDatabase() {
     console.error('❌ Database setup failed:', error.message);
     console.error('💡 Make sure:');
     console.error('   - Vercel Postgres is set up in your project');
-    console.error('   - POSTGRES_URL environment variable is configured');
+    console.error('   - LCT_Commit_PRISMA_DATABASE_URL environment variable is configured');
     console.error('   - You have run: npm install');
     process.exit(1);
+  } finally {
+    // Close the database connection
+    if (client) {
+      await client.end();
+    }
   }
 }
 

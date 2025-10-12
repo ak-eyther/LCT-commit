@@ -7,12 +7,24 @@
  * Usage: node scripts/add-user.js "email@example.com" "password"
  */
 
-const { sql } = require('@vercel/postgres');
+// Load environment variables from .env file
+require('dotenv').config();
+
+const { Client } = require('pg');
 const bcrypt = require('bcryptjs');
 
 async function addUser(email, password) {
+  let client;
   try {
     console.log(`🔧 Adding user: ${email}`);
+    
+    // Create database client with direct connection
+    client = new Client({
+      connectionString: process.env.POSTGRES_URL
+    });
+    
+    await client.connect();
+    console.log('✅ Connected to database');
     
     // Validate inputs
     if (!email || !password) {
@@ -33,27 +45,27 @@ async function addUser(email, password) {
     const passwordHash = await bcrypt.hash(password, saltRounds);
     
     // Check if user already exists
-    const existingUser = await sql`
-      SELECT id FROM users WHERE email = ${email}
-    `;
+    const existingUser = await client.query(
+      'SELECT id FROM users WHERE email = $1',
+      [email]
+    );
     
     if (existingUser.rows.length > 0) {
       console.log('⚠️  User already exists. Updating password...');
       
       // Update existing user
-      await sql`
-        UPDATE users 
-        SET password_hash = ${passwordHash}, created_at = CURRENT_TIMESTAMP
-        WHERE email = ${email}
-      `;
+      await client.query(
+        'UPDATE users SET password_hash = $1, created_at = CURRENT_TIMESTAMP WHERE email = $2',
+        [passwordHash, email]
+      );
       
       console.log('✅ User password updated successfully');
     } else {
       // Insert new user
-      await sql`
-        INSERT INTO users (email, password_hash)
-        VALUES (${email}, ${passwordHash})
-      `;
+      await client.query(
+        'INSERT INTO users (email, password_hash) VALUES ($1, $2)',
+        [email, passwordHash]
+      );
       
       console.log('✅ User created successfully');
     }
@@ -67,9 +79,14 @@ async function addUser(email, password) {
     console.error('❌ Failed to add user:', error.message);
     console.error('💡 Make sure:');
     console.error('   - Database is set up (run: node scripts/setup-database.js)');
-    console.error('   - POSTGRES_URL environment variable is configured');
+    console.error('   - LCT_Commit_PRISMA_DATABASE_URL environment variable is configured');
     console.error('   - You have run: npm install');
     process.exit(1);
+  } finally {
+    // Close the database connection
+    if (client) {
+      await client.end();
+    }
   }
 }
 
