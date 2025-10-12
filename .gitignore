@@ -60,5 +60,8 @@ test-linear-*.sh
 /tmp/test_linear*.sh
 /tmp/create_linear*.sh
 
+# Mock data files (local development only)
+mock-users.json
+
 # Duplicate directory (removed)
 LCT-commit/
