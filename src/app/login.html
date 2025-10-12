@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - LCT Healthcare Claims System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 420px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .remember-me-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .remember-me-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .remember-me-group label {
+            color: #555;
+            font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .remember-me-info {
+            display: block;
+            margin-top: 6px;
+            margin-left: 28px;
+            color: #888;
+            font-size: 12px;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert-error {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background-color: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Accessibility improvements */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>LCT Healthcare</h1>
+            <p>Claims Adjudication System</p>
+        </div>
+
+        <div id="alertBox" class="alert" role="alert" aria-live="polite"></div>
+
+        <div class="loading-spinner" id="loadingSpinner" aria-hidden="true">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #666;">Logging in...</p>
+        </div>
+
+        <form id="loginForm" aria-label="Login form">
+            <div class="form-group">
+                <label for="username">Username or Email</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    required 
+                    autocomplete="username"
+                    aria-required="true"
+                    placeholder="Enter your username or email"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required 
+                    autocomplete="current-password"
+                    aria-required="true"
+                    placeholder="Enter your password"
+                >
+            </div>
+
+            <div class="remember-me-group">
+                <input 
+                    type="checkbox" 
+                    id="rememberMe" 
+                    name="rememberMe"
+                    aria-describedby="rememberMeInfo"
+                >
+                <label for="rememberMe">
+                    Keep me logged in
+                    <span class="remember-me-info" id="rememberMeInfo">
+                        Unchecked: Session expires in 1 hour | Checked: Session lasts 7 days
+                    </span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn-login" id="loginButton">
+                Login
+            </button>
+        </form>
+
+        <div class="forgot-password">
+            <a href="#" id="forgotPasswordLink">Forgot password?</a>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = '/api';
+
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const rememberMeCheckbox = document.getElementById('rememberMe');
+        const loginButton = document.getElementById('loginButton');
+        const alertBox = document.getElementById('alertBox');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+
+        // Show alert message
+        function showAlert(message, type = 'error') {
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type}`;
+            alertBox.style.display = 'block';
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    alertBox.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Hide alert message
+        function hideAlert() {
+            alertBox.style.display = 'none';
+        }
+
+        // Show loading state
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loginButton.disabled = true;
+                loginButton.textContent = 'Logging in...';
+                loadingSpinner.style.display = 'block';
+                loadingSpinner.setAttribute('aria-hidden', 'false');
+                loginForm.style.display = 'none';
+            } else {
+                loginButton.disabled = false;
+                loginButton.textContent = 'Login';
+                loadingSpinner.style.display = 'none';
+                loadingSpinner.setAttribute('aria-hidden', 'true');
+                loginForm.style.display = 'block';
+            }
+        }
+
+        // Handle login form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert();
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            const rememberMe = rememberMeCheckbox.checked;
+
+            // Basic validation
+            if (!username || !password) {
+                showAlert('Please enter both username and password', 'error');
+                return;
+            }
+
+            setLoading(true);
+
+            try {
+                // Call login API
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username,
+                        password,
+                        rememberMe
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Login failed');
+                }
+
+                // Store authentication token
+                if (data.token) {
+                    localStorage.setItem('lctAuthToken', data.token);
+                    localStorage.setItem('lctRememberMe', rememberMe ? 'true' : 'false');
+                    localStorage.setItem('lctTokenExpiry', data.expiresAt || '');
+                    
+                    if (data.user) {
+                        localStorage.setItem('lctUser', JSON.stringify(data.user));
+                    }
+
+                    showAlert('Login successful! Redirecting...', 'success');
+
+                    // Redirect to dashboard after short delay
+                    setTimeout(() => {
+                        window.location.href = '/src/app/index.html';
+                    }, 1000);
+                } else {
+                    throw new Error('No authentication token received');
+                }
+
+            } catch (error) {
+                setLoading(false);
+                showAlert(error.message || 'An error occurred during login', 'error');
+            }
+        });
+
+        // Handle forgot password link
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAlert('Password reset functionality coming soon. Please contact your administrator.', 'error');
+        });
+
+        // Check if user is already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('lctAuthToken');
+            const expiry = localStorage.getItem('lctTokenExpiry');
+            
+            if (token && expiry) {
+                const now = new Date().getTime();
+                const expiryTime = new Date(expiry).getTime();
+                
+                // If token is still valid, redirect to dashboard
+                if (expiryTime > now) {
+                    window.location.href = '/src/app/index.html';
+                } else {
+                    // Token expired, clear storage
+                    localStorage.removeItem('lctAuthToken');
+                    localStorage.removeItem('lctRememberMe');
+                    localStorage.removeItem('lctTokenExpiry');
+                    localStorage.removeItem('lctUser');
+                }
+            }
+        });
+
+        // Clear password field on page unload for security
+        window.addEventListener('beforeunload', () => {
+            passwordInput.value = '';
+        });
+    </script>
+</body>
+</html>
