@@ -20,8 +20,42 @@
 
         /* Theme Variables - Will be switched dynamically */
         :root {
-            /* Anthropic-Inspired (Warm Minimal) - DEFAULT */
-            --primary: #131314;
+            /* X/Grok-Inspired (Minimal Black & White) - DEFAULT */
+            --primary: #000000;
+            --accent: #71717a;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --border: #e4e4e7;
+            --muted: #f4f4f5;
+            --muted-fg: #71717a;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --error: #dc2626;
+            --info: #71717a;
+            --text: #000000;
+            --text-secondary: #52525b;
+        }
+
+        [data-theme="slate"] {
+            /* Slate-Inspired (Cool Minimal) */
+            --primary: #0f172a;
+            --accent: #64748b;
+            --background: #ffffff;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --muted: #f1f5f9;
+            --muted-fg: #64748b;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --error: #dc2626;
+            --info: #64748b;
+            --text: #0f172a;
+            --text-secondary: #475569;
+        }
+
+        [data-theme="warm"] {
+            /* Warm Minimal (Terracotta Accent) */
+            --primary: #0a0a0a;
             --accent: #d97757;
             --background: #ffffff;
             --surface: #ffffff;
@@ -31,44 +65,9 @@
             --success: #16a34a;
             --warning: #f59e0b;
             --error: #dc2626;
-            --info: #2563eb;
+            --info: #737373;
             --text: #0a0a0a;
             --text-secondary: #525252;
-        }
-
-        [data-theme="openai"] {
-            /* OpenAI-Inspired (Bold Tech) */
-            --primary: #000000;
-            --accent: #0066FF;
-            --background: #ffffff;
-            --surface: #ffffff;
-            --border: #e4e4e7;
-            --muted: #f4f4f5;
-            --muted-fg: #71717a;
-            --success: #10a37f;
-            --warning: #f59e0b;
-            --error: #dc2626;
-            --info: #0066FF;
-            --text: #000000;
-            --text-secondary: #52525b;
-        }
-
-        [data-theme="hybrid"] {
-            /* Hybrid (Best of Both) */
-            --primary: #0a0a0a;
-            --accent: #0066FF;
-            --accent-secondary: #d97757;
-            --background: #ffffff;
-            --surface: #ffffff;
-            --border: #e4e4e7;
-            --muted: #f4f4f5;
-            --muted-fg: #71717a;
-            --success: #16a34a;
-            --warning: #f59e0b;
-            --error: #dc2626;
-            --info: #0066FF;
-            --text: #0a0a0a;
-            --text-secondary: #52525b;
         }
 
         /* Layout */
@@ -105,7 +104,7 @@
         }
 
         .theme-btn {
-            padding: 8px 16px;
+            padding: 6px 12px;
             border: none;
             background: transparent;
             border-radius: 6px;
@@ -216,9 +215,9 @@
         }
 
         .btn {
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.15s;
@@ -226,7 +225,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn-primary {
@@ -436,10 +435,10 @@
         }
 
         .nav-item {
-            padding: 10px 16px;
+            padding: 8px 12px;
             border: none;
             background: transparent;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             color: var(--text-secondary);
@@ -503,9 +502,9 @@
         <div class="header-content">
             <div class="header-title">LCT Design System Preview - Interactive</div>
             <div class="theme-switcher">
-                <button class="theme-btn active" onclick="switchTheme('anthropic')">Anthropic</button>
-                <button class="theme-btn" onclick="switchTheme('openai')">OpenAI</button>
-                <button class="theme-btn" onclick="switchTheme('hybrid')">Hybrid</button>
+                <button class="theme-btn active" onclick="switchTheme('xgrok')">X/Grok</button>
+                <button class="theme-btn" onclick="switchTheme('slate')">Slate</button>
+                <button class="theme-btn" onclick="switchTheme('warm')">Warm</button>
             </div>
         </div>
     </div>
@@ -514,27 +513,27 @@
         <!-- Theme Info -->
         <div class="section">
             <div class="section-header">
-                <h2 class="section-title">Current Theme: <span id="current-theme">Anthropic-Inspired (Warm Minimal)</span></h2>
-                <p class="section-desc" id="theme-desc">Warm, approachable, human-centered design inspired by Anthropic/Claude</p>
+                <h2 class="section-title">Current Theme: <span id="current-theme">X/Grok-Inspired (Minimal B&W)</span></h2>
+                <p class="section-desc" id="theme-desc">Ultra-minimal black & white design inspired by X.com and Grok</p>
             </div>
             <div class="comparison">
                 <div class="comparison-title">Theme Characteristics</div>
                 <div class="comparison-grid">
                     <div class="comparison-item">
                         <div class="comparison-label">Primary Color</div>
-                        <div class="comparison-value" id="primary-color">#131314</div>
+                        <div class="comparison-value" id="primary-color">#000000</div>
                     </div>
                     <div class="comparison-item">
                         <div class="comparison-label">Accent Color</div>
-                        <div class="comparison-value accent-highlight" id="accent-color">#d97757</div>
+                        <div class="comparison-value accent-highlight" id="accent-color">#71717a</div>
                     </div>
                     <div class="comparison-item">
                         <div class="comparison-label">Aesthetic</div>
-                        <div class="comparison-value" id="aesthetic">Warm & Minimal</div>
+                        <div class="comparison-value" id="aesthetic">B&W Minimal</div>
                     </div>
                     <div class="comparison-item">
                         <div class="comparison-label">Feel</div>
-                        <div class="comparison-value" id="feel">Professional & Approachable</div>
+                        <div class="comparison-value" id="feel">Clean & Efficient</div>
                     </div>
                 </div>
             </div>
@@ -550,12 +549,12 @@
                 <div class="color-swatch">
                     <div class="color-box" style="background: var(--primary);"></div>
                     <div class="color-label">Primary</div>
-                    <div class="color-value" id="display-primary">#131314</div>
+                    <div class="color-value" id="display-primary">#000000</div>
                 </div>
                 <div class="color-swatch">
                     <div class="color-box" style="background: var(--accent);"></div>
                     <div class="color-label">Accent (No Purple!)</div>
-                    <div class="color-value" id="display-accent">#d97757</div>
+                    <div class="color-value" id="display-accent">#71717a</div>
                 </div>
                 <div class="color-swatch">
                     <div class="color-box" style="background: var(--success);"></div>
@@ -575,7 +574,7 @@
                 <div class="color-swatch">
                     <div class="color-box" style="background: var(--info);"></div>
                     <div class="color-label">Info</div>
-                    <div class="color-value" id="display-info">#2563eb</div>
+                    <div class="color-value" id="display-info">#71717a</div>
                 </div>
             </div>
         </div>
@@ -730,10 +729,10 @@
             </div>
             <div style="font-size: 14px; line-height: 1.8; color: var(--text-secondary);">
                 <p style="margin-bottom: 12px;">
-                    <strong style="color: var(--text);">✅ No Purple:</strong> Replaced #9333ea with accent colors that better match tech company aesthetics.
+                    <strong style="color: var(--text);">✅ No Purple OR Blue:</strong> Replaced #9333ea and minimized blue - using slate/gray tones instead.
                 </p>
                 <p style="margin-bottom: 12px;">
-                    <strong style="color: var(--text);">✅ Minimal & Professional:</strong> Clean design inspired by Anthropic/Claude and OpenAI.
+                    <strong style="color: var(--text);">✅ Compact & Efficient:</strong> Smaller buttons (6px 12px), compact UI inspired by X.com and Grok.
                 </p>
                 <p style="margin-bottom: 12px;">
                     <strong style="color: var(--text);">✅ Consistent Spacing:</strong> 8px base scale (8px, 16px, 24px, 32px).
@@ -750,35 +749,35 @@
 
     <script>
         const themes = {
-            anthropic: {
-                name: 'Anthropic-Inspired (Warm Minimal)',
-                desc: 'Warm, approachable, human-centered design inspired by Anthropic/Claude',
-                primary: '#131314',
+            xgrok: {
+                name: 'X/Grok-Inspired (Minimal B&W)',
+                desc: 'Ultra-minimal black & white design inspired by X.com and Grok',
+                primary: '#000000',
+                accent: '#71717a',
+                success: '#16a34a',
+                info: '#71717a',
+                aesthetic: 'B&W Minimal',
+                feel: 'Clean & Efficient'
+            },
+            slate: {
+                name: 'Slate-Inspired (Cool Minimal)',
+                desc: 'Cool, professional design with slate gray accents - no blue!',
+                primary: '#0f172a',
+                accent: '#64748b',
+                success: '#16a34a',
+                info: '#64748b',
+                aesthetic: 'Cool & Professional',
+                feel: 'Modern & Trustworthy'
+            },
+            warm: {
+                name: 'Warm Minimal (Terracotta)',
+                desc: 'Warm, approachable design with terracotta accent - no blue!',
+                primary: '#0a0a0a',
                 accent: '#d97757',
                 success: '#16a34a',
-                info: '#2563eb',
+                info: '#737373',
                 aesthetic: 'Warm & Minimal',
                 feel: 'Professional & Approachable'
-            },
-            openai: {
-                name: 'OpenAI-Inspired (Bold Tech)',
-                desc: 'Bold, technical, cutting-edge design inspired by OpenAI',
-                primary: '#000000',
-                accent: '#0066FF',
-                success: '#10a37f',
-                info: '#0066FF',
-                aesthetic: 'Bold & Technical',
-                feel: 'Innovative & Confident'
-            },
-            hybrid: {
-                name: 'Hybrid (Best of Both)',
-                desc: 'Balanced design combining warmth and technical precision',
-                primary: '#0a0a0a',
-                accent: '#0066FF',
-                success: '#16a34a',
-                info: '#0066FF',
-                aesthetic: 'Balanced & Modern',
-                feel: 'Professional & Trustworthy'
             }
         };
 
@@ -786,7 +785,7 @@
             const theme = themes[themeName];
 
             // Update theme attribute
-            document.documentElement.setAttribute('data-theme', themeName === 'anthropic' ? '' : themeName);
+            document.documentElement.setAttribute('data-theme', themeName === 'xgrok' ? '' : themeName);
 
             // Update active button
             document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
