@@ -371,10 +371,12 @@ border-color: #fde68a;
 
 #### Medium Priority
 ```css
-background: #dbeafe;
-color: #1e40af;
-border-color: #bfdbfe;
+background: #f5f5f5;
+color: #525252;
+border-color: #e5e5e5;
 ```
+<!-- Note: Uses neutral gray palette to maintain Warm Minimal theme consistency.
+     Progression: Critical (red) → High (amber) → Medium (neutral gray) → Low (muted gray) -->
 
 #### Low Priority
 ```css

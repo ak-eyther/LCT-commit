@@ -184,11 +184,11 @@
         .stat-card.completed .number { color: #16a34a; }
 
         .stat-card.progress {
-            background: #eff6ff;
-            border-color: #bfdbfe;
-            border-left: 3px solid #2563eb;
+            background: rgba(217, 119, 87, 0.05);
+            border-color: rgba(217, 119, 87, 0.2);
+            border-left: 3px solid #d97757;
         }
-        .stat-card.progress .number { color: #2563eb; }
+        .stat-card.progress .number { color: #d97757; }
 
         .stat-card.planned {
             background: #fffbeb;
@@ -398,9 +398,9 @@
         }
 
         .badge-medium {
-            background: #dbeafe;
-            color: #1e40af;
-            border-color: #bfdbfe;
+            background: #f5f5f5;
+            color: #525252;
+            border-color: #e5e5e5;
         }
 
         .badge-low {
@@ -1038,8 +1038,8 @@
                     <div class="count" style="color: #d97706;">${stats.priorityCounts.High}</div>
                     <div class="label">High</div>
                 </div>
-                <div class="priority-item" style="border-left: 3px solid #2563eb;">
-                    <div class="count" style="color: #2563eb;">${stats.priorityCounts.Medium}</div>
+                <div class="priority-item" style="border-left: 3px solid #525252;">
+                    <div class="count" style="color: #525252;">${stats.priorityCounts.Medium}</div>
                     <div class="label">Medium</div>
                 </div>
                 <div class="priority-item" style="border-left: 3px solid #737373;">
@@ -1058,8 +1058,8 @@
                         <div class="stats">
                             <span>Total: ${data.total}</span>
                             <span style="color: #16a34a;">Done: ${data.completed}</span>
-                            <span style="color: #2563eb;">Progress: ${data.inProgress}</span>
-                            <span style="color: #9333ea;">${pct}%</span>
+                            <span style="color: #d97757;">Progress: ${data.inProgress}</span>
+                            <span style="color: #d97757;">${pct}%</span>
                         </div>
                     </div>
                 `;
