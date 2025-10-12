@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1",
+    "username": "admin",
+    "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "role": "admin",
+    "email": "admin@lct.co.ke",
+    "lastLogin": "2025-10-12T11:00:01.067Z"
+  },
+  {
+    "id": "2",
+    "username": "reviewer",
+    "password": "8d3fc6b1854fc81c5eba8dd1d3c33d6e0c3e5d8d9f7c4e6e0d9a8c7d5e3f2b1a",
+    "role": "reviewer",
+    "email": "reviewer@lct.co.ke",
+    "lastLogin": null
+  }
+]
