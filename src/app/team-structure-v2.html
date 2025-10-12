@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vitraya & LCT - Organization Structure</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --background: 0 0% 100%;
@@ -38,20 +35,47 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: hsl(var(--background));
-            color: hsl(var(--foreground));
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #0a0a0a;
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
+        .top-nav {
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 16px 24px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            margin-bottom: 0;
+        }
+
+        .top-nav a {
+            color: #525252;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.15s;
+        }
+
+        .top-nav a:hover {
+            color: #0a0a0a;
+        }
+
+        .top-nav a.active {
+            color: #0a0a0a;
+            border-bottom: 2px solid #d97757;
+        }
+
         .header {
-            background: linear-gradient(135deg, hsl(221.2 83.2% 53.3%) 0%, hsl(262.1 83.3% 57.8%) 100%);
-            color: white;
+            background: #ffffff;
+            color: #0a0a0a;
             padding: 3rem 1.5rem;
             text-align: center;
-            border-bottom: 1px solid hsl(var(--border));
+            border-bottom: 1px solid #e5e5e5;
         }
 
         .header h1 {
@@ -144,8 +168,8 @@
         }
 
         .tab.active {
-            color: hsl(var(--primary));
-            border-bottom-color: hsl(var(--primary));
+            color: #0a0a0a;
+            border-bottom-color: #d97757;
         }
 
         .tab-content {
@@ -205,7 +229,7 @@
         }
 
         .person-card.business {
-            border-left: 3px solid hsl(262.1 83.3% 57.8%);
+            border-left: 3px solid #d97757;
         }
 
         .person-card.product {
@@ -213,7 +237,7 @@
         }
 
         .person-card.engineering {
-            border-left: 3px solid hsl(221.2 83.2% 53.3%);
+            border-left: 3px solid #737373;
         }
 
         .person-card.lct {
@@ -260,8 +284,8 @@
         }
 
         .badge-info {
-            background: hsl(221.2 83.2% 53.3% / 0.1);
-            color: hsl(221.2 83.2% 45%);
+            background: rgba(115, 115, 115, 0.1);
+            color: #737373;
         }
 
         .badge-success {
@@ -269,9 +293,10 @@
             color: hsl(142.1 76.2% 30%);
         }
 
-        .badge-purple {
-            background: hsl(262.1 83.3% 57.8% / 0.1);
-            color: hsl(262.1 83.3% 47.8%);
+        .badge-accent {
+            background: rgba(217, 119, 87, 0.1);
+            color: #d97757;
+            border-color: rgba(217, 119, 87, 0.3);
         }
 
         .reporting {
@@ -363,8 +388,8 @@
         }
 
         .org-box.ceo {
-            border-color: hsl(262.1 83.3% 57.8%);
-            background: linear-gradient(135deg, hsl(262.1 83.3% 57.8% / 0.05) 0%, hsl(262.1 83.3% 57.8% / 0.1) 100%);
+            border-color: #d97757;
+            background: linear-gradient(135deg, rgba(217, 119, 87, 0.05) 0%, rgba(217, 119, 87, 0.1) 100%);
         }
 
         .org-box.leadership {
@@ -373,8 +398,8 @@
         }
 
         .org-box.manager {
-            border-color: hsl(221.2 83.2% 53.3%);
-            background: linear-gradient(135deg, hsl(221.2 83.2% 53.3% / 0.05) 0%, hsl(221.2 83.2% 53.3% / 0.1) 100%);
+            border-color: #737373;
+            background: linear-gradient(135deg, rgba(115, 115, 115, 0.05) 0%, rgba(115, 115, 115, 0.1) 100%);
         }
 
         .org-box.engineer {
@@ -487,6 +512,15 @@
     </style>
 </head>
 <body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="index.html">Dashboard</a>
+        <a href="team-structure-v2.html" class="active" aria-current="page">Team Structure</a>
+        <a href="reports.html">Reports</a>
+        <a href="documentation.html">Documentation</a>
+        <a href="settings.html">Settings</a>
+    </nav>
+
     <div class="header">
         <h1>Vitraya Technologies & LCT Group Africa</h1>
         <p>Organization Structure & Team Directory • Last Updated: October 9, 2025</p>
@@ -826,12 +860,12 @@
                         <div class="org-box ceo">
                             <div class="org-box-name">Mrinal Sinha</div>
                             <div class="org-box-title">CEO, Vitraya</div>
-                            <span class="badge badge-purple">CEO</span>
+                            <span class="badge badge-accent">CEO</span>
                         </div>
                         <div class="org-box ceo">
                             <div class="org-box-name">Ankur Shrivastava</div>
                             <div class="org-box-title">CTO, Vitraya</div>
-                            <span class="badge badge-purple">CTO</span>
+                            <span class="badge badge-accent">CTO</span>
                         </div>
                     </div>
 
@@ -882,7 +916,7 @@
                             <div class="org-connector"></div>
                             <div class="org-box-name">Varsha Vashishta</div>
                             <div class="org-box-title">Product Designer</div>
-                            <span class="badge badge-purple">Shared</span>
+                            <span class="badge badge-accent">Shared</span>
                         </div>
                     </div>
 
@@ -892,13 +926,13 @@
                             <div class="org-connector"></div>
                             <div class="org-box-name">Dr. Annu</div>
                             <div class="org-box-title">Medical Auditor</div>
-                            <span class="badge badge-purple">Audit</span>
+                            <span class="badge badge-accent">Audit</span>
                         </div>
                         <div class="org-box engineer">
                             <div class="org-connector"></div>
                             <div class="org-box-name">Dr. Gargi</div>
                             <div class="org-box-title">Medical Auditor</div>
-                            <span class="badge badge-purple">Audit</span>
+                            <span class="badge badge-accent">Audit</span>
                         </div>
                         <div class="org-box engineer">
                             <div class="org-connector"></div>
@@ -995,7 +1029,7 @@
                     <div class="person-card leadership">
                         <div class="person-name">Mrinal Sinha</div>
                         <div class="person-title">CEO, Vitraya Technologies</div>
-                        <span class="badge badge-purple">Executive</span>
+                        <span class="badge badge-accent">Executive</span>
                         <ul class="responsibilities">
                             <li>Ultimate decision authority</li>
                             <li>Overall company strategy</li>
@@ -1006,7 +1040,7 @@
                     <div class="person-card leadership">
                         <div class="person-name">Ankur Shrivastava</div>
                         <div class="person-title">CTO, Vitraya Technologies</div>
-                        <span class="badge badge-purple">Executive</span>
+                        <span class="badge badge-accent">Executive</span>
                         <ul class="responsibilities">
                             <li>CTO for entire Vitraya (all 6 PODs)</li>
                             <li>All tech leads hard report to CTO</li>
@@ -1072,7 +1106,7 @@
                     <div class="person-card leadership">
                         <div class="person-name">Mrinal Sinha</div>
                         <div class="person-title">CEO, Vitraya Technologies</div>
-                        <span class="badge badge-purple">Executive</span>
+                        <span class="badge badge-accent">Executive</span>
                         <ul class="responsibilities">
                             <li>Ultimate decision-making authority</li>
                             <li>Overall company strategy and vision</li>
@@ -1084,7 +1118,7 @@
                     <div class="person-card leadership">
                         <div class="person-name">Ankur Shrivastava</div>
                         <div class="person-title">CTO, Vitraya Technologies</div>
-                        <span class="badge badge-purple">Executive</span>
+                        <span class="badge badge-accent">Executive</span>
                         <ul class="responsibilities">
                             <li>Chief Technology Officer: overall technology strategy and vision for entire Vitraya</li>
                             <li>Engineering leadership across ALL PODs: Star Health, ABHI, Niva Bupa, Bajaj, LCT, GIC</li>
@@ -1172,7 +1206,7 @@
                     <div class="person-card business">
                         <div class="person-name">Dr. Annu</div>
                         <div class="person-title">Medical Auditor</div>
-                        <span class="badge badge-purple">Medical Audit</span>
+                        <span class="badge badge-accent">Medical Audit</span>
                         <div class="reporting"><strong>Reports to:</strong> Bharat Pandey</div>
                         <ul class="responsibilities">
                             <li>Medical adjudication review</li>
@@ -1184,7 +1218,7 @@
                     <div class="person-card business">
                         <div class="person-name">Dr. Gargi</div>
                         <div class="person-title">Medical Auditor</div>
-                        <span class="badge badge-purple">Medical Audit</span>
+                        <span class="badge badge-accent">Medical Audit</span>
                         <div class="reporting"><strong>Reports to:</strong> Bharat Pandey</div>
                         <ul class="responsibilities">
                             <li>Medical adjudication review</li>
@@ -1235,7 +1269,7 @@
                     <div class="person-card product">
                         <div class="person-name">Varsha Vashishta</div>
                         <div class="person-title">Product Designer</div>
-                        <span class="badge badge-purple">Shared Resource</span>
+                        <span class="badge badge-accent">Shared Resource</span>
                         <ul class="responsibilities">
                             <li>Edit/Audit portal design for LCT</li>
                             <li>OPD portal UI/UX</li>

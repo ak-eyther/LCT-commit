@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LCT Success Matrix Tracker</title>
+    <link rel="stylesheet" href="../assets/css/design-tokens.css">
     <style>
         * {
             margin: 0;
@@ -13,7 +14,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #fafafa;
+            background: #ffffff;
             color: #0a0a0a;
             line-height: 1.5;
         }
@@ -51,7 +52,7 @@
         }
 
         .top-nav a {
-            color: #737373;
+            color: #525252;
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
@@ -64,35 +65,35 @@
 
         .top-nav a.active {
             color: #0a0a0a;
-            border-bottom: 2px solid #0a0a0a;
+            border-bottom: 2px solid #d97757;
         }
 
-        .nav {
+        .page-nav {
             display: flex;
             gap: 4px;
             margin-bottom: 20px;
             border-bottom: 1px solid #e5e5e5;
         }
 
-        .nav-item {
+        .page-nav-item {
             padding: 8px 16px;
             border: none;
             background: transparent;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            color: #737373;
+            color: #525252;
             border-bottom: 2px solid transparent;
             transition: all 0.15s;
         }
 
-        .nav-item:hover {
+        .page-nav-item:hover {
             color: #0a0a0a;
         }
 
-        .nav-item.active {
+        .page-nav-item.active {
             color: #0a0a0a;
-            border-bottom-color: #0a0a0a;
+            border-bottom-color: #d97757;
         }
 
         .page {
@@ -184,11 +185,11 @@
         .stat-card.completed .number { color: #16a34a; }
 
         .stat-card.progress {
-            background: #eff6ff;
-            border-color: #bfdbfe;
-            border-left: 3px solid #2563eb;
+            background: #fff5f0;
+            border-color: #fed7c4;
+            border-left: 3px solid #d97757;
         }
-        .stat-card.progress .number { color: #2563eb; }
+        .stat-card.progress .number { color: #d97757; }
 
         .stat-card.planned {
             background: #fffbeb;
@@ -212,11 +213,11 @@
         .stat-card.critical .number { color: #dc2626; }
 
         .stat-card.percentage {
-            background: #faf5ff;
-            border-color: #e9d5ff;
-            border-left: 3px solid #9333ea;
+            background: #fff5f0;
+            border-color: #fed7c4;
+            border-left: 3px solid #d97757;
         }
-        .stat-card.percentage .number { color: #9333ea; }
+        .stat-card.percentage .number { color: #d97757; }
 
         .dashboard-section {
             background: white;
@@ -492,7 +493,8 @@
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #a3a3a3;
+            border-color: #d97757;
+            box-shadow: 0 0 0 3px rgba(217, 119, 87, 0.1);
         }
 
         .form-group textarea {
@@ -543,12 +545,11 @@
 <body>
     <!-- Top Navigation -->
     <nav class="top-nav">
-        <a href="index.html" class="active">Dashboard</a>
+        <a href="index.html" class="active" aria-current="page">Dashboard</a>
         <a href="team-structure-v2.html">Team Structure</a>
         <a href="reports.html">Reports</a>
         <a href="documentation.html">Documentation</a>
         <a href="settings.html">Settings</a>
-        <a href="#" id="logout-btn" style="color: #dc2626; margin-left: auto;">Logout</a>
     </nav>
 
     <div class="container">
@@ -557,17 +558,17 @@
             <p>31 evaluation criteria with detailed explanations</p>
         </div>
 
-        <div class="nav">
-            <button class="nav-item active" id="nav-dashboard" data-page="dashboard">Dashboard</button>
-            <button class="nav-item" id="nav-checklist" data-page="checklist">Checklist</button>
-        </div>
+        <nav class="page-nav">
+            <button class="page-nav-item active" onclick="switchPage('dashboard')">Dashboard</button>
+            <button class="page-nav-item" onclick="switchPage('checklist')">Checklist</button>
+        </nav>
 
         <!-- DASHBOARD PAGE -->
         <div id="dashboard-page" class="page active">
             <div class="controls">
-                <button class="btn btn-primary" id="save-btn-dashboard">Save</button>
-                <button class="btn" id="export-json-dashboard">Export JSON</button>
-                <button class="btn" id="export-csv-dashboard">Export CSV</button>
+                <button class="btn btn-primary" onclick="saveData()">Save</button>
+                <button class="btn" onclick="exportJSON()">Export JSON</button>
+                <button class="btn" onclick="exportCSV()">Export CSV</button>
             </div>
 
             <div class="stats-grid" id="stats-cards"></div>
@@ -599,17 +600,17 @@
         <!-- CHECKLIST PAGE -->
         <div id="checklist-page" class="page">
             <div class="controls">
-                <button class="btn btn-primary" id="save-btn-checklist">Save</button>
-                <button class="btn" id="export-json-checklist">Export JSON</button>
-                <button class="btn" id="export-csv-checklist">Export CSV</button>
+                <button class="btn btn-primary" onclick="saveData()">Save</button>
+                <button class="btn" onclick="exportJSON()">Export JSON</button>
+                <button class="btn" onclick="exportCSV()">Export CSV</button>
             </div>
 
             <div class="filters">
-                <button class="filter-btn active" id="filter-all" data-filter="all">All (31)</button>
-                <button class="filter-btn" id="filter-critical" data-filter="CRITICAL">Critical (4)</button>
-                <button class="filter-btn" id="filter-not-started" data-filter="Not Started">Not Started</button>
-                <button class="filter-btn" id="filter-in-progress" data-filter="In Progress">In Progress</button>
-                <button class="filter-btn" id="filter-completed" data-filter="Completed">Completed</button>
+                <button class="filter-btn active" onclick="filterItems('all')">All (31)</button>
+                <button class="filter-btn" onclick="filterItems('CRITICAL')">Critical (4)</button>
+                <button class="filter-btn" onclick="filterItems('Not Started')">Not Started</button>
+                <button class="filter-btn" onclick="filterItems('In Progress')">In Progress</button>
+                <button class="filter-btn" onclick="filterItems('Completed')">Completed</button>
             </div>
 
             <div id="checklist-content"></div>
@@ -619,37 +620,6 @@
     <div class="toast" id="toast">Saved</div>
 
     <script>
-        // Authentication check - must be first
-        async function checkAuth() {
-            const token = localStorage.getItem('lctAuthToken');
-            if (!token) {
-                window.location.href = '/login.html';
-                return;
-            }
-            
-            // Verify token with backend
-            try {
-                const response = await fetch('/api/auth/verify', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!response.ok) {
-                    localStorage.removeItem('lctAuthToken');
-                    localStorage.removeItem('lctUser');
-                    localStorage.removeItem('lctRememberMe');
-                    window.location.href = '/login.html';
-                }
-            } catch (error) {
-                console.error('Auth verification failed:', error);
-                localStorage.removeItem('lctAuthToken');
-                localStorage.removeItem('lctUser');
-                localStorage.removeItem('lctRememberMe');
-                window.location.href = '/login.html';
-            }
-        }
-
-        // Run auth check on page load
-        checkAuth();
-
         const checklistData = [
             {
                 section: "1. Clinical Accuracy",
@@ -930,10 +900,10 @@
 
         function switchPage(page) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.page-nav-item').forEach(n => n.classList.remove('active'));
 
             document.getElementById(`${page}-page`).classList.add('active');
-            document.getElementById(`nav-${page}`).classList.add('active');
+            event.target.classList.add('active');
 
             if (page === 'dashboard') {
                 renderDashboard();
@@ -1070,8 +1040,8 @@
                     <div class="count" style="color: #d97706;">${stats.priorityCounts.High}</div>
                     <div class="label">High</div>
                 </div>
-                <div class="priority-item" style="border-left: 3px solid #2563eb;">
-                    <div class="count" style="color: #2563eb;">${stats.priorityCounts.Medium}</div>
+                <div class="priority-item" style="border-left: 3px solid #737373;">
+                    <div class="count" style="color: #737373;">${stats.priorityCounts.Medium}</div>
                     <div class="label">Medium</div>
                 </div>
                 <div class="priority-item" style="border-left: 3px solid #737373;">
@@ -1090,8 +1060,8 @@
                         <div class="stats">
                             <span>Total: ${data.total}</span>
                             <span style="color: #16a34a;">Done: ${data.completed}</span>
-                            <span style="color: #2563eb;">Progress: ${data.inProgress}</span>
-                            <span style="color: #9333ea;">${pct}%</span>
+                            <span style="color: #737373;">Progress: ${data.inProgress}</span>
+                            <span style="color: #d97757;">${pct}%</span>
                         </div>
                     </div>
                 `;
@@ -1102,20 +1072,7 @@
         function filterItems(filter) {
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-
-            // Find and activate the correct filter button
-            const filterMap = {
-                'all': 'filter-all',
-                'CRITICAL': 'filter-critical',
-                'Not Started': 'filter-not-started',
-                'In Progress': 'filter-in-progress',
-                'Completed': 'filter-completed'
-            };
-            const buttonId = filterMap[filter];
-            if (buttonId) {
-                document.getElementById(buttonId).classList.add('active');
-            }
-
+            event.target.classList.add('active');
             renderChecklist();
         }
 
@@ -1169,7 +1126,7 @@
                                 </div>
                             </div>
                             
-                            <div class="explain-toggle" id="toggle-${item.id}" data-item-id="${item.id}">▶ Show details</div>
+                            <div class="explain-toggle" id="toggle-${item.id}" onclick="toggleExplanation(${item.id})">▶ Show details</div>
                             
                             <div class="explanation" id="explain-${item.id}">
                                 <div>${item.explanation}</div>
@@ -1179,7 +1136,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <select id="status-${item.id}" data-item-id="${item.id}">
+                                    <select id="status-${item.id}" onchange="toggleFields(${item.id}, this.value)">
                                         <option value="Not Started" ${status === 'Not Started' ? 'selected' : ''}>Not Started</option>
                                         <option value="Planned" ${status === 'Planned' ? 'selected' : ''}>Planned</option>
                                         <option value="In Progress" ${status === 'In Progress' ? 'selected' : ''}>In Progress</option>
@@ -1274,121 +1231,6 @@
         document.addEventListener('change', function(e) {
             if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
                 saveData();
-            }
-        });
-
-        // Logout function
-        async function logout() {
-            const token = localStorage.getItem('lctAuthToken');
-            
-            // Call logout API (optional)
-            if (token) {
-                try {
-                    await fetch('/api/auth/logout', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                } catch (error) {
-                    console.error('Logout API call failed:', error);
-                }
-            }
-            
-            // Clear local storage
-            localStorage.removeItem('lctAuthToken');
-            localStorage.removeItem('lctUser');
-            localStorage.removeItem('lctRememberMe');
-            
-            // Redirect to login
-            window.location.href = '/login.html';
-        }
-
-        // Event Listeners Setup
-        document.addEventListener('DOMContentLoaded', () => {
-            // Logout button
-            const logoutBtn = document.getElementById('logout-btn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    logout();
-                });
-            }
-
-            // Navigation buttons
-            const navDashboard = document.getElementById('nav-dashboard');
-            const navChecklist = document.getElementById('nav-checklist');
-
-            if (navDashboard) {
-                navDashboard.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    switchPage('dashboard');
-                });
-            }
-
-            if (navChecklist) {
-                navChecklist.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    switchPage('checklist');
-                });
-            }
-
-            // Dashboard save/export buttons
-            const saveDashboard = document.getElementById('save-btn-dashboard');
-            const exportJSONDashboard = document.getElementById('export-json-dashboard');
-            const exportCSVDashboard = document.getElementById('export-csv-dashboard');
-
-            if (saveDashboard) saveDashboard.addEventListener('click', saveData);
-            if (exportJSONDashboard) exportJSONDashboard.addEventListener('click', exportJSON);
-            if (exportCSVDashboard) exportCSVDashboard.addEventListener('click', exportCSV);
-
-            // Checklist save/export buttons
-            const saveChecklist = document.getElementById('save-btn-checklist');
-            const exportJSONChecklist = document.getElementById('export-json-checklist');
-            const exportCSVChecklist = document.getElementById('export-csv-checklist');
-
-            if (saveChecklist) saveChecklist.addEventListener('click', saveData);
-            if (exportJSONChecklist) exportJSONChecklist.addEventListener('click', exportJSON);
-            if (exportCSVChecklist) exportCSVChecklist.addEventListener('click', exportCSV);
-
-            // Filter buttons
-            const filterButtons = [
-                { id: 'filter-all', filter: 'all' },
-                { id: 'filter-critical', filter: 'CRITICAL' },
-                { id: 'filter-not-started', filter: 'Not Started' },
-                { id: 'filter-in-progress', filter: 'In Progress' },
-                { id: 'filter-completed', filter: 'Completed' }
-            ];
-
-            filterButtons.forEach(({ id, filter }) => {
-                const btn = document.getElementById(id);
-                if (btn) {
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        filterItems(filter);
-                    });
-                }
-            });
-        });
-
-        // Event delegation for dynamically generated elements
-        document.addEventListener('click', (e) => {
-            // Handle explain toggle clicks
-            if (e.target.classList.contains('explain-toggle')) {
-                const itemId = e.target.getAttribute('data-item-id');
-                if (itemId) {
-                    toggleExplanation(parseInt(itemId));
-                }
-            }
-        });
-
-        // Event delegation for status changes
-        document.addEventListener('change', (e) => {
-            if (e.target.id && e.target.id.startsWith('status-')) {
-                const itemId = e.target.getAttribute('data-item-id');
-                if (itemId) {
-                    toggleFields(parseInt(itemId), e.target.value);
-                }
             }
         });
 
