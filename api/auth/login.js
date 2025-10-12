@@ -1,14 +1,14 @@
 /**
  * LCT Authentication - Login API Endpoint
- * 
+ *
  * POST /api/auth/login
  * Body: { email: string, password: string }
  * Returns: { success: boolean, token?: string, error?: string }
  */
 
-const { sql } = require('@vercel/postgres');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import { sql } from '@vercel/postgres';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
   // Only allow POST requests

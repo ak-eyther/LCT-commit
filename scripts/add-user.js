@@ -17,12 +17,23 @@ async function addUser(email, password) {
   let client;
   try {
     console.log(`🔧 Adding user: ${email}`);
-    
+
+    // Validate POSTGRES_URL is configured
+    if (!process.env.POSTGRES_URL) {
+      console.error('❌ POSTGRES_URL environment variable is not configured');
+      console.error('💡 Check:');
+      console.error('   1. .env file exists in project root');
+      console.error('   2. File contains: POSTGRES_URL=your-connection-string');
+      console.error('   3. You ran: npm install dotenv');
+      process.exit(1);
+    }
+
     // Create database client with direct connection
     client = new Client({
       connectionString: process.env.POSTGRES_URL
     });
-    
+
+    console.log('Connecting to database...');
     await client.connect();
     console.log('✅ Connected to database');
     
@@ -79,7 +90,7 @@ async function addUser(email, password) {
     console.error('❌ Failed to add user:', error.message);
     console.error('💡 Make sure:');
     console.error('   - Database is set up (run: node scripts/setup-database.js)');
-    console.error('   - LCT_Commit_PRISMA_DATABASE_URL environment variable is configured');
+    console.error('   - POSTGRES_URL environment variable is configured in .env');
     console.error('   - You have run: npm install');
     process.exit(1);
   } finally {

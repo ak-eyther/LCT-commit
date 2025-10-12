@@ -135,7 +135,7 @@
         <a href="reports.html">Reports</a>
         <a href="documentation.html" class="active" aria-current="page">Documentation</a>
         <a href="settings.html">Settings</a>
-        <a href="#" onclick="logout()" style="color: #dc2626; margin-left: auto;">Logout</a>
+        <a href="#" id="logout-link" style="color: #dc2626; margin-left: auto;">Logout</a>
     </nav>
 
     <div class="container">
@@ -203,5 +203,17 @@
         </div>
     </div>
     <script src="auth.js"></script>
+    <script>
+        // Logout event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutLink = document.getElementById('logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+        });
+    </script>
 </body>
 </html>

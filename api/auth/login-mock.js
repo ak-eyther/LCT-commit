@@ -62,17 +62,17 @@ export default async function handler(req, res) {
       });
     }
 
-    // Verify password using environment variable (never hardcode!)
-    const mockPassword = process.env.MOCK_AUTH_PASSWORD;
-    if (!mockPassword) {
-      console.error('CRITICAL: MOCK_AUTH_PASSWORD not configured for local development');
+    // Verify password using bcrypt (same as production)
+    // The mock database stores bcrypt hashes, not plaintext
+    if (!user.passwordHash) {
+      console.error('CRITICAL: User record missing passwordHash field');
       return res.status(500).json({
         success: false,
-        error: 'Mock authentication not configured. Set MOCK_AUTH_PASSWORD in .env'
+        error: 'Mock database corrupted. Run: node scripts/setup-database-mock.js'
       });
     }
 
-    const isValidPassword = password === mockPassword;
+    const isValidPassword = await bcrypt.compare(password, user.passwordHash);
 
     if (!isValidPassword) {
       return res.status(401).json({
