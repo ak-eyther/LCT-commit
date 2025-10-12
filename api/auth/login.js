@@ -63,6 +63,15 @@ export default async function handler(req, res) {
       });
     }
 
+    // Validate JWT_SECRET is configured
+    if (!process.env.JWT_SECRET) {
+      console.error('CRITICAL: JWT_SECRET is not configured');
+      return res.status(500).json({
+        success: false,
+        error: 'Server configuration error. Please contact support.'
+      });
+    }
+
     // Generate JWT token with appropriate expiration
     // Remember Me: 7 days, otherwise: 1 hour
     const expiresIn = rememberMe ? '7d' : '1h';

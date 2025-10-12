@@ -25,7 +25,31 @@ async function checkAuth() {
             window.location.href = '/login.html';
         }
     } catch (error) {
-        console.error('Auth verification failed:', error);
+        console.error('Auth verification failed:', {
+            message: error.message,
+            type: error.name,
+            timestamp: new Date().toISOString()
+        });
+
+        // Check if it's a network error (TypeError for fetch failures)
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            // Network error - retry once after brief delay
+            console.log('Network error detected, retrying authentication...');
+            try {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                const retryResponse = await fetch('/api/auth/verify', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (retryResponse.ok) {
+                    console.log('Authentication retry successful');
+                    return; // Success, don't log out
+                }
+            } catch (retryError) {
+                console.error('Retry failed:', retryError);
+            }
+        }
+
+        // Clear auth data and redirect
         localStorage.removeItem('lctAuthToken');
         localStorage.removeItem('lctUser');
         localStorage.removeItem('lctRememberMe');
@@ -47,7 +71,11 @@ async function logout() {
                 }
             });
         } catch (error) {
-            console.error('Logout API call failed:', error);
+            console.error('Logout API call failed:', {
+                message: error.message,
+                timestamp: new Date().toISOString()
+            });
+            // Continue with client-side logout even if API fails
         }
     }
     
@@ -62,8 +90,26 @@ async function logout() {
 
 // Get current user info
 function getCurrentUser() {
-    const userStr = localStorage.getItem('lctUser');
-    return userStr ? JSON.parse(userStr) : null;
+    try {
+        const userStr = localStorage.getItem('lctUser');
+        if (!userStr) return null;
+
+        const user = JSON.parse(userStr);
+
+        // Validate structure
+        if (!user || !user.email || !user.id) {
+            console.warn('Corrupted user data in localStorage');
+            localStorage.removeItem('lctUser');
+            return null;
+        }
+
+        return user;
+    } catch (error) {
+        console.error('Failed to parse user data:', error);
+        // Clear corrupted data
+        localStorage.removeItem('lctUser');
+        return null;
+    }
 }
 
 // Check if user is logged in (without API call)

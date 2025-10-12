@@ -13,14 +13,23 @@ const jwt = require('jsonwebtoken');
 export default async function handler(req, res) {
   // Only allow POST requests
   if (req.method !== 'POST') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Method not allowed. Use POST.' 
+    return res.status(405).json({
+      success: false,
+      error: 'Method not allowed. Use POST.'
+    });
+  }
+
+  // SECURITY: Prevent mock auth in production
+  if (process.env.NODE_ENV === 'production') {
+    console.error('CRITICAL: Mock login endpoint called in production environment');
+    return res.status(500).json({
+      success: false,
+      error: 'Server configuration error. Please contact support.'
     });
   }
 
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe } = req.body;
 
     // Validate inputs
     if (!email || !password) {
@@ -53,10 +62,18 @@ export default async function handler(req, res) {
       });
     }
 
-    // Verify password (for mock, we'll use a simple comparison)
-    // In production, this would use bcrypt.compare()
-    const isValidPassword = password === 'AkFk@#1897'; // Mock password check
-    
+    // Verify password using environment variable (never hardcode!)
+    const mockPassword = process.env.MOCK_AUTH_PASSWORD;
+    if (!mockPassword) {
+      console.error('CRITICAL: MOCK_AUTH_PASSWORD not configured for local development');
+      return res.status(500).json({
+        success: false,
+        error: 'Mock authentication not configured. Set MOCK_AUTH_PASSWORD in .env'
+      });
+    }
+
+    const isValidPassword = password === mockPassword;
+
     if (!isValidPassword) {
       return res.status(401).json({
         success: false,
@@ -64,14 +81,26 @@ export default async function handler(req, res) {
       });
     }
 
-    // Generate JWT token (expires in 1 hour)
+    // Validate JWT_SECRET is configured
+    if (!process.env.JWT_SECRET) {
+      console.error('CRITICAL: JWT_SECRET is not configured');
+      return res.status(500).json({
+        success: false,
+        error: 'Server configuration error. Please contact support.'
+      });
+    }
+
+    // Generate JWT token with Remember Me support
+    // Remember Me: 7 days, otherwise: 1 hour
+    const expiresIn = rememberMe ? '7d' : '1h';
+
     const token = jwt.sign(
-      { 
-        userId: user.id, 
-        email: user.email 
+      {
+        userId: user.id,
+        email: user.email
       },
-      process.env.JWT_SECRET || 'mock-secret-for-local-dev',
-      { expiresIn: '1h' }
+      process.env.JWT_SECRET,
+      { expiresIn }
     );
 
     // Update last login
