@@ -43,6 +43,33 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
+        .top-nav {
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 16px 24px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            margin-bottom: 0;
+        }
+
+        .top-nav a {
+            color: #525252;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.15s;
+        }
+
+        .top-nav a:hover {
+            color: #0a0a0a;
+        }
+
+        .top-nav a.active {
+            color: #0a0a0a;
+            border-bottom: 2px solid #d97757;
+        }
+
         .header {
             background: #ffffff;
             color: #0a0a0a;
@@ -485,6 +512,15 @@
     </style>
 </head>
 <body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="index.html">Dashboard</a>
+        <a href="team-structure-v2.html" class="active" aria-current="page">Team Structure</a>
+        <a href="reports.html">Reports</a>
+        <a href="documentation.html">Documentation</a>
+        <a href="settings.html">Settings</a>
+    </nav>
+
     <div class="header">
         <h1>Vitraya Technologies & LCT Group Africa</h1>
         <p>Organization Structure & Team Directory • Last Updated: October 9, 2025</p>
