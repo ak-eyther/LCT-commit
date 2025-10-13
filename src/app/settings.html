@@ -282,7 +282,7 @@
                     setTimeout(() => window.location.href = 'index.html', 1500);
                 } catch (error) {
                     showToast('Error importing data');
-                    console.error(error);
+                    // Import error - not logged to prevent information exposure
                 }
             };
             reader.readAsText(file);

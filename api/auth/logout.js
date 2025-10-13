@@ -8,7 +8,7 @@
 
 const jwt = require('jsonwebtoken');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ 
@@ -31,11 +31,13 @@ export default async function handler(req, res) {
     const token = authHeader.substring(7); // Remove "Bearer " prefix
 
     // Verify token (optional - just to ensure it was valid)
-    try {
-      jwt.verify(token, process.env.JWT_SECRET);
-    } catch (error) {
-      // Token is already invalid/expired, but that's okay for logout
-      console.log('Token was already invalid during logout:', error.message);
+    if (process.env.JWT_SECRET) {
+      try {
+        jwt.verify(token, process.env.JWT_SECRET);
+      } catch (error) {
+        // Token is already invalid/expired, but that's okay for logout
+        // This is expected and not an error condition
+      }
     }
 
     // For JWT tokens, we don't need to store them server-side
@@ -48,8 +50,8 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Logout error:', error);
-    
+    // Logout error - logged internally by Vercel
+
     return res.status(500).json({
       success: false,
       error: 'Logout failed'

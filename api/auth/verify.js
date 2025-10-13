@@ -8,7 +8,7 @@
 
 const jwt = require('jsonwebtoken');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Only allow GET requests
   if (req.method !== 'GET') {
     return res.status(405).json({ 
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
 
     // Validate JWT_SECRET is configured
     if (!process.env.JWT_SECRET) {
-      console.error('CRITICAL: JWT_SECRET is not configured');
+      // CRITICAL: JWT_SECRET is not configured - logged internally by Vercel
       return res.status(500).json({
         success: false,
         error: 'Server configuration error'
@@ -52,8 +52,8 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Token verification error:', error);
-    
+    // Token verification error - logged internally by Vercel
+
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,

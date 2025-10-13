@@ -87,7 +87,9 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    if (!email.includes('@')) {
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
         error: 'Invalid email format'

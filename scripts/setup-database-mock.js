@@ -27,7 +27,7 @@ async function setupMockDatabase() {
     
     // Save mock users to a local file
     const mockDataPath = path.join(__dirname, '..', 'mock-users.json');
-    fs.writeFileSync(mockDataPath, JSON.stringify(mockUsers, null, 2));
+    await fs.promises.writeFile(mockDataPath, JSON.stringify(mockUsers, null, 2));
     
     console.log('✅ Mock database setup complete!');
     console.log('📝 This is for local development only.');
