@@ -1334,10 +1334,11 @@ Next Meeting: October 27, 2025`
             alert('Example meeting notes loaded! Click "Process with AI" to see extraction.');
         }
 
-        // Process with OpenAI Agent (Mock for Phase 1)
+        // Process with OpenAI Agent (Phase 2 - Real API)
         async function processWithAI() {
             const title = document.getElementById('meetingTitle').value;
             const date = document.getElementById('meetingDate').value;
+            const attendees = document.getElementById('attendees').value;
             const notes = document.getElementById('meetingNotes').value;
 
             if (!title || !date || !notes) {
@@ -1353,39 +1354,60 @@ Next Meeting: October 27, 2025`
             // Show processing overlay
             showProcessingOverlay();
 
-            // Simulate AI processing (Replace with real API call in Phase 2)
-            setTimeout(() => {
-                // Mock AI results
+            try {
+                // Call real OpenAI API via backend proxy
+                const response = await fetch('/api/brain-dumps/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        date: date,
+                        participants: attendees,
+                        notes: notes
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || `API error: ${response.status}`);
+                }
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Processing failed');
+                }
+
+                // Transform API response to match frontend format
                 currentAIResults = {
-                    summary: "The team discussed Q4 budget planning including reallocation of training funds, new marketing campaigns, engineering headcount increase, and software license renewals. Key decisions made on influencer partnerships and prioritizing customer success over new features.",
-                    actionItems: [
-                        { task: "Finalize budget reallocation", owner: "Sarah", dueDate: "2025-10-18", priority: "high" },
-                        { task: "Submit campaign creative brief", owner: "Mike", dueDate: "2025-10-21", priority: "high" },
-                        { task: "Begin senior engineer recruitment", owner: "Alex", dueDate: "2025-10-16", priority: "critical" },
-                        { task: "Get procurement approval for licenses", owner: "Sarah", dueDate: "2025-10-20", priority: "medium" },
-                        { task: "Review and approve Q4 OKRs", owner: "Team", dueDate: "2025-10-20", priority: "medium" }
-                    ],
-                    decisions: [
-                        { decision: "Approved $30K marketing campaign", context: "Moving forward with influencer partnership strategy for November launch" },
-                        { decision: "Approved 2 senior engineer positions", context: "Need to scale team to meet Q4 product goals" },
-                        { decision: "Prioritize customer success over new features", context: "Focus on 15% retention increase" }
-                    ],
-                    blockers: [
-                        { blocker: "Procurement approval pending for licenses", owner: "Sarah", impact: "high" },
-                        { blocker: "Legal review needed for influencer contracts", owner: "Mike", impact: "medium" }
-                    ],
-                    keyPoints: [
-                        "Q3 spending at 78% of allocation",
-                        "$50K reallocation from unused training budget",
-                        "$12K annual software license renewal",
-                        "Target: Fill 2 engineering positions by end of Q4",
-                        "Goal: 15% customer retention increase"
-                    ]
+                    summary: `Meeting processed on ${new Date().toLocaleString()}. Extracted ${data.results.action_items.length} action items, ${data.results.decisions.length} decisions, and ${data.results.blockers.length} blockers.`,
+                    actionItems: data.results.action_items.map(item => ({
+                        task: item.task,
+                        owner: item.owner || 'Unassigned',
+                        dueDate: item.due_date || 'No deadline',
+                        priority: item.priority || 'medium'
+                    })),
+                    decisions: data.results.decisions.map(decision => ({
+                        decision: decision.decision,
+                        context: decision.context
+                    })),
+                    blockers: data.results.blockers.map(blocker => ({
+                        blocker: blocker.description,
+                        owner: blocker.owner || 'Unassigned',
+                        impact: blocker.impact || 'medium'
+                    })),
+                    keyPoints: []  // Not extracted by API yet
                 };
 
                 hideProcessingOverlay();
                 displayPreview(currentAIResults);
-            }, 2000);
+
+            } catch (error) {
+                console.error('Processing error:', error);
+                hideProcessingOverlay();
+                alert(`Failed to process meeting notes: ${error.message}\n\nPlease try again or contact support if the issue persists.`);
+            }
         }
 
         // Show/hide processing overlay
