@@ -9,6 +9,27 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const rateLimit = require('express-rate-limit');
+
+// Create rate limiter for login endpoint (same as production)
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // limit each IP to 5 requests per windowMs
+    message: 'Too many login attempts, please try again later',
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+// Production-safe logging utility
+const logger = {
+  error: (msg, data) => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(msg, data);
+    }
+    // In production, this would integrate with your logging service
+    // e.g., Sentry, LogRocket, CloudWatch, etc.
+  }
+};
 
 module.exports = async function handler(req, res) {
   // Only allow POST requests
@@ -19,9 +40,25 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  // Apply rate limiting (for Vercel serverless)
+  await new Promise((resolve, reject) => {
+    loginLimiter(req, res, (err) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  }).catch(() => {
+    // Rate limit exceeded - response already sent by limiter
+    return;
+  });
+
+  // Check if response was already sent by rate limiter
+  if (res.headersSent) {
+    return;
+  }
+
   // SECURITY: Prevent mock auth in production
   if (process.env.NODE_ENV === 'production') {
-    console.error('CRITICAL: Mock login endpoint called in production environment');
+    logger.error('CRITICAL: Mock login endpoint called in production environment');
     return res.status(500).json({
       success: false,
       error: 'Server configuration error. Please contact support.'
@@ -42,9 +79,9 @@ module.exports = async function handler(req, res) {
     // Load mock users
     const mockDataPath = path.join(process.cwd(), 'mock-users.json');
     let mockUsers = {};
-    
+
     try {
-      const mockData = fs.readFileSync(mockDataPath, 'utf8');
+      const mockData = await fs.promises.readFile(mockDataPath, 'utf8');
       mockUsers = JSON.parse(mockData);
     } catch (error) {
       return res.status(500).json({
@@ -65,7 +102,7 @@ module.exports = async function handler(req, res) {
     // Verify password using bcrypt (same as production)
     // The mock database stores bcrypt hashes, not plaintext
     if (!user.passwordHash) {
-      console.error('CRITICAL: User record missing passwordHash field');
+      logger.error('CRITICAL: User record missing passwordHash field');
       return res.status(500).json({
         success: false,
         error: 'Mock database corrupted. Run: node scripts/setup-database-mock.js'
@@ -83,7 +120,7 @@ module.exports = async function handler(req, res) {
 
     // Validate JWT_SECRET is configured
     if (!process.env.JWT_SECRET) {
-      console.error('CRITICAL: JWT_SECRET is not configured');
+      logger.error('CRITICAL: JWT_SECRET is not configured');
       return res.status(500).json({
         success: false,
         error: 'Server configuration error. Please contact support.'
@@ -105,7 +142,7 @@ module.exports = async function handler(req, res) {
 
     // Update last login
     user.lastLogin = new Date().toISOString();
-    fs.writeFileSync(mockDataPath, JSON.stringify(mockUsers, null, 2));
+    await fs.promises.writeFile(mockDataPath, JSON.stringify(mockUsers, null, 2));
 
     // Return success with token
     return res.status(200).json({
@@ -118,8 +155,8 @@ module.exports = async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Mock login error:', error);
-    
+    logger.error('Mock login error:', error);
+
     return res.status(500).json({
       success: false,
       error: 'Internal server error. Please try again.'
