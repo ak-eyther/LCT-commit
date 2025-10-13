@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LCT Commit - Brain Dumps</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 24px 16px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .logo p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .nav {
+            margin-top: 32px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #334155;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: #f1f5f9;
+        }
+
+        .nav-item.active {
+            background: #fee2e2;
+            color: #d97757;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid;
+            transition: all 0.15s;
+        }
+
+        .btn-primary {
+            background: #d97757;
+            color: white;
+            border-color: #d97757;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .content {
+            padding: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Page Tabs */
+        .page-tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 32px;
+        }
+
+        .page-tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #64748b;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-tab:hover {
+            color: #334155;
+        }
+
+        .page-tab.active {
+            color: #d97757;
+            border-bottom-color: #d97757;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 300px;
+            font-family: 'SF Mono', Consolas, monospace;
+            line-height: 1.6;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #d97757;
+            box-shadow: 0 0 0 3px rgba(217, 119, 87, 0.1);
+        }
+
+        .char-count {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .auto-save-status {
+            font-size: 12px;
+            color: #10b981;
+            margin-left: 8px;
+        }
+
+        /* Preview/Results Section */
+        .preview-section {
+            background: white;
+            border: 2px solid #d97757;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .preview-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .preview-badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .result-section {
+            background: #f8fafc;
+            border-radius: 6px;
+            padding: 16px;
+        }
+
+        .result-section h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-item {
+            background: white;
+            border-left: 3px solid #d97757;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        .result-item-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .result-item-meta {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .ai-summary {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .ai-summary h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 8px;
+        }
+
+        .ai-summary p {
+            font-size: 13px;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        /* Past Meetings Table */
+        .past-meetings {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .past-meetings-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .past-meetings-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .meeting-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .meeting-table thead {
+            background: #f8fafc;
+        }
+
+        .meeting-table th {
+            padding: 12px 24px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meeting-table tbody tr {
+            border-top: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .meeting-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .meeting-table td {
+            padding: 16px 24px;
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .meeting-type-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-general { background: #f3f4f6; color: #374151; }
+        .badge-standup { background: #dbeafe; color: #1e40af; }
+        .badge-sprint { background: #fef3c7; color: #92400e; }
+        .badge-retro { background: #d1fae5; color: #065f46; }
+        .badge-1on1 { background: #fce7f3; color: #9f1239; }
+        .badge-brainstorm { background: #e0e7ff; color: #3730a3; }
+
+        .importance-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .importance-critical {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .importance-high {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .importance-normal {
+            background: #e0e7ff;
+            color: #3730a3;
+            border: 1px solid #c7d2fe;
+        }
+
+        .importance-low {
+            background: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+        }
+
+        /* Collapsible Meeting Details */
+        .meeting-details {
+            display: none;
+            padding: 0;
+            background: #f8fafc;
+            border-top: 2px solid #d97757;
+        }
+
+        .meeting-details.expanded {
+            display: block;
+        }
+
+        .meeting-details-header {
+            background: white;
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .meeting-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 16px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .meeting-details-tabs {
+            display: flex;
+            gap: 4px;
+            background: white;
+            padding: 0 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .detail-tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .detail-tab:hover {
+            color: #334155;
+            background: #f8fafc;
+        }
+
+        .detail-tab.active {
+            color: #d97757;
+            border-bottom-color: #d97757;
+        }
+
+        .meeting-details-content {
+            background: white;
+            padding: 24px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .meeting-notes-text {
+            font-size: 13px;
+            color: #334155;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            font-family: 'SF Mono', Consolas, monospace;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .action-items-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .action-item {
+            background: white;
+            border-left: 4px solid #d97757;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            border-left-width: 4px;
+            transition: all 0.2s;
+        }
+
+        .action-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .action-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 8px;
+        }
+
+        .action-item-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+            flex: 1;
+        }
+
+        .action-item-status {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-in-progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-todo {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .action-item-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .meta-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .decision-item, .blocker-item {
+            background: white;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 12px;
+        }
+
+        .decision-item {
+            border-left: 4px solid #10b981;
+        }
+
+        .blocker-item {
+            border-left: 4px solid #ef4444;
+        }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .item-context {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .expand-icon {
+            display: inline-block;
+            margin-left: 8px;
+            transition: transform 0.2s;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(90deg);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .processing-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .processing-modal {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .processing-modal h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .processing-modal p {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #f3f4f6;
+            border-top-color: #d97757;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Template List */
+        .template-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .template-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .template-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .template-item h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .template-item p {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .template-preview {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: 'SF Mono', Consolas, monospace;
+            font-size: 12px;
+            color: #334155;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .meeting-meta-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <h1>LCT Commit</h1>
+            <p>Meeting Notes System</p>
+        </div>
+
+        <nav class="nav">
+            <a href="#" class="nav-item active">
+                🧠 Brain Dumps
+            </a>
+            <!-- Additional pages will be added later -->
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+        <div class="header">
+            <div>
+                <h2>🧠 Brain Dumps</h2>
+                <p>Convert meeting notes into actionable tasks with AI</p>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Page Tabs -->
+            <div class="page-tabs">
+                <button class="page-tab active" onclick="switchTab('new-meeting')">
+                    ✨ New Meeting
+                </button>
+                <button class="page-tab" onclick="switchTab('past-meetings')">
+                    📋 Past Meetings
+                </button>
+                <button class="page-tab" onclick="switchTab('templates')">
+                    ⚙️ Manage Templates
+                </button>
+            </div>
+
+            <!-- Tab 1: New Meeting -->
+            <div id="tab-new-meeting" class="tab-content active">
+                <div class="form-section">
+                    <h3 style="font-size: 18px; margin-bottom: 20px; color: #0f172a;">
+                        Create New Meeting Note
+                        <span id="autoSaveStatus" class="auto-save-status"></span>
+                    </h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Meeting Title *</label>
+                            <input type="text" id="meetingTitle" placeholder="e.g., Sprint Planning - Oct 2025" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Meeting Date *</label>
+                            <input type="date" id="meetingDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Meeting Template *</label>
+                            <select id="templateSelect" onchange="loadTemplate()">
+                                <option value="">-- Select Template --</option>
+                                <option value="general">💬 General Meeting</option>
+                                <option value="standup">🏃 Daily Standup</option>
+                                <option value="sprint">🎯 Sprint Planning</option>
+                                <option value="retro">🔄 Retrospective</option>
+                                <option value="1on1">👥 1-on-1</option>
+                                <option value="brainstorm">💡 Brainstorming</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Attendees</label>
+                            <input type="text" id="attendees" placeholder="e.g., John, Sarah, Mike">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Meeting Notes *</label>
+                        <textarea id="meetingNotes" placeholder="Paste your meeting notes here or click 'Load Template' to start..."></textarea>
+                        <div class="char-count">
+                            <span id="charCount">0</span> / 100,000 characters
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="processWithAI()">
+                            ✨ Process with AI
+                        </button>
+                        <button class="btn btn-secondary" onclick="saveDraft()">
+                            💾 Save as Draft
+                        </button>
+                        <button class="btn btn-secondary" onclick="loadMockData()">
+                            🧪 Load Example
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearForm()">
+                            🗑️ Clear
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportCSV()">
+                            📊 Export CSV
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportJSON()">
+                            📄 Export JSON
+                        </button>
+                    </div>
+                </div>
+
+                <!-- AI Results Preview (Hidden by default) -->
+                <div id="previewSection" class="preview-section hidden">
+                    <div class="preview-header">
+                        <h3>
+                            <span>🎯 AI Processing Results</span>
+                        </h3>
+                        <span class="preview-badge">✓ Processing Complete</span>
+                    </div>
+
+                    <div class="ai-summary">
+                        <h4>📝 Meeting Summary</h4>
+                        <p id="aiSummary">AI-generated summary will appear here...</p>
+                    </div>
+
+                    <div class="results-grid">
+                        <!-- Action Items -->
+                        <div class="result-section">
+                            <h4>✅ Action Items (<span id="actionItemsCount">0</span>)</h4>
+                            <div id="actionItemsList"></div>
+                        </div>
+
+                        <!-- Decisions -->
+                        <div class="result-section">
+                            <h4>🎯 Decisions (<span id="decisionsCount">0</span>)</h4>
+                            <div id="decisionsList"></div>
+                        </div>
+
+                        <!-- Blockers -->
+                        <div class="result-section">
+                            <h4>🚧 Blockers (<span id="blockersCount">0</span>)</h4>
+                            <div id="blockersList"></div>
+                        </div>
+
+                        <!-- Key Points -->
+                        <div class="result-section">
+                            <h4>💡 Key Points (<span id="keyPointsCount">0</span>)</h4>
+                            <div id="keyPointsList"></div>
+                        </div>
+                    </div>
+
+                    <div class="preview-actions" style="display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid #e2e8f0; flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-secondary" onclick="reRunAI()">
+                                🔄 Re-run AI Processing
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-secondary" onclick="discardResults()">
+                                ❌ Discard
+                            </button>
+                            <button class="btn btn-primary" onclick="saveToMeetings()">
+                                💾 Save to Past Meetings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Past Meetings -->
+            <div id="tab-past-meetings" class="tab-content">
+                <div class="past-meetings">
+                    <div class="past-meetings-header">
+                        <h3>Meeting History</h3>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-secondary btn-small" onclick="clearHistory()">
+                                🗑️ Clear All
+                            </button>
+                            <button class="btn btn-secondary btn-small" onclick="refreshMeetings()">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <table class="meeting-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30px;"></th>
+                                <th style="width: 120px;">Date</th>
+                                <th>Title</th>
+                                <th style="width: 100px;">Type</th>
+                                <th style="width: 80px;">Tasks</th>
+                                <th style="width: 120px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="meetingsTableBody">
+                            <!-- Meetings will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3: Manage Templates -->
+            <div id="tab-templates" class="tab-content">
+                <div class="form-section">
+                    <h3 style="font-size: 18px; margin-bottom: 20px; color: #0f172a;">Customize Meeting Templates</h3>
+
+                    <div class="template-list" id="templateList">
+                        <!-- Templates will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // BRAIN DUMPS APPLICATION
+        // ============================================
+
+        // Template definitions
+        const templates = {
+            general: `Meeting Notes - [Date]
+
+Attendees:
+- [Name 1]
+- [Name 2]
+
+Agenda:
+1. [Topic 1]
+2. [Topic 2]
+
+Discussion:
+- [Point 1]
+- [Point 2]
+
+Decisions:
+- [Decision 1]
+- [Decision 2]
+
+Action Items:
+- [ ] [Task 1] - @[Owner] - Due: [Date]
+- [ ] [Task 2] - @[Owner] - Due: [Date]
+
+Blockers:
+- [Blocker if any]
+
+Next Meeting: [Date/Time]`,
+
+            standup: `Daily Standup - [Date]
+
+Team Member: [Name]
+
+✅ YESTERDAY
+- [What was completed]
+- [What was completed]
+
+📋 TODAY
+- [What will be worked on]
+- [What will be worked on]
+
+🚧 BLOCKERS
+- [Any blockers or help needed]
+
+Notes:
+- [Additional context]`,
+
+            sprint: `Sprint Planning - Sprint [Number]
+
+Sprint Duration: [Start Date] - [End Date]
+
+Sprint Goal:
+[What we aim to achieve this sprint]
+
+Team Capacity:
+- Total story points: [Number]
+- Available days: [Number]
+- Team members: [Count]
+
+Stories Selected:
+1. [Story 1] - [Points]SP - @[Owner]
+2. [Story 2] - [Points]SP - @[Owner]
+3. [Story 3] - [Points]SP - @[Owner]
+
+Definition of Done:
+- [ ] Code complete
+- [ ] Tests written
+- [ ] Code reviewed
+- [ ] Deployed to staging
+- [ ] Documentation updated
+
+Risks:
+- [Risk 1]
+- [Risk 2]
+
+Action Items:
+- [ ] [Setup task] - @[Owner]
+- [ ] [Preparation task] - @[Owner]`,
+
+            retro: `Sprint Retrospective - Sprint [Number]
+
+Sprint Period: [Start] - [End]
+
+😊 WHAT WENT WELL
+- [Positive point 1]
+- [Positive point 2]
+- [Positive point 3]
+
+😕 WHAT DIDN'T GO WELL
+- [Challenge 1]
+- [Challenge 2]
+- [Challenge 3]
+
+💡 WHAT CAN WE IMPROVE
+- [Improvement 1]
+- [Improvement 2]
+- [Improvement 3]
+
+🎯 ACTION ITEMS
+- [ ] [Action 1] - @[Owner] - Due: [Date]
+- [ ] [Action 2] - @[Owner] - Due: [Date]
+- [ ] [Action 3] - @[Owner] - Due: [Date]
+
+📊 METRICS
+- Velocity: [Number]
+- Stories completed: [Number]
+- Bugs found: [Number]
+
+Shoutouts:
+- [Team member] for [achievement]`,
+
+            '1on1': `1-on-1 Meeting - [Date]
+
+Participants: [Manager] & [Employee]
+
+CHECK-IN
+How are you feeling? (1-10): [Rating]
+- [Discussion about wellbeing]
+
+RECENT WORK
+Highlights:
+- [Achievement 1]
+- [Achievement 2]
+
+Challenges:
+- [Challenge 1]
+- [Challenge 2]
+
+GOALS & DEVELOPMENT
+Current Goals:
+- [Goal 1] - Status: [On track/At risk]
+- [Goal 2] - Status: [On track/At risk]
+
+Development Areas:
+- [Skill/Area to develop]
+
+FEEDBACK
+From Manager:
+- [Feedback point 1]
+- [Feedback point 2]
+
+From Employee:
+- [Feedback point 1]
+- [Feedback point 2]
+
+ACTION ITEMS
+- [ ] [Action 1] - @[Owner]
+- [ ] [Action 2] - @[Owner]
+
+Next Meeting: [Date]`,
+
+            brainstorm: `Brainstorming Session - [Date]
+
+Topic: [What we're brainstorming about]
+
+Challenge/Problem:
+[Define the problem we're trying to solve]
+
+Participants:
+- [Name 1]
+- [Name 2]
+
+IDEAS 💡
+1. [Idea 1]
+   Pros: [Benefits]
+   Cons: [Drawbacks]
+
+2. [Idea 2]
+   Pros: [Benefits]
+   Cons: [Drawbacks]
+
+3. [Idea 3]
+   Pros: [Benefits]
+   Cons: [Drawbacks]
+
+VOTING RESULTS
+- [Idea X]: [Votes] votes
+- [Idea Y]: [Votes] votes
+
+SELECTED APPROACH
+[Which idea(s) we'll pursue and why]
+
+NEXT STEPS
+- [ ] [Action 1] - @[Owner] - Due: [Date]
+- [ ] [Action 2] - @[Owner] - Due: [Date]
+
+PARKING LOT
+- [Ideas to revisit later]`
+        };
+
+        // Past meetings storage
+        let pastMeetings = [];
+        let currentAIResults = null;
+        let autoSaveTimer = null;
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('meetingDate').value = today;
+
+            // Load past meetings from localStorage
+            const savedMeetings = localStorage.getItem('brainDumps_meetings');
+            if (savedMeetings) {
+                pastMeetings = JSON.parse(savedMeetings);
+            }
+
+            renderPastMeetings();
+            renderTemplateList();
+            setupCharCounter();
+            setupAutoSave();
+        });
+
+        // Character counter
+        function setupCharCounter() {
+            const textarea = document.getElementById('meetingNotes');
+            textarea.addEventListener('input', (e) => {
+                document.getElementById('charCount').textContent = e.target.value.length.toLocaleString();
+            });
+        }
+
+        // Auto-save every 30 seconds
+        function setupAutoSave() {
+            setInterval(() => {
+                const notes = document.getElementById('meetingNotes').value;
+                if (notes.length > 10) {
+                    localStorage.setItem('brainDumps_draft', JSON.stringify({
+                        title: document.getElementById('meetingTitle').value,
+                        date: document.getElementById('meetingDate').value,
+                        template: document.getElementById('templateSelect').value,
+                        attendees: document.getElementById('attendees').value,
+                        notes: notes,
+                        savedAt: new Date().toISOString()
+                    }));
+                    showAutoSaveStatus('Auto-saved ✓');
+                }
+            }, 30000);
+        }
+
+        function showAutoSaveStatus(message) {
+            const status = document.getElementById('autoSaveStatus');
+            status.textContent = message;
+            setTimeout(() => {
+                status.textContent = '';
+            }, 3000);
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.page-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'past-meetings') {
+                renderPastMeetings();
+            }
+        }
+
+        // Load template into textarea
+        function loadTemplate() {
+            const selectedTemplate = document.getElementById('templateSelect').value;
+            const textarea = document.getElementById('meetingNotes');
+
+            if (selectedTemplate && templates[selectedTemplate]) {
+                textarea.value = templates[selectedTemplate];
+                textarea.focus();
+                document.getElementById('charCount').textContent = textarea.value.length.toLocaleString();
+            }
+        }
+
+        // Load mock data
+        function loadMockData() {
+            const mockData = {
+                title: 'Q4 Budget Planning Meeting',
+                date: new Date().toISOString().split('T')[0],
+                template: 'general',
+                attendees: 'Sarah Johnson, Mike Chen, Alex Rodriguez',
+                notes: `Q4 Budget Planning Meeting - ${new Date().toLocaleDateString()}
+
+Attendees: Sarah Johnson (CFO), Mike Chen (Marketing), Alex Rodriguez (Engineering)
+
+Discussion Points:
+1. Budget Review
+   - Current spending at 78% of Q3 allocation
+   - Need to reallocate $50K from unused training budget
+   - Sarah will finalize reallocation by Friday Oct 18
+
+2. Marketing Campaign
+   - Approved new social media campaign for November
+   - Budget: $30K approved
+   - Mike to submit creative brief by next Monday
+   - Decision: Moving forward with influencer partnership strategy
+
+3. Engineering Resources
+   - Discussed hiring 2 senior engineers
+   - Approved headcount increase
+   - Alex to start recruitment process immediately
+   - Target: Fill positions by end of Q4
+
+4. Software Licenses
+   - Need to renew Jira and Confluence licenses
+   - Blocker: Waiting on procurement approval from finance
+   - $12K annual cost
+   - Sarah to follow up with procurement team
+
+5. Q4 Goals
+   - Launch new product feature by Nov 30
+   - Increase customer retention by 15%
+   - Decision: Prioritize customer success over new features
+
+Action Items:
+- Sarah: Finalize budget reallocation by Friday
+- Mike: Submit campaign creative brief by Oct 21
+- Alex: Begin senior engineer recruitment this week
+- Sarah: Get procurement approval for license renewal
+- Team: Review and approve Q4 OKRs by Oct 20
+
+Blockers:
+- Procurement approval pending for software licenses
+- Legal review needed for influencer contracts (blocking campaign launch)
+
+Next Meeting: October 27, 2025`
+            };
+
+            document.getElementById('meetingTitle').value = mockData.title;
+            document.getElementById('meetingDate').value = mockData.date;
+            document.getElementById('templateSelect').value = mockData.template;
+            document.getElementById('attendees').value = mockData.attendees;
+            document.getElementById('meetingNotes').value = mockData.notes;
+            document.getElementById('charCount').textContent = mockData.notes.length.toLocaleString();
+
+            alert('Example meeting notes loaded! Click "Process with AI" to see extraction.');
+        }
+
+        // Process with OpenAI Agent (Mock for Phase 1)
+        async function processWithAI() {
+            const title = document.getElementById('meetingTitle').value;
+            const date = document.getElementById('meetingDate').value;
+            const notes = document.getElementById('meetingNotes').value;
+
+            if (!title || !date || !notes) {
+                alert('Please fill in all required fields (Title, Date, Notes)');
+                return;
+            }
+
+            if (notes.length < 50) {
+                alert('Please enter at least 50 characters of notes for meaningful extraction.');
+                return;
+            }
+
+            // Show processing overlay
+            showProcessingOverlay();
+
+            // Simulate AI processing (Replace with real API call in Phase 2)
+            setTimeout(() => {
+                // Mock AI results
+                currentAIResults = {
+                    summary: "The team discussed Q4 budget planning including reallocation of training funds, new marketing campaigns, engineering headcount increase, and software license renewals. Key decisions made on influencer partnerships and prioritizing customer success over new features.",
+                    actionItems: [
+                        { task: "Finalize budget reallocation", owner: "Sarah", dueDate: "2025-10-18", priority: "high" },
+                        { task: "Submit campaign creative brief", owner: "Mike", dueDate: "2025-10-21", priority: "high" },
+                        { task: "Begin senior engineer recruitment", owner: "Alex", dueDate: "2025-10-16", priority: "critical" },
+                        { task: "Get procurement approval for licenses", owner: "Sarah", dueDate: "2025-10-20", priority: "medium" },
+                        { task: "Review and approve Q4 OKRs", owner: "Team", dueDate: "2025-10-20", priority: "medium" }
+                    ],
+                    decisions: [
+                        { decision: "Approved $30K marketing campaign", context: "Moving forward with influencer partnership strategy for November launch" },
+                        { decision: "Approved 2 senior engineer positions", context: "Need to scale team to meet Q4 product goals" },
+                        { decision: "Prioritize customer success over new features", context: "Focus on 15% retention increase" }
+                    ],
+                    blockers: [
+                        { blocker: "Procurement approval pending for licenses", owner: "Sarah", impact: "high" },
+                        { blocker: "Legal review needed for influencer contracts", owner: "Mike", impact: "medium" }
+                    ],
+                    keyPoints: [
+                        "Q3 spending at 78% of allocation",
+                        "$50K reallocation from unused training budget",
+                        "$12K annual software license renewal",
+                        "Target: Fill 2 engineering positions by end of Q4",
+                        "Goal: 15% customer retention increase"
+                    ]
+                };
+
+                hideProcessingOverlay();
+                displayPreview(currentAIResults);
+            }, 2000);
+        }
+
+        // Show/hide processing overlay
+        function showProcessingOverlay() {
+            const overlay = document.createElement('div');
+            overlay.id = 'processingOverlay';
+            overlay.className = 'processing-overlay';
+            overlay.innerHTML = `
+                <div class="processing-modal">
+                    <div class="spinner"></div>
+                    <h3 style="margin-top: 24px;">Processing with AI...</h3>
+                    <p>Extracting action items, decisions, and key insights</p>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        function hideProcessingOverlay() {
+            const overlay = document.getElementById('processingOverlay');
+            if (overlay) overlay.remove();
+        }
+
+        // Display preview of AI results
+        function displayPreview(results) {
+            const previewSection = document.getElementById('previewSection');
+
+            // Update summary
+            document.getElementById('aiSummary').textContent = results.summary;
+
+            // Update action items
+            document.getElementById('actionItemsCount').textContent = results.actionItems.length;
+            const actionItemsList = document.getElementById('actionItemsList');
+            actionItemsList.innerHTML = results.actionItems.map(item => `
+                <div class="result-item">
+                    <div class="result-item-title">${escapeHtml(item.task)}</div>
+                    <div class="result-item-meta">
+                        👤 ${escapeHtml(item.owner)} • 📅 Due: ${item.dueDate} • ⚡ Priority: ${item.priority}
+                    </div>
+                </div>
+            `).join('');
+
+            // Update decisions
+            document.getElementById('decisionsCount').textContent = results.decisions.length;
+            const decisionsList = document.getElementById('decisionsList');
+            decisionsList.innerHTML = results.decisions.map(item => `
+                <div class="result-item">
+                    <div class="result-item-title">${escapeHtml(item.decision)}</div>
+                    <div class="result-item-meta">${escapeHtml(item.context)}</div>
+                </div>
+            `).join('');
+
+            // Update blockers
+            document.getElementById('blockersCount').textContent = results.blockers.length;
+            const blockersList = document.getElementById('blockersList');
+            blockersList.innerHTML = results.blockers.map(item => `
+                <div class="result-item">
+                    <div class="result-item-title">${escapeHtml(item.blocker)}</div>
+                    <div class="result-item-meta">👤 ${escapeHtml(item.owner)} • Impact: ${item.impact}</div>
+                </div>
+            `).join('');
+
+            // Update key points
+            document.getElementById('keyPointsCount').textContent = results.keyPoints.length;
+            const keyPointsList = document.getElementById('keyPointsList');
+            keyPointsList.innerHTML = results.keyPoints.map(point => `
+                <div class="result-item">
+                    <div class="result-item-title">${escapeHtml(point)}</div>
+                </div>
+            `).join('');
+
+            // Show preview section
+            previewSection.classList.remove('hidden');
+            previewSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Re-run AI processing
+        function reRunAI() {
+            if (confirm('Re-run AI processing? This will replace the current results.')) {
+                processWithAI();
+            }
+        }
+
+        // Discard results
+        function discardResults() {
+            if (confirm('Discard these results? You can re-run processing anytime.')) {
+                document.getElementById('previewSection').classList.add('hidden');
+                currentAIResults = null;
+            }
+        }
+
+        // Save to past meetings
+        function saveToMeetings() {
+            const title = document.getElementById('meetingTitle').value;
+            const date = document.getElementById('meetingDate').value;
+            const template = document.getElementById('templateSelect').value;
+            const notes = document.getElementById('meetingNotes').value;
+            const attendees = document.getElementById('attendees').value;
+
+            if (!currentAIResults) {
+                alert('Please process the meeting with AI first');
+                return;
+            }
+
+            // Create new meeting entry
+            const newMeeting = {
+                id: Date.now(),
+                title: title,
+                type: template || 'general',
+                date: date,
+                attendees: attendees || 'Not specified',
+                actionItems: currentAIResults.actionItems.length,
+                notes: notes,
+                expanded: false,
+                actions: currentAIResults.actionItems,
+                decisions: currentAIResults.decisions,
+                blockers: currentAIResults.blockers,
+                summary: currentAIResults.summary
+            };
+
+            // Add to past meetings
+            pastMeetings.unshift(newMeeting);
+
+            // Save to localStorage
+            localStorage.setItem('brainDumps_meetings', JSON.stringify(pastMeetings));
+
+            // Show success message
+            alert(`✅ Meeting saved successfully!\n\n${currentAIResults.actionItems.length} action items extracted`);
+
+            // Clear form and hide preview
+            clearForm();
+            document.getElementById('previewSection').classList.add('hidden');
+            currentAIResults = null;
+
+            // Switch to past meetings tab
+            const pastMeetingsTab = document.querySelector('.page-tab:nth-child(2)');
+            pastMeetingsTab.click();
+        }
+
+        // Save draft
+        function saveDraft() {
+            const draft = {
+                title: document.getElementById('meetingTitle').value,
+                date: document.getElementById('meetingDate').value,
+                template: document.getElementById('templateSelect').value,
+                attendees: document.getElementById('attendees').value,
+                notes: document.getElementById('meetingNotes').value,
+                savedAt: new Date().toISOString()
+            };
+
+            if (!draft.notes || draft.notes.length < 10) {
+                alert('Please enter at least 10 characters before saving draft.');
+                return;
+            }
+
+            localStorage.setItem('brainDumps_draft', JSON.stringify(draft));
+            alert('💾 Draft saved successfully!');
+        }
+
+        // Clear form
+        function clearForm() {
+            if (currentAIResults && !confirm('Are you sure you want to clear the form? Unsaved results will be lost.')) {
+                return;
+            }
+
+            document.getElementById('meetingTitle').value = '';
+            document.getElementById('templateSelect').value = '';
+            document.getElementById('meetingNotes').value = '';
+            document.getElementById('attendees').value = '';
+            document.getElementById('charCount').textContent = '0';
+            document.getElementById('previewSection').classList.add('hidden');
+            currentAIResults = null;
+        }
+
+        // Export functions
+        function exportCSV() {
+            if (!currentAIResults) {
+                alert('No results to export. Please process a meeting first.');
+                return;
+            }
+
+            const title = document.getElementById('meetingTitle').value || 'meeting';
+            let csv = 'Brain Dumps Export\n\n';
+            csv += `Meeting: ${title}\n`;
+            csv += `Date: ${document.getElementById('meetingDate').value}\n\n`;
+            csv += 'SECTION,ITEM,OWNER,DUE DATE,PRIORITY,CONTEXT\n';
+
+            currentAIResults.actionItems.forEach(item => {
+                csv += `Action Item,"${item.task}","${item.owner}","${item.dueDate}","${item.priority}",""\n`;
+            });
+
+            currentAIResults.decisions.forEach(decision => {
+                csv += `Decision,"${decision.decision}","","","","${decision.context}"\n`;
+            });
+
+            currentAIResults.blockers.forEach(blocker => {
+                csv += `Blocker,"${blocker.blocker}","${blocker.owner}","","${blocker.impact}",""\n`;
+            });
+
+            downloadFile(csv, `brain-dumps-${title.replace(/[^a-z0-9]/gi, '-')}.csv`, 'text/csv');
+        }
+
+        function exportJSON() {
+            if (!currentAIResults) {
+                alert('No results to export. Please process a meeting first.');
+                return;
+            }
+
+            const title = document.getElementById('meetingTitle').value || 'meeting';
+            const exportData = {
+                meeting: {
+                    title: document.getElementById('meetingTitle').value,
+                    date: document.getElementById('meetingDate').value,
+                    attendees: document.getElementById('attendees').value,
+                    notes: document.getElementById('meetingNotes').value
+                },
+                results: currentAIResults,
+                exportedAt: new Date().toISOString()
+            };
+
+            const json = JSON.stringify(exportData, null, 2);
+            downloadFile(json, `brain-dumps-${title.replace(/[^a-z0-9]/gi, '-')}.json`, 'application/json');
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // Render past meetings table
+        function renderPastMeetings() {
+            const tbody = document.getElementById('meetingsTableBody');
+            tbody.innerHTML = '';
+
+            if (pastMeetings.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">📭</div>
+                            <div style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">No meetings yet</div>
+                            <div style="font-size: 14px;">Create your first meeting note to get started</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            pastMeetings.forEach(meeting => {
+                // Main row
+                const row = document.createElement('tr');
+                row.onclick = () => toggleMeetingDetails(meeting.id);
+
+                row.innerHTML = `
+                    <td>
+                        <span class="expand-icon ${meeting.expanded ? 'expanded' : ''}" style="color: #64748b;">▶</span>
+                    </td>
+                    <td style="font-weight: 600; color: #0f172a;">
+                        ${new Date(meeting.date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                        })}
+                    </td>
+                    <td style="font-weight: 600; color: #0f172a;">${escapeHtml(meeting.title)}</td>
+                    <td>
+                        <span class="meeting-type-badge badge-${meeting.type}">
+                            ${meeting.type}
+                        </span>
+                    </td>
+                    <td style="text-align: center;">
+                        <span style="background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                            ${meeting.actionItems}
+                        </span>
+                    </td>
+                    <td onclick="event.stopPropagation()">
+                        <button class="btn btn-secondary btn-small" onclick="deleteMeeting(${meeting.id})">
+                            🗑️ Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+
+                // Details row (if expanded)
+                if (meeting.expanded) {
+                    const detailsRow = document.createElement('tr');
+                    detailsRow.innerHTML = `
+                        <td colspan="6" style="padding: 0;">
+                            <div class="meeting-details expanded">
+                                <div class="meeting-details-header">
+                                    <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">
+                                        ${escapeHtml(meeting.title)}
+                                    </h3>
+                                    <p style="font-size: 14px; color: #64748b; margin-bottom: 16px;">
+                                        ${escapeHtml(meeting.summary || 'Meeting summary not available')}
+                                    </p>
+
+                                    <div class="meeting-meta-grid">
+                                        <div class="meta-item">
+                                            <span class="meta-label">📅 Date</span>
+                                            <span class="meta-value">${new Date(meeting.date).toLocaleDateString('en-US', {
+                                                month: 'long',
+                                                day: 'numeric',
+                                                year: 'numeric'
+                                            })}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">👥 Attendees</span>
+                                            <span class="meta-value">${escapeHtml(meeting.attendees)}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">🎯 Type</span>
+                                            <span class="meta-value" style="text-transform: capitalize;">${meeting.type}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">✅ Tasks</span>
+                                            <span class="meta-value">${meeting.actionItems} action items</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="meeting-details-tabs">
+                                    <button class="detail-tab active" onclick="event.stopPropagation(); switchDetailTab(${meeting.id}, 'tasks')">
+                                        ✅ Action Items (${meeting.actions.length})
+                                    </button>
+                                    <button class="detail-tab" onclick="event.stopPropagation(); switchDetailTab(${meeting.id}, 'decisions')">
+                                        🎯 Decisions (${meeting.decisions ? meeting.decisions.length : 0})
+                                    </button>
+                                    <button class="detail-tab" onclick="event.stopPropagation(); switchDetailTab(${meeting.id}, 'blockers')">
+                                        🚧 Blockers (${meeting.blockers ? meeting.blockers.length : 0})
+                                    </button>
+                                    <button class="detail-tab" onclick="event.stopPropagation(); switchDetailTab(${meeting.id}, 'transcript')">
+                                        📝 Full Transcript
+                                    </button>
+                                </div>
+
+                                <div class="meeting-details-content">
+                                    <div id="detail-${meeting.id}-tasks" class="tab-panel active">
+                                        <div class="action-items-list">
+                                            ${meeting.actions.map(action => `
+                                                <div class="action-item">
+                                                    <div class="action-item-header">
+                                                        <div class="action-item-title">${escapeHtml(action.task)}</div>
+                                                    </div>
+                                                    <div class="action-item-meta">
+                                                        <span class="meta-badge">👤 ${escapeHtml(action.owner)}</span>
+                                                        <span class="meta-badge">📅 Due: ${action.dueDate}</span>
+                                                        <span class="meta-badge">⚡ Priority: ${action.priority}</span>
+                                                    </div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <div id="detail-${meeting.id}-decisions" class="tab-panel">
+                                        ${meeting.decisions && meeting.decisions.length > 0 ? `
+                                            ${meeting.decisions.map(decision => `
+                                                <div class="decision-item">
+                                                    <div class="item-title">✓ ${escapeHtml(decision.decision)}</div>
+                                                    <div class="item-context">${escapeHtml(decision.context)}</div>
+                                                </div>
+                                            `).join('')}
+                                        ` : '<p style="color: #64748b; text-align: center; padding: 40px;">No decisions recorded</p>'}
+                                    </div>
+
+                                    <div id="detail-${meeting.id}-blockers" class="tab-panel">
+                                        ${meeting.blockers && meeting.blockers.length > 0 ? `
+                                            ${meeting.blockers.map(blocker => `
+                                                <div class="blocker-item">
+                                                    <div class="item-title">⚠️ ${escapeHtml(blocker.blocker)}</div>
+                                                    <div class="item-context">
+                                                        Owner: ${escapeHtml(blocker.owner)} • Impact: ${blocker.impact}
+                                                    </div>
+                                                </div>
+                                            `).join('')}
+                                        ` : '<p style="color: #64748b; text-align: center; padding: 40px;">No blockers identified</p>'}
+                                    </div>
+
+                                    <div id="detail-${meeting.id}-transcript" class="tab-panel">
+                                        <div class="meeting-notes-text">${escapeHtml(meeting.notes)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(detailsRow);
+                }
+            });
+        }
+
+        // Switch detail tabs
+        function switchDetailTab(meetingId, tabName) {
+            const detailsRow = document.querySelector(`#detail-${meetingId}-tasks`).closest('.meeting-details');
+            const tabs = detailsRow.querySelectorAll('.detail-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const panels = detailsRow.querySelectorAll('.tab-panel');
+            panels.forEach(panel => panel.classList.remove('active'));
+            document.getElementById(`detail-${meetingId}-${tabName}`).classList.add('active');
+        }
+
+        // Toggle meeting details
+        function toggleMeetingDetails(meetingId) {
+            const meeting = pastMeetings.find(m => m.id === meetingId);
+            if (meeting) {
+                meeting.expanded = !meeting.expanded;
+                renderPastMeetings();
+            }
+        }
+
+        // Delete meeting
+        function deleteMeeting(meetingId) {
+            if (confirm('Delete this meeting? This cannot be undone.')) {
+                pastMeetings = pastMeetings.filter(m => m.id !== meetingId);
+                localStorage.setItem('brainDumps_meetings', JSON.stringify(pastMeetings));
+                renderPastMeetings();
+            }
+        }
+
+        // Clear all history
+        function clearHistory() {
+            if (confirm('Delete all meeting history? This cannot be undone.')) {
+                pastMeetings = [];
+                localStorage.removeItem('brainDumps_meetings');
+                renderPastMeetings();
+                alert('✓ All meetings deleted');
+            }
+        }
+
+        // Refresh meetings
+        function refreshMeetings() {
+            renderPastMeetings();
+            alert('✓ Meetings refreshed');
+        }
+
+        // Render template list
+        function renderTemplateList() {
+            const container = document.getElementById('templateList');
+            container.innerHTML = '';
+
+            const templateNames = {
+                general: '💬 General Meeting',
+                standup: '🏃 Daily Standup',
+                sprint: '🎯 Sprint Planning',
+                retro: '🔄 Retrospective',
+                '1on1': '👥 1-on-1',
+                brainstorm: '💡 Brainstorming'
+            };
+
+            const descriptions = {
+                general: 'Standard meeting format with discussion points and action items',
+                standup: 'Quick daily sync: Yesterday, Today, Blockers',
+                sprint: 'Sprint goals, story points, team capacity',
+                retro: 'What went well, what didn\'t, action items',
+                '1on1': 'Personal check-in, goals, feedback, concerns',
+                brainstorm: 'Ideas, concepts, creative solutions'
+            };
+
+            Object.keys(templates).forEach(key => {
+                const templateItem = document.createElement('div');
+                templateItem.className = 'template-item';
+
+                templateItem.innerHTML = `
+                    <div class="template-item-header">
+                        <h4>${templateNames[key]}</h4>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-secondary btn-small" onclick="editTemplate('${key}')">
+                                ✏️ Edit
+                            </button>
+                            <button class="btn btn-secondary btn-small" onclick="resetTemplate('${key}')">
+                                🔄 Reset
+                            </button>
+                        </div>
+                    </div>
+                    <p>${descriptions[key]}</p>
+                    <div class="template-preview">${escapeHtml(templates[key])}</div>
+                `;
+
+                container.appendChild(templateItem);
+            });
+        }
+
+        // Edit template
+        function editTemplate(templateKey) {
+            const newContent = prompt('Edit template:', templates[templateKey]);
+            if (newContent !== null) {
+                templates[templateKey] = newContent;
+                localStorage.setItem('brainDumps_templates', JSON.stringify(templates));
+                renderTemplateList();
+                alert('✓ Template updated');
+            }
+        }
+
+        // Reset template to default
+        function resetTemplate(templateKey) {
+            if (confirm('Reset this template to default?')) {
+                location.reload(); // Reload to reset templates
+            }
+        }
+
+        // XSS Protection
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

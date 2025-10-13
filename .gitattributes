@@ -1,6 +1,0 @@
-# Sentinel test files - contain fake/test secrets for security testing
-.sentinel-tests/** linguist-generated=true
-.sentinel-tests/test-*.js -diff
-.sentinel-tests/test-*.html -diff
-SENTINEL_TESTING.md linguist-documentation
-test-sentinel.sh linguist-vendored
