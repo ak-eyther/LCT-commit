@@ -1,5 +1,29 @@
 {
+  "name": "lct-commit",
+  "version": "1.0.0",
+  "description": "LCT Success Matrix Tracker with Authentication",
+  "scripts": {
+    "setup-db": "node scripts/setup-database.js",
+    "add-user": "node scripts/add-user.js",
+    "test:ui": "node scripts/athena-guard.js",
+    "test:ui:local": "./scripts/run-ui-tests-local.sh",
+    "setup:athena-guard": "./setup-athena-guard.sh",
+    "generate:tests": "node scripts/ai-integrations/test-generator.js"
+  },
   "dependencies": {
-    "@vercel/analytics": "^1.5.0"
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/postgres": "^0.10.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express-rate-limit": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "axe-core": "^4.11.0",
+    "axios": "^1.12.2",
+    "lighthouse": "^11.7.1",
+    "playwright-core": "^1.56.0"
   }
 }

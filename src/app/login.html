@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - LCT Success Matrix Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            color: #0a0a0a;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #0a0a0a;
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            font-size: 14px;
+            color: #737373;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #525252;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            font-family: inherit;
+            transition: border-color 0.15s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0a0a0a;
+        }
+
+        .form-group input.error {
+            border-color: #dc2626;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0a0a0a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.15s;
+            margin-bottom: 16px;
+        }
+
+        .login-button:hover {
+            background: #262626;
+        }
+
+        .login-button:disabled {
+            background: #737373;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #737373;
+            font-size: 14px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .remember-me label {
+            font-size: 14px;
+            color: #525252;
+            cursor: pointer;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: #a3a3a3;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>LCT Tracker</h1>
+            <p>Sign in to access the Success Matrix</p>
+        </div>
+
+        <div class="error-message" id="error-message"></div>
+        <div class="loading" id="loading">Signing in...</div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="arif.khan@vitraya.com"
+                    required
+                    autocomplete="email"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Enter your password"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            <div class="remember-me">
+                <input type="checkbox" id="remember-me" name="remember-me">
+                <label for="remember-me">Remember me for 7 days</label>
+            </div>
+
+            <button type="submit" class="login-button" id="login-button">
+                Sign In
+            </button>
+        </form>
+
+        <div class="footer">
+            <p>LCT Group & Vitraya Technologies</p>
+            <p>Healthcare Claims Adjudication System</p>
+        </div>
+    </div>
+
+    <script>
+        // Check if already logged in
+        const existingToken = localStorage.getItem('lctAuthToken');
+        if (existingToken) {
+            // Verify existing token
+            verifyToken(existingToken);
+        }
+
+        // Form submission
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('remember-me').checked;
+            
+            // Clear previous errors
+            hideError();
+            
+            // Validate inputs
+            if (!email || !password) {
+                showError('Please enter both email and password');
+                return;
+            }
+            
+            if (!email.includes('@')) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            // Show loading state
+            showLoading();
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        rememberMe: rememberMe
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store token
+                    localStorage.setItem('lctAuthToken', data.token);
+                    
+                    // Store user info
+                    localStorage.setItem('lctUser', JSON.stringify(data.user));
+                    
+                    // Set remember me (extend token if needed)
+                    if (rememberMe) {
+                        localStorage.setItem('lctRememberMe', 'true');
+                    }
+                    
+                    // Redirect to dashboard
+                    window.location.href = '/';
+                } else {
+                    showError(data.error || 'Login failed. Please try again.');
+                }
+            } catch (error) {
+                // Login error - not logged to prevent information exposure
+                showError('Network error. Please check your connection and try again.');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // Helper functions
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        function hideError() {
+            const errorEl = document.getElementById('error-message');
+            errorEl.classList.remove('show');
+        }
+
+        function showLoading() {
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('login-button').disabled = true;
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('show');
+            document.getElementById('login-button').disabled = false;
+        }
+
+        // Verify existing token
+        async function verifyToken(token) {
+            try {
+                const response = await fetch('/api/auth/verify', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    // Token is valid, redirect to dashboard
+                    window.location.href = '/';
+                } else {
+                    // Token is invalid, remove it
+                    localStorage.removeItem('lctAuthToken');
+                    localStorage.removeItem('lctUser');
+                    localStorage.removeItem('lctRememberMe');
+                }
+            } catch (error) {
+                // Network error, remove token to be safe
+                localStorage.removeItem('lctAuthToken');
+                localStorage.removeItem('lctUser');
+                localStorage.removeItem('lctRememberMe');
+            }
+        }
+
+        // Auto-focus email field
+        document.getElementById('email').focus();
+    </script>
+</body>
+</html>

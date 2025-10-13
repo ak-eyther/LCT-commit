@@ -114,6 +114,7 @@
         <a href="reports.html" class="active" aria-current="page">Reports</a>
         <a href="documentation.html">Documentation</a>
         <a href="settings.html">Settings</a>
+        <a href="#" id="logout-link" style="color: #dc2626; margin-left: auto;">Logout</a>
     </nav>
 
     <div class="container">
@@ -156,7 +157,19 @@
         </div>
     </div>
 
+    <script src="auth.js"></script>
     <script>
+        // Logout event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutLink = document.getElementById('logout-link');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+        });
+
         // Load data from localStorage (shared with index.html)
         function loadData() {
             const saved = localStorage.getItem('lctTrackerData');

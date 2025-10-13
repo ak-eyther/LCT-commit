@@ -551,11 +551,11 @@
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="showTab('goals', event)">Goals & Collaboration</button>
-            <button class="tab" onclick="showTab('org-chart', event)">Org Chart</button>
-            <button class="tab" onclick="showTab('leadership', event)">Leadership Team</button>
-            <button class="tab" onclick="showTab('engineering', event)">Product & Engineering</button>
-            <button class="tab" onclick="showTab('lct-team', event)">LCT Team</button>
+            <button class="tab active" id="tab-goals" data-tab="goals">Goals & Collaboration</button>
+            <button class="tab" id="tab-org-chart" data-tab="org-chart">Org Chart</button>
+            <button class="tab" id="tab-leadership" data-tab="leadership">Leadership Team</button>
+            <button class="tab" id="tab-engineering" data-tab="engineering">Product & Engineering</button>
+            <button class="tab" id="tab-lct-team" data-tab="lct-team">LCT Team</button>
         </div>
 
         <!-- GOALS & COLLABORATION TAB -->
@@ -1539,8 +1539,9 @@
         </div>
     </div>
 
+    <script src="auth.js"></script>
     <script>
-        function showTab(tabName, event) {
+        function showTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
@@ -1550,8 +1551,30 @@
             });
 
             document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
         }
+
+        // Event Listeners Setup
+        document.addEventListener('DOMContentLoaded', () => {
+            // Tab buttons
+            const tabs = [
+                { id: 'tab-goals', name: 'goals' },
+                { id: 'tab-org-chart', name: 'org-chart' },
+                { id: 'tab-leadership', name: 'leadership' },
+                { id: 'tab-engineering', name: 'engineering' },
+                { id: 'tab-lct-team', name: 'lct-team' }
+            ];
+
+            tabs.forEach(({ id, name }) => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        showTab(name);
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>

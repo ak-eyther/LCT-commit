@@ -559,16 +559,16 @@
         </div>
 
         <nav class="page-nav">
-            <button class="page-nav-item active" onclick="switchPage('dashboard')">Dashboard</button>
-            <button class="page-nav-item" onclick="switchPage('checklist')">Checklist</button>
+            <button class="page-nav-item active" id="nav-dashboard" data-page="dashboard">Dashboard</button>
+            <button class="page-nav-item" id="nav-checklist" data-page="checklist">Checklist</button>
         </nav>
 
         <!-- DASHBOARD PAGE -->
         <div id="dashboard-page" class="page active">
             <div class="controls">
-                <button class="btn btn-primary" onclick="saveData()">Save</button>
-                <button class="btn" onclick="exportJSON()">Export JSON</button>
-                <button class="btn" onclick="exportCSV()">Export CSV</button>
+                <button class="btn btn-primary" id="dashboard-save">Save</button>
+                <button class="btn" id="dashboard-export-json">Export JSON</button>
+                <button class="btn" id="dashboard-export-csv">Export CSV</button>
             </div>
 
             <div class="stats-grid" id="stats-cards"></div>
@@ -600,17 +600,17 @@
         <!-- CHECKLIST PAGE -->
         <div id="checklist-page" class="page">
             <div class="controls">
-                <button class="btn btn-primary" onclick="saveData()">Save</button>
-                <button class="btn" onclick="exportJSON()">Export JSON</button>
-                <button class="btn" onclick="exportCSV()">Export CSV</button>
+                <button class="btn btn-primary" id="checklist-save">Save</button>
+                <button class="btn" id="checklist-export-json">Export JSON</button>
+                <button class="btn" id="checklist-export-csv">Export CSV</button>
             </div>
 
             <div class="filters">
-                <button class="filter-btn active" onclick="filterItems('all')">All (31)</button>
-                <button class="filter-btn" onclick="filterItems('CRITICAL')">Critical (4)</button>
-                <button class="filter-btn" onclick="filterItems('Not Started')">Not Started</button>
-                <button class="filter-btn" onclick="filterItems('In Progress')">In Progress</button>
-                <button class="filter-btn" onclick="filterItems('Completed')">Completed</button>
+                <button class="filter-btn active" id="filter-all" data-filter="all">All (31)</button>
+                <button class="filter-btn" id="filter-critical" data-filter="CRITICAL">Critical (4)</button>
+                <button class="filter-btn" id="filter-notstarted" data-filter="Not Started">Not Started</button>
+                <button class="filter-btn" id="filter-inprogress" data-filter="In Progress">In Progress</button>
+                <button class="filter-btn" id="filter-completed" data-filter="Completed">Completed</button>
             </div>
 
             <div id="checklist-content"></div>
@@ -903,7 +903,7 @@
             document.querySelectorAll('.page-nav-item').forEach(n => n.classList.remove('active'));
 
             document.getElementById(`${page}-page`).classList.add('active');
-            event.target.classList.add('active');
+            document.getElementById(`nav-${page}`).classList.add('active');
 
             if (page === 'dashboard') {
                 renderDashboard();
@@ -1069,10 +1069,10 @@
             document.getElementById('section-breakdown').innerHTML = sectionHtml;
         }
 
-        function filterItems(filter) {
+        function filterItems(filter, button) {
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            button.classList.add('active');
             renderChecklist();
         }
 
@@ -1125,8 +1125,8 @@
                                     <span class="badge" style="background:#fafafa;color:#525252;border-color:#e5e5e5">${item.target}</span>
                                 </div>
                             </div>
-                            
-                            <div class="explain-toggle" id="toggle-${item.id}" onclick="toggleExplanation(${item.id})">▶ Show details</div>
+
+                            <div class="explain-toggle" id="toggle-${item.id}" data-item-id="${item.id}">▶ Show details</div>
                             
                             <div class="explanation" id="explain-${item.id}">
                                 <div>${item.explanation}</div>
@@ -1136,7 +1136,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <select id="status-${item.id}" onchange="toggleFields(${item.id}, this.value)">
+                                    <select id="status-${item.id}" class="status-select" data-item-id="${item.id}">
                                         <option value="Not Started" ${status === 'Not Started' ? 'selected' : ''}>Not Started</option>
                                         <option value="Planned" ${status === 'Planned' ? 'selected' : ''}>Planned</option>
                                         <option value="In Progress" ${status === 'In Progress' ? 'selected' : ''}>In Progress</option>
@@ -1237,6 +1237,53 @@
         // Initialize
         renderDashboard();
         renderChecklist();
+
+        // Event listeners for navigation buttons
+        document.getElementById('nav-dashboard').addEventListener('click', () => switchPage('dashboard'));
+        document.getElementById('nav-checklist').addEventListener('click', () => switchPage('checklist'));
+
+        // Event listeners for dashboard controls
+        document.getElementById('dashboard-save').addEventListener('click', saveData);
+        document.getElementById('dashboard-export-json').addEventListener('click', exportJSON);
+        document.getElementById('dashboard-export-csv').addEventListener('click', exportCSV);
+
+        // Event listeners for checklist controls
+        document.getElementById('checklist-save').addEventListener('click', saveData);
+        document.getElementById('checklist-export-json').addEventListener('click', exportJSON);
+        document.getElementById('checklist-export-csv').addEventListener('click', exportCSV);
+
+        // Event listeners for filter buttons
+        document.getElementById('filter-all').addEventListener('click', function() {
+            filterItems('all', this);
+        });
+        document.getElementById('filter-critical').addEventListener('click', function() {
+            filterItems('CRITICAL', this);
+        });
+        document.getElementById('filter-notstarted').addEventListener('click', function() {
+            filterItems('Not Started', this);
+        });
+        document.getElementById('filter-inprogress').addEventListener('click', function() {
+            filterItems('In Progress', this);
+        });
+        document.getElementById('filter-completed').addEventListener('click', function() {
+            filterItems('Completed', this);
+        });
+
+        // Delegated event listeners for dynamically generated content
+        document.getElementById('checklist-content').addEventListener('click', function(e) {
+            if (e.target.classList.contains('explain-toggle')) {
+                const itemId = parseInt(e.target.dataset.itemId);
+                toggleExplanation(itemId);
+            }
+        });
+
+        document.getElementById('checklist-content').addEventListener('change', function(e) {
+            if (e.target.classList.contains('status-select')) {
+                const itemId = parseInt(e.target.dataset.itemId);
+                const status = e.target.value;
+                toggleFields(itemId, status);
+            }
+        });
     </script>
 </body>
 </html>
