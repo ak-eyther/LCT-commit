@@ -3,9 +3,10 @@
 
 import OpenAI from 'openai';
 
-// Initialize OpenAI client
+// Initialize OpenAI client with dedicated Brain Dumps API key
+// Falls back to main OPENAI_API_KEY if OPENAI_BRAINDUMPS_KEY is not set
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_BRAINDUMPS_KEY || process.env.OPENAI_API_KEY
 });
 
 // System prompt for AI extraction
@@ -163,9 +164,9 @@ Participants: ${participants || 'Not specified'}
 Notes:
 ${notes}`;
 
-    // Call OpenAI GPT-4 with structured output
+    // Call OpenAI GPT-4 Turbo with structured output (supports JSON mode)
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4-turbo-preview',
       messages: [
         {
           role: 'system',
