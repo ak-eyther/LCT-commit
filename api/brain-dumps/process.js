@@ -2,15 +2,30 @@
 // Integrates with OpenAI GPT-4 to extract action items, decisions, and blockers
 // Updated: October 14, 2025 - Added error handling infrastructure with tracking IDs
 
-import OpenAI from 'openai';
-import { ValidationError, handleOpenAIError, InternalServerError } from '../../src/lib/errors.js';
-import { sendErrorResponse, sendSuccessResponse, setCORSHeaders, handlePreflightRequest, validateMethod } from '../../src/lib/error-handler.js';
-import { getOpenAIKey, validateConfig } from '../../src/lib/config.js';
+const OpenAI = require('openai');
+const {
+  ValidationError,
+  handleOpenAIError,
+  InternalServerError,
+  generateErrorId,
+} = require('../../src/lib/errors');
+const {
+  sendErrorResponse,
+  sendSuccessResponse,
+  setCORSHeaders,
+  handlePreflightRequest,
+  validateMethod,
+} = require('../../src/lib/error-handler');
+const { getOpenAIKey, validateConfig } = require('../../src/lib/config');
 
 // Validate configuration on function cold start
 const configValidation = validateConfig({ logWarnings: false });
 if (!configValidation.valid) {
-  console.error('Configuration validation failed:', configValidation.errors);
+  const errorId = generateErrorId();
+  console.error(`[${errorId}] Configuration validation failed`, {
+    errorId,
+    errors: configValidation.errors,
+  });
 }
 
 // Initialize OpenAI client
@@ -19,7 +34,11 @@ try {
   const apiKey = getOpenAIKey();
   openai = new OpenAI({ apiKey });
 } catch (error) {
-  console.error('Failed to initialize OpenAI client:', error.message);
+  const errorId = generateErrorId();
+  console.error(`[${errorId}] Failed to initialize OpenAI client`, {
+    errorId,
+    error: error.message,
+  });
   // OpenAI will be null, and requests will fail with clear error message
 }
 
@@ -166,11 +185,6 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Validate HTTP method
-  if (!validateMethod(req, res, ['POST'])) {
-    return;
-  }
-
   // Check if OpenAI client was initialized
   if (!openai) {
     return sendErrorResponse(
@@ -184,8 +198,13 @@ export default async function handler(req, res) {
 
   try {
     // ==============================
-    // INPUT VALIDATION (Outside try-catch for specific handling)
+    // VALIDATION
     // ==============================
+
+    // Validate HTTP method
+    validateMethod(req, ['POST']);
+
+    // Validate request input
     validateInput(req.body);
 
     const { title, date, participants, notes } = req.body;
