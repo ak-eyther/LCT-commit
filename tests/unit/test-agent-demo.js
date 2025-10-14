@@ -60,13 +60,13 @@ async function processHealthcareClaim(claim) {
     return {
       success: true,
       claimId: result.id,
-      approvedAmount: result.approvedAmount
+      approvedAmount: result.approvedAmount,
     };
   } catch (error) {
     // Safe error handling - no data exposure
     return {
       success: false,
-      error: 'Claim processing failed'
+      error: 'Claim processing failed',
     };
   }
 }
@@ -75,12 +75,12 @@ async function processHealthcareClaim(claim) {
 function validateAndProcess(claim) {
   return Promise.resolve({
     id: 'CLM-' + Date.now(),
-    approvedAmount: claim.amount * 0.95
+    approvedAmount: claim.amount * 0.95,
   });
 }
 
 module.exports = {
   fetchUserData,
   calculateDiscount,
-  processHealthcareClaim
+  processHealthcareClaim,
 };

@@ -19,6 +19,7 @@ This document provides instructions for configuring the OpenAI Agent Builder to 
 **Status:** ✅ Already Implemented
 
 The backend API (`api/brain-dumps/process.js`) directly calls OpenAI's GPT-4 API with structured prompts. This approach:
+
 - ✅ Gives full control over the prompt
 - ✅ Works out of the box with no additional setup
 - ✅ Easier to version control and test
@@ -44,13 +45,13 @@ If you prefer to use OpenAI's visual Agent Builder interface, follow these instr
 
 #### Basic Settings
 
-| Field | Value |
-|-------|-------|
-| **Agent Name** | Brain Dumps Meeting Extractor |
-| **Model** | GPT-4 or GPT-4 Turbo |
-| **Temperature** | 0.3 (for consistent extraction) |
-| **Max Tokens** | 2000 |
-| **Response Format** | JSON Object |
+| Field               | Value                           |
+| ------------------- | ------------------------------- |
+| **Agent Name**      | Brain Dumps Meeting Extractor   |
+| **Model**           | GPT-4 or GPT-4 Turbo            |
+| **Temperature**     | 0.3 (for consistent extraction) |
+| **Max Tokens**      | 2000                            |
+| **Response Format** | JSON Object                     |
 
 ---
 
@@ -110,12 +111,14 @@ Extraction Guidelines:
 Add these input validation rules:
 
 **Input Requirements:**
+
 - Minimum length: 50 characters
 - Maximum length: 100,000 characters
 - Required fields: title, date, notes
 
 **Content Filters:**
 Reject if input contains these keywords:
+
 - patient, diagnosis, prescription, medical record
 - phi, hipaa, treatment, medication, symptom
 - icd-10, cpt code, pharmacy, hospital admission
@@ -129,6 +132,7 @@ Reject if input contains these keywords:
 Use this example meeting note to test:
 
 **Test Input:**
+
 ```
 Meeting: Sprint Planning - October 2025
 Date: 2025-10-13
@@ -152,6 +156,7 @@ Blockers:
 ```
 
 **Expected Output:**
+
 ```json
 {
   "action_items": [
@@ -206,6 +211,7 @@ Blockers:
 ### Step 6: Get Agent ID (If Using Agent Builder)
 
 After creating the agent:
+
 1. Click on the agent name
 2. Copy the **Agent ID** from the URL or agent settings
 3. Store it securely (you'll need it for API calls)
@@ -221,13 +227,13 @@ Update `api/brain-dumps/process.js` to use the Agent Builder endpoint:
 ```javascript
 // Replace the direct GPT-4 call with Agent Builder API call
 const response = await openai.agents.run({
-  agent_id: process.env.OPENAI_AGENT_ID,  // Add this to .env
+  agent_id: process.env.OPENAI_AGENT_ID, // Add this to .env
   input: {
     meeting: title,
     date: date,
     participants: participants || 'Not specified',
-    notes: notes
-  }
+    notes: notes,
+  },
 });
 
 const extracted = response.output;
@@ -235,6 +241,7 @@ const extracted = response.output;
 
 **Environment Variable:**
 Add to `.env`:
+
 ```bash
 OPENAI_AGENT_ID=agent_abc123xyz  # Your agent ID from Step 6
 ```
@@ -244,11 +251,13 @@ OPENAI_AGENT_ID=agent_abc123xyz  # Your agent ID from Step 6
 ## 📊 Cost Comparison
 
 ### Direct API (Current Implementation)
+
 - **Cost:** ~$0.035 per meeting (~2,000 tokens)
 - **Latency:** ~2-5 seconds
 - **Control:** Full control over prompt and parameters
 
 ### Agent Builder
+
 - **Cost:** Same as direct API + agent overhead
 - **Latency:** ~3-7 seconds (additional agent layer)
 - **Control:** Visual interface, easier to modify without code changes
@@ -294,6 +303,7 @@ OPENAI_AGENT_ID=agent_abc123xyz  # Your agent ID from Step 6
 ### Issue: High API costs
 
 **Solution:**
+
 1. Check if you're using GPT-4 Turbo (cheaper than GPT-4)
 2. Reduce max_tokens if responses are consistently under 1000 tokens
 3. Consider caching frequently processed meetings
@@ -320,6 +330,7 @@ OPENAI_AGENT_ID=agent_abc123xyz  # Your agent ID from Step 6
 **Last Updated:** October 13, 2025
 **Maintained By:** Development Team
 **Related Files:**
+
 - `api/brain-dumps/process.js` (Backend API)
 - `docs/features/brain-dumps/HANDOFF.md` (Phase handoff)
 - `docs/features/brain-dumps/frontend-spec.md` (Frontend spec)

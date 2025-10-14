@@ -6,15 +6,6 @@
     "Track audit findings and resolutions",
     "Learn from security best practices"
   ],
-  "memory_categories": [
-    "project",
-    "development",
-    "shared"
-  ],
-  "memory_types": [
-    "decision",
-    "learning",
-    "pattern",
-    "issue"
-  ]
+  "memory_categories": ["project", "development", "shared"],
+  "memory_types": ["decision", "learning", "pattern", "issue"]
 }

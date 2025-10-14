@@ -14,33 +14,33 @@ const CONFIG_SCHEMA = {
   OPENAI_API_KEY: {
     required: false, // Made optional because OPENAI_BRAINDUMPS_KEY can be used instead
     description: 'OpenAI API key for general AI features',
-    validate: (value) => value && value.startsWith('sk-')
+    validate: value => value && value.startsWith('sk-'),
   },
   OPENAI_BRAINDUMPS_KEY: {
     required: false, // At least one OpenAI key must be present
     description: 'Dedicated OpenAI API key for Brain Dumps feature',
-    validate: (value) => value && value.startsWith('sk-')
+    validate: value => value && value.startsWith('sk-'),
   },
 
   // Database Configuration (optional for Brain Dumps MVP)
   DATABASE_URL: {
     required: false,
     description: 'PostgreSQL database connection string',
-    validate: (value) => value && value.startsWith('postgres')
+    validate: value => value && value.startsWith('postgres'),
   },
 
   // Monitoring (optional)
   SENTRY_DSN: {
     required: false,
-    description: 'Sentry DSN for error tracking'
+    description: 'Sentry DSN for error tracking',
   },
 
   // Environment
   NODE_ENV: {
     required: false,
     description: 'Node environment (development|production)',
-    default: 'development'
-  }
+    default: 'development',
+  },
 };
 
 /**
@@ -63,7 +63,9 @@ export function validateConfig(options = {}) {
 
     // Check required fields
     if (schema.required && !value) {
-      errors.push(`Missing required environment variable: ${key} (${schema.description})`);
+      errors.push(
+        `Missing required environment variable: ${key} (${schema.description})`
+      );
       continue;
     }
 
@@ -74,12 +76,15 @@ export function validateConfig(options = {}) {
 
     // Warn about missing optional fields
     if (!schema.required && !value && logWarnings) {
-      warnings.push(`Optional environment variable not set: ${key} (${schema.description})`);
+      warnings.push(
+        `Optional environment variable not set: ${key} (${schema.description})`
+      );
     }
   }
 
   // Special validation: At least one OpenAI key must be present
-  const hasOpenAIKey = process.env.OPENAI_API_KEY || process.env.OPENAI_BRAINDUMPS_KEY;
+  const hasOpenAIKey =
+    process.env.OPENAI_API_KEY || process.env.OPENAI_BRAINDUMPS_KEY;
   if (!hasOpenAIKey) {
     errors.push(
       'At least one OpenAI API key must be configured: OPENAI_API_KEY or OPENAI_BRAINDUMPS_KEY'
@@ -108,7 +113,7 @@ export function validateConfig(options = {}) {
   return {
     valid: errors.length === 0,
     errors,
-    warnings
+    warnings,
   };
 }
 
@@ -182,8 +187,13 @@ export function getConfigSummary() {
 
     if (value) {
       // Mask sensitive values
-      if (key.includes('KEY') || key.includes('SECRET') || key.includes('DSN')) {
-        summary[key] = `${value.substring(0, 8)}...${value.substring(value.length - 4)}`;
+      if (
+        key.includes('KEY') ||
+        key.includes('SECRET') ||
+        key.includes('DSN')
+      ) {
+        summary[key] =
+          `${value.substring(0, 8)}...${value.substring(value.length - 4)}`;
       } else {
         summary[key] = value;
       }

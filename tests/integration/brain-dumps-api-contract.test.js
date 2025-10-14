@@ -21,18 +21,20 @@ const VALID_REQUEST = {
   title: 'Q4 Planning Session',
   date: '2025-10-14',
   participants: 'Alice, Bob, Carol',
-  notes: 'We discussed Q4 goals and identified three key priorities: 1) Launch new feature by Nov 15, 2) Complete security audit, 3) Hire two engineers. Bob will lead hiring. We decided to delay mobile app to Q1 2026 due to resource constraints. Blocker: Waiting on legal approval for contracts.'
+  notes:
+    'We discussed Q4 goals and identified three key priorities: 1) Launch new feature by Nov 15, 2) Complete security audit, 3) Hire two engineers. Bob will lead hiring. We decided to delay mobile app to Q1 2026 due to resource constraints. Blocker: Waiting on legal approval for contracts.',
 };
 
 test.describe('Brain Dumps API Contract Tests', () => {
-
   // ========================================
   // SUCCESS RESPONSE TESTS
   // ========================================
 
-  test('should return success response with all required fields', async ({ request }) => {
+  test('should return success response with all required fields', async ({
+    request,
+  }) => {
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-      data: VALID_REQUEST
+      data: VALID_REQUEST,
     });
 
     expect(response.status()).toBe(200);
@@ -49,9 +51,11 @@ test.describe('Brain Dumps API Contract Tests', () => {
     expect(typeof data.meeting_id).toBe('number');
   });
 
-  test('should return results with action_items, decisions, and blockers arrays', async ({ request }) => {
+  test('should return results with action_items, decisions, and blockers arrays', async ({
+    request,
+  }) => {
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-      data: VALID_REQUEST
+      data: VALID_REQUEST,
     });
 
     const data = await response.json();
@@ -62,9 +66,11 @@ test.describe('Brain Dumps API Contract Tests', () => {
     expect(Array.isArray(data.results.blockers)).toBe(true);
   });
 
-  test('should return metadata with model, tokens_used, and processing_time', async ({ request }) => {
+  test('should return metadata with model, tokens_used, and processing_time', async ({
+    request,
+  }) => {
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-      data: VALID_REQUEST
+      data: VALID_REQUEST,
     });
 
     const data = await response.json();
@@ -85,7 +91,7 @@ test.describe('Brain Dumps API Contract Tests', () => {
 
   test('should validate action_item structure', async ({ request }) => {
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-      data: VALID_REQUEST
+      data: VALID_REQUEST,
     });
 
     const data = await response.json();
@@ -102,13 +108,15 @@ test.describe('Brain Dumps API Contract Tests', () => {
       expect(typeof actionItem.task).toBe('string');
       expect(['string', 'object']).toContain(typeof actionItem.owner); // null or string
       expect(['string', 'object']).toContain(typeof actionItem.due_date); // null or string
-      expect(['critical', 'high', 'medium', 'low']).toContain(actionItem.priority);
+      expect(['critical', 'high', 'medium', 'low']).toContain(
+        actionItem.priority
+      );
     }
   });
 
   test('should validate decision structure', async ({ request }) => {
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-      data: VALID_REQUEST
+      data: VALID_REQUEST,
     });
 
     const data = await response.json();
@@ -129,7 +137,7 @@ test.describe('Brain Dumps API Contract Tests', () => {
 
   test('should validate blocker structure', async ({ request }) => {
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-      data: VALID_REQUEST
+      data: VALID_REQUEST,
     });
 
     const data = await response.json();
@@ -154,7 +162,7 @@ test.describe('Brain Dumps API Contract Tests', () => {
 
   test('should return 400 for missing required fields', async ({ request }) => {
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-      data: { title: 'Test Meeting' } // Missing date and notes
+      data: { title: 'Test Meeting' }, // Missing date and notes
     });
 
     expect(response.status()).toBe(400);
@@ -171,8 +179,8 @@ test.describe('Brain Dumps API Contract Tests', () => {
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
       data: {
         ...VALID_REQUEST,
-        date: '10/14/2025' // Invalid format (should be YYYY-MM-DD)
-      }
+        date: '10/14/2025', // Invalid format (should be YYYY-MM-DD)
+      },
     });
 
     expect(response.status()).toBe(400);
@@ -187,8 +195,8 @@ test.describe('Brain Dumps API Contract Tests', () => {
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
       data: {
         ...VALID_REQUEST,
-        notes: 'Too short' // Less than 50 characters
-      }
+        notes: 'Too short', // Less than 50 characters
+      },
     });
 
     expect(response.status()).toBe(400);
@@ -203,8 +211,9 @@ test.describe('Brain Dumps API Contract Tests', () => {
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
       data: {
         ...VALID_REQUEST,
-        notes: 'The patient was diagnosed with hypertension and prescribed medication for treatment.'
-      }
+        notes:
+          'The patient was diagnosed with hypertension and prescribed medication for treatment.',
+      },
     });
 
     expect(response.status()).toBe(400);
@@ -232,7 +241,7 @@ test.describe('Brain Dumps API Contract Tests', () => {
 
   test('should handle OPTIONS preflight requests', async ({ request }) => {
     const response = await request.fetch(BRAIN_DUMPS_ENDPOINT, {
-      method: 'OPTIONS'
+      method: 'OPTIONS',
     });
 
     expect(response.status()).toBe(200);
@@ -264,7 +273,7 @@ test.describe('Brain Dumps API Contract Tests', () => {
 
     for (let i = 0; i < 5; i++) {
       const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-        data: {} // Invalid request
+        data: {}, // Invalid request
       });
       const data = await response.json();
       errorIds.add(data.errorId);
@@ -280,7 +289,7 @@ test.describe('Brain Dumps API Contract Tests', () => {
 
   test('should include CORS headers', async ({ request }) => {
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-      data: VALID_REQUEST
+      data: VALID_REQUEST,
     });
 
     const headers = response.headers();
@@ -292,12 +301,14 @@ test.describe('Brain Dumps API Contract Tests', () => {
   // SECURITY TESTS
   // ========================================
 
-  test('should not expose internal error details in production', async ({ request }) => {
+  test('should not expose internal error details in production', async ({
+    request,
+  }) => {
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
       data: {
         ...VALID_REQUEST,
-        notes: 'a'.repeat(10) // Too short
-      }
+        notes: 'a'.repeat(10), // Too short
+      },
     });
 
     const data = await response.json();
@@ -313,7 +324,7 @@ test.describe('Brain Dumps API Contract Tests', () => {
     // This test assumes API key is configured
     // If it fails with 500, check error message doesn't expose key details
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-      data: VALID_REQUEST
+      data: VALID_REQUEST,
     });
 
     const data = await response.json();
@@ -331,12 +342,11 @@ test.describe('Brain Dumps API Contract Tests', () => {
  * Performance Tests
  */
 test.describe('Brain Dumps API Performance', () => {
-
   test('should respond within 15 seconds', async ({ request }) => {
     const startTime = Date.now();
 
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-      data: VALID_REQUEST
+      data: VALID_REQUEST,
     });
 
     const endTime = Date.now();
@@ -347,11 +357,13 @@ test.describe('Brain Dumps API Performance', () => {
   });
 
   test('should handle concurrent requests', async ({ request }) => {
-    const requests = Array(3).fill(null).map(() =>
-      request.post(BRAIN_DUMPS_ENDPOINT, {
-        data: VALID_REQUEST
-      })
-    );
+    const requests = Array(3)
+      .fill(null)
+      .map(() =>
+        request.post(BRAIN_DUMPS_ENDPOINT, {
+          data: VALID_REQUEST,
+        })
+      );
 
     const responses = await Promise.all(requests);
 

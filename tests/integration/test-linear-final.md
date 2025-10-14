@@ -5,12 +5,14 @@ This file tests the Linear integration workflow after merge to main.
 ## Test Scenario
 
 When AI reviewers comment on this PR with priority markers:
+
 - 🔴 CRITICAL
 - 🟠 HIGH
 - 🟡 MEDIUM
 - 🟢 LOW
 
 The workflow should:
+
 1. Detect the AI reviewer comment
 2. Extract the priority level
 3. Create a Linear issue in "LCT commit" project
@@ -24,4 +26,5 @@ The workflow should:
 ✅ GitHub comment posted with Linear issue link
 
 ---
-*Test Date: October 9, 2025*
+
+_Test Date: October 9, 2025_

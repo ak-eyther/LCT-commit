@@ -27,7 +27,7 @@ export function sendErrorResponse(res, error, options = {}) {
         statusCode: error.statusCode,
         code: error.code,
         metadata: error.metadata,
-        stack: error.stack
+        stack: error.stack,
       });
     }
 
@@ -44,14 +44,14 @@ export function sendErrorResponse(res, error, options = {}) {
   if (logToConsole) {
     console.error(`[${errorId}] Unexpected Error:`, error.message, {
       name: error.name,
-      stack: error.stack
+      stack: error.stack,
     });
   }
 
   const response = {
     success: false,
     error: message,
-    errorId
+    errorId,
   };
 
   // Include stack trace in development mode if requested
@@ -72,7 +72,7 @@ export function sendErrorResponse(res, error, options = {}) {
 export function sendSuccessResponse(res, data, statusCode = 200) {
   return res.status(statusCode).json({
     success: true,
-    ...data
+    ...data,
   });
 }
 
@@ -117,7 +117,7 @@ export function logError(error, context = {}) {
     message: error.message,
     statusCode: error.statusCode,
     code: error.code,
-    ...context
+    ...context,
   };
 
   // Log to console (in production, this would go to a logging service)
@@ -147,7 +147,7 @@ export function validateMethod(req, res, allowedMethods) {
   res.status(405).json({
     success: false,
     error: `Method not allowed. Use ${allowedMethods.join(', ')}.`,
-    errorId: generateErrorId()
+    errorId: generateErrorId(),
   });
 
   return false;
@@ -166,7 +166,7 @@ export function setCORSHeaders(res, options = {}) {
   const {
     origin = '*',
     methods = ['POST', 'GET', 'OPTIONS'],
-    headers = ['Content-Type']
+    headers = ['Content-Type'],
   } = options;
 
   res.setHeader('Access-Control-Allow-Origin', origin);

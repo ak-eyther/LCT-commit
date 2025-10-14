@@ -51,11 +51,11 @@ reviews:
 
 # Ignore patterns
 ignore:
-  - "*.md"  # Don't review markdown documentation
-  - ".gitignore"
-  - "vercel.json"
-  - "package-lock.json"
-  - "*.log"
+  - '*.md' # Don't review markdown documentation
+  - '.gitignore'
+  - 'vercel.json'
+  - 'package-lock.json'
+  - '*.log'
 
 # Custom instructions for reviewers
 custom_instructions: |
@@ -103,13 +103,13 @@ comments:
 
 # Auto-label PRs based on review
 labels:
-  - label: "needs-changes"
+  - label: 'needs-changes'
     condition: "review.status == 'changes_requested'"
-  - label: "approved"
+  - label: 'approved'
     condition: "review.status == 'approved'"
-  - label: "security-issue"
-    condition: "review.security_issues > 0"
-  - label: "critical-priority"
+  - label: 'security-issue'
+    condition: 'review.security_issues > 0'
+  - label: 'critical-priority'
     condition: "pr.body contains 'CRITICAL'"
 
 # Summary format

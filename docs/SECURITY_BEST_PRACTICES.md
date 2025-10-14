@@ -8,6 +8,7 @@
 ## 🔐 Critical Security Rules
 
 ### ❌ NEVER Do This:
+
 1. **NEVER hardcode API keys, tokens, or secrets in any file**
 2. **NEVER commit credential files to Git**
 3. **NEVER share credentials in chat, email, or documentation**
@@ -15,6 +16,7 @@
 5. **NEVER use production credentials in test files**
 
 ### ✅ ALWAYS Do This:
+
 1. **ALWAYS use GitHub Secrets** for sensitive data
 2. **ALWAYS use environment variables** for local development
 3. **ALWAYS add credential files to `.gitignore`**
@@ -26,6 +28,7 @@
 ## 🛡️ How to Store Credentials Securely
 
 ### For GitHub Actions Workflows:
+
 ```yaml
 # ✅ CORRECT - Use GitHub Secrets
 env:
@@ -38,6 +41,7 @@ env:
 ```
 
 ### For Local Development:
+
 ```bash
 # ✅ CORRECT - Use environment variables
 export LINEAR_API_KEY="your-key-here"
@@ -53,13 +57,16 @@ API_KEY="lin_api_abc123..."  # NEVER DO THIS!
 ```
 
 ### For Documentation:
+
 ```markdown
 # ✅ CORRECT - Use placeholders
+
 LINEAR_API_KEY=lin_api_xxxxxxxxxxxxx
 LINEAR_API_KEY=your-key-here
 
 # ❌ WRONG - Show real credentials
-LINEAR_API_KEY=lin_api_abc123def456...  # NEVER show real keys in docs!
+
+LINEAR_API_KEY=lin_api_abc123def456... # NEVER show real keys in docs!
 ```
 
 ---
@@ -67,16 +74,19 @@ LINEAR_API_KEY=lin_api_abc123def456...  # NEVER show real keys in docs!
 ## 📋 Protected Credential Types
 
 ### 1. Linear API Keys
+
 - **Pattern:** `lin_api_*`
 - **Storage:** GitHub Secrets → `LINEAR_API_KEY`
 - **Rotation:** Linear Settings → API → Regenerate Key
 
 ### 2. GitHub Tokens
+
 - **Pattern:** `ghp_*` or `github_pat_*`
 - **Storage:** Automatically provided as `${{ secrets.GITHUB_TOKEN }}`
 - **Scope:** Read/Write for workflows only
 
 ### 3. Environment Variables
+
 - **Protected:** `LINEAR_TEAM_ID`, `LINEAR_PROJECT_ID`
 - **Storage:** GitHub Secrets or local `.env` file
 - **Never commit:** `.env*` files are in `.gitignore`
@@ -86,6 +96,7 @@ LINEAR_API_KEY=lin_api_abc123def456...  # NEVER show real keys in docs!
 ## 🔍 What's Already Protected
 
 ### `.gitignore` Coverage:
+
 ```gitignore
 # Environment variables
 .env
@@ -109,6 +120,7 @@ test-linear-*.sh
 ```
 
 ### Sentinel Security Scanning:
+
 - **Detects:** Hardcoded API keys, passwords, tokens
 - **Blocks:** Commits with CRITICAL security issues
 - **Reports:** Creates Linear issues for violations
@@ -119,17 +131,20 @@ test-linear-*.sh
 ## 🚨 What to Do If Credentials Are Exposed
 
 ### If Accidentally Committed to Git:
+
 1. **Rotate the key immediately** (generate a new one)
 2. **Remove from Git history** (use `git filter-branch` or BFG Repo-Cleaner)
 3. **Update GitHub Secrets** with the new key
 4. **Notify your team** of the key rotation
 
 ### If Exposed in Chat/Email:
+
 1. **Rotate the key immediately**
 2. **Update all systems** using the old key
 3. **Verify no unauthorized access** occurred
 
 ### If Exposed in Documentation:
+
 1. **Remove from documentation** (replace with placeholder)
 2. **Check if it's the real key** or just an example
 3. **Rotate if necessary**
@@ -139,6 +154,7 @@ test-linear-*.sh
 ## 📝 How to Set GitHub Secrets
 
 ### Via GitHub Web UI:
+
 1. Go to: `https://github.com/ak-eyther/LCT-commit/settings/secrets/actions`
 2. Click: **New repository secret**
 3. Add:
@@ -147,6 +163,7 @@ test-linear-*.sh
    - `LINEAR_PROJECT_ID` → Your Linear project UUID (optional)
 
 ### Via GitHub CLI:
+
 ```bash
 # Set secrets securely via command line
 gh secret set LINEAR_API_KEY --body "your-new-key-here"
@@ -161,6 +178,7 @@ gh secret list
 ## ✅ Security Checklist
 
 Before committing code:
+
 - [ ] No hardcoded API keys or tokens
 - [ ] All credentials use `${{ secrets.X }}` or environment variables
 - [ ] `.gitignore` covers all sensitive files
@@ -169,6 +187,7 @@ Before committing code:
 - [ ] Sentinel pre-commit hook passed
 
 Before pushing to GitHub:
+
 - [ ] Review `git diff` for any secrets
 - [ ] No credential files in `git status`
 - [ ] GitHub Secrets are configured
@@ -179,12 +198,14 @@ Before pushing to GitHub:
 ## 🎯 Healthcare-Specific Security
 
 ### PHI/PII Data Protection:
+
 - **Never log patient data** in console or files
 - **Encrypt sensitive data** at rest and in transit
 - **Use secure API endpoints** (HTTPS only)
 - **Validate all inputs** to prevent injection attacks
 
 ### Financial Data:
+
 - **Invoice amounts** validated server-side only
 - **Tariff data** from trusted sources only
 - **Savings calculations** audited and logged

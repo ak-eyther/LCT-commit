@@ -11,6 +11,7 @@ This directory contains an **interactive HTML preview** of the proposed LCT desi
 ## 🚀 How to Use
 
 ### Option 1: Open Directly
+
 ```bash
 # Navigate to the directory
 cd design-preview
@@ -26,6 +27,7 @@ start design-system-preview.html
 ```
 
 ### Option 2: Double-Click
+
 Just double-click `design-system-preview.html` in Finder/Explorer
 
 ## 🎭 Available Themes
@@ -33,18 +35,21 @@ Just double-click `design-system-preview.html` in Finder/Explorer
 The preview includes 3 design directions you can toggle between:
 
 ### 1. Anthropic-Inspired (Warm Minimal)
+
 - **Primary:** #131314 (charcoal)
 - **Accent:** #d97757 (terracotta) - replaces purple!
 - **Feel:** Warm, approachable, professional
 - **Inspired by:** Anthropic/Claude design system
 
 ### 2. OpenAI-Inspired (Bold Tech)
+
 - **Primary:** #000000 (pure black)
 - **Accent:** #0066FF (vibrant blue)
 - **Feel:** Bold, technical, innovative
 - **Inspired by:** OpenAI 2025 rebrand
 
 ### 3. Hybrid (Best of Both)
+
 - **Primary:** #0a0a0a (near-black)
 - **Accent:** #0066FF (blue)
 - **Feel:** Balanced, professional, trustworthy
@@ -96,13 +101,13 @@ Once you've reviewed and chosen a direction:
 
 ## 📊 Comparison
 
-| Feature | Current | New Design |
-|---------|---------|------------|
-| Purple accent | ❌ #9333ea | ✅ Replaced with blue/terracotta |
-| Spacing | ❌ Inconsistent | ✅ 8px base scale |
-| Colors | ❌ Hardcoded | ✅ CSS variables |
-| Theme switching | ❌ No | ✅ Ready for dark mode |
-| Design system | ❌ None | ✅ Complete documentation |
+| Feature         | Current         | New Design                       |
+| --------------- | --------------- | -------------------------------- |
+| Purple accent   | ❌ #9333ea      | ✅ Replaced with blue/terracotta |
+| Spacing         | ❌ Inconsistent | ✅ 8px base scale                |
+| Colors          | ❌ Hardcoded    | ✅ CSS variables                 |
+| Theme switching | ❌ No           | ✅ Ready for dark mode           |
+| Design system   | ❌ None         | ✅ Complete documentation        |
 
 ## 🔗 Resources
 

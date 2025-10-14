@@ -62,7 +62,7 @@ var(--spacing-8)   /* 32px - Page spacing */
 
 ```css
 .btn {
-  padding: 6px 12px;              /* Compact! */
+  padding: 6px 12px; /* Compact! */
   font-size: 13px;
   font-weight: 500;
   border-radius: 6px;
@@ -134,13 +134,13 @@ var(--spacing-8)   /* 32px - Page spacing */
 
 ## 🔄 Migration Cheat Sheet
 
-| Old Code | New Code |
-|----------|----------|
-| `color: #9333ea` | `color: var(--accent)` |
-| `color: #2563eb` | `color: var(--info)` |
-| `padding: 8px 16px` | `padding: 6px 12px` |
-| `font-size: 14px` | `font-size: 13px` |
-| `margin: 15px` | `margin: var(--spacing-4)` |
+| Old Code            | New Code                   |
+| ------------------- | -------------------------- |
+| `color: #9333ea`    | `color: var(--accent)`     |
+| `color: #2563eb`    | `color: var(--info)`       |
+| `padding: 8px 16px` | `padding: 6px 12px`        |
+| `font-size: 14px`   | `font-size: 13px`          |
+| `margin: 15px`      | `margin: var(--spacing-4)` |
 
 ---
 
@@ -148,6 +148,7 @@ var(--spacing-8)   /* 32px - Page spacing */
 
 ```markdown
 Design System Compliance:
+
 - [ ] Uses CSS variables (no hardcoded colors)
 - [ ] No purple (#9333ea) anywhere
 - [ ] Minimal blue (only gray for info)
@@ -164,6 +165,7 @@ Design System Compliance:
 ## 🚨 Common Mistakes
 
 **DON'T:**
+
 ```css
 /* ❌ Hardcoded color */
 color: #d97757;
@@ -172,7 +174,7 @@ color: #d97757;
 color: #9333ea;
 
 /* ❌ Blue for decoration */
-color: #0066FF;
+color: #0066ff;
 
 /* ❌ Arbitrary spacing */
 padding: 14px 18px;
@@ -182,6 +184,7 @@ padding: 10px 20px;
 ```
 
 **DO:**
+
 ```css
 /* ✅ CSS variable */
 color: var(--accent);

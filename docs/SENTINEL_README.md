@@ -21,6 +21,7 @@ Sentinel is your automated code guardian - an elite AI-powered code review agent
 ## ✨ Features
 
 ### 🔒 Security Analysis
+
 - Detects hardcoded secrets (API keys, passwords, tokens)
 - Identifies SQL injection vulnerabilities
 - Catches XSS (Cross-Site Scripting) issues
@@ -29,6 +30,7 @@ Sentinel is your automated code guardian - an elite AI-powered code review agent
 - Checks for sensitive data exposure
 
 ### 🎨 UI/UX Analysis
+
 - WCAG 2.2 Level AA compliance checks
 - Missing alt text on images
 - Input elements without labels
@@ -37,6 +39,7 @@ Sentinel is your automated code guardian - an elite AI-powered code review agent
 - Performance optimization hints
 
 ### ⚙️ Functional Analysis
+
 - Missing try-catch blocks in async functions
 - console.log statements in production code
 - TODO/FIXME comment tracking
@@ -44,6 +47,7 @@ Sentinel is your automated code guardian - an elite AI-powered code review agent
 - Edge case handling
 
 ### 📊 Linear Integration
+
 - Automatically creates Linear issues for bugs
 - Priority mapping: CRITICAL → Urgent, HIGH → High
 - Rich issue descriptions with code context
@@ -57,6 +61,7 @@ Sentinel is your automated code guardian - an elite AI-powered code review agent
 ### 1. Enable GitHub Actions
 
 Sentinel runs automatically on:
+
 - ✅ Pull requests to `main`, `qa`, `develop`
 - ✅ Pushes to `main`, `qa`, `develop`, `feature/*`, `fix/*`
 
@@ -75,6 +80,7 @@ git commit -m "Test Sentinel pre-commit hook"
 ```
 
 The pre-commit hook will:
+
 - ⛔ **BLOCK commits** with CRITICAL security issues
 - ⚠️ **WARN** about HIGH issues (but allow commit)
 - 📝 **INFORM** about code quality improvements
@@ -92,6 +98,7 @@ LINEAR_TEAM_ID=your-team-uuid
 ```
 
 **Get your Linear credentials:**
+
 1. Go to https://linear.app/settings/api
 2. Create new API key
 3. Find your team ID in team settings
@@ -143,17 +150,19 @@ LINEAR_TEAM_ID=your-team-uuid
 
 - **Hardcoded API Key** in `server.js:42`
   🔴 CRITICAL: Hardcoded API Key detected
-  ```
-  const API_KEY = "sk_live_51H8xYz...";
-  ```
+```
+
+const API_KEY = "sk_live_51H8xYz...";
+
+```
 
 ### 🟠 HIGH Issues (2)
 
 - **Accessibility** in `index.html:128`
-  🟠 HIGH: Image missing alt attribute
+🟠 HIGH: Image missing alt attribute
 
 - **Error Handling** in `utils.js:56`
-  🟠 HIGH: Async function without try-catch
+🟠 HIGH: Async function without try-catch
 
 ### 📊 Linear Issues Created
 
@@ -198,6 +207,7 @@ If you believe this is a false positive, you can bypass with:
 ### Customize Severity Levels
 
 Edit `.claude/agents/code-reviewer.md` to adjust:
+
 - Which patterns to detect
 - Severity classifications
 - LCT-specific business rules
@@ -205,6 +215,7 @@ Edit `.claude/agents/code-reviewer.md` to adjust:
 ### Adjust Pre-Commit Hook
 
 Edit `.git/hooks/pre-commit` to:
+
 - Add custom checks
 - Change blocking behavior
 - Add project-specific validations
@@ -212,6 +223,7 @@ Edit `.git/hooks/pre-commit` to:
 ### Modify GitHub Workflow
 
 Edit `.github/workflows/code-review.yml` to:
+
 - Change trigger conditions
 - Add more file types
 - Integrate additional tools
@@ -220,12 +232,12 @@ Edit `.github/workflows/code-review.yml` to:
 
 ## 📊 Issue Severity Guide
 
-| Severity | Description | Action |
-|----------|-------------|--------|
-| 🔴 **CRITICAL** | Security vulnerabilities, data exposure | ⛔ Blocks PR merge |
-| 🟠 **HIGH** | Major bugs, accessibility issues | Must fix before release |
-| 🟡 **MEDIUM** | Code quality, tech debt | Fix in next sprint |
-| 🟢 **LOW** | Nice-to-have improvements | Backlog item |
+| Severity        | Description                             | Action                  |
+| --------------- | --------------------------------------- | ----------------------- |
+| 🔴 **CRITICAL** | Security vulnerabilities, data exposure | ⛔ Blocks PR merge      |
+| 🟠 **HIGH**     | Major bugs, accessibility issues        | Must fix before release |
+| 🟡 **MEDIUM**   | Code quality, tech debt                 | Fix in next sprint      |
+| 🟢 **LOW**      | Nice-to-have improvements               | Backlog item            |
 
 ---
 
@@ -234,16 +246,19 @@ Edit `.github/workflows/code-review.yml` to:
 Sentinel has deep knowledge of the LCT commit project:
 
 ### Security Priorities
+
 - **PHI/PII Protection**: Patient data must be encrypted (AES-256-GCM)
 - **Financial Accuracy**: Server-side validation only
 - **Audit Trails**: All data access must be logged
 
 ### Critical Business Logic
+
 - Invoice amount precedence: LCT → ETIMS → Document
 - Savings calculation: `billedAmount - approvedAmount`
 - Fraud detection patterns must never be bypassed
 
 ### Success Criteria
+
 - 90%+ adjudication accuracy by October 7, 2025
 - Zero financial calculation errors
 
@@ -287,11 +302,13 @@ curl -X POST https://api.linear.app/graphql \
 ### False Positives
 
 To bypass a single commit (use sparingly):
+
 ```bash
 git commit --no-verify -m "Your message"
 ```
 
 To disable globally (not recommended):
+
 ```bash
 git config core.hooksPath /dev/null
 ```
@@ -301,16 +318,19 @@ git config core.hooksPath /dev/null
 ## 📚 Resources
 
 ### Security
+
 - [OWASP Top 10 2025](https://owasp.org/www-project-top-ten/)
 - [OWASP Code Review Guide](https://owasp.org/www-project-code-review-guide/)
 - [CWE Top 25](https://cwe.mitre.org/top25/)
 
 ### Accessibility
+
 - [WCAG 2.2 Guidelines](https://www.w3.org/WAI/WCAG22/quickref/)
 - [A11Y Project Checklist](https://www.a11yproject.com/checklist/)
 - [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
 
 ### Linear API
+
 - [Linear API Documentation](https://developers.linear.app/docs)
 - [GraphQL API Reference](https://studio.apollographql.com/public/Linear-API/home)
 
@@ -321,6 +341,7 @@ git config core.hooksPath /dev/null
 ### For Developers
 
 1. **Run local checks before pushing**
+
    ```bash
    # Test your changes locally
    git add .
@@ -372,6 +393,7 @@ Track Sentinel's impact:
 - **False Positive Rate**: Issues marked as invalid
 
 Dashboard ideas:
+
 - Weekly security issues trend
 - Top vulnerability types
 - Team responsiveness to Sentinel alerts
@@ -433,11 +455,13 @@ Need help with Sentinel?
 ## 🏆 Success Stories
 
 ### Before Sentinel
+
 - 3 hardcoded API keys committed to main
 - 12 accessibility issues in production
 - 5 SQL injection vulnerabilities found in audit
 
 ### After Sentinel
+
 - ✅ 0 secrets in codebase
 - ✅ 95% accessibility score
 - ✅ All PRs security-reviewed automatically
@@ -448,6 +472,7 @@ Need help with Sentinel?
 ## 📝 Version History
 
 **v1.0.0** (October 9, 2025)
+
 - Initial release
 - OWASP Top 10 2025 coverage
 - WCAG 2.2 Level AA checks
@@ -460,6 +485,7 @@ Need help with Sentinel?
 ## 🎯 Roadmap
 
 **Coming Soon:**
+
 - 🔮 AI-powered fix suggestions
 - 📊 Security trend analytics dashboard
 - 🧪 Integration with testing frameworks

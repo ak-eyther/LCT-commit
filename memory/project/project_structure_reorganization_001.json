@@ -27,8 +27,16 @@
           "TESTING_RESULTS.md"
         ],
         "tests/": {
-          "unit/": ["test-agent-demo.js", "test-linear-workflow.js", "test_results.json"],
-          "integration/": ["TEST_LINEAR_MAIN.md", "TEST_LINEAR_QA.md", "test-linear-final.md"],
+          "unit/": [
+            "test-agent-demo.js",
+            "test-linear-workflow.js",
+            "test_results.json"
+          ],
+          "integration/": [
+            "TEST_LINEAR_MAIN.md",
+            "TEST_LINEAR_QA.md",
+            "test-linear-final.md"
+          ],
           "sentinel/": ["10 security test files"]
         }
       },

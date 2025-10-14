@@ -14,6 +14,7 @@
 **LCT commit** is a comprehensive tracking system for implementing and monitoring 31 evaluation criteria for healthcare claims adjudication in Kenya. This project represents a critical partnership between **LCT Group** (Kenya) and **Vitraya Technologies** (India) to transform healthcare claims processing with AI-powered accuracy.
 
 ### Key Features
+
 - ✅ Track 31 evaluation criteria across 5 categories
 - 📊 Real-time dashboard with progress visualization
 - 🎯 Priority-based filtering (CRITICAL, High, Medium, Low)
@@ -136,12 +137,14 @@ All pages share data via `localStorage` - changes sync automatically!
 ### Quick Setup
 
 1. **Install MCP servers**:
+
    ```bash
    npm install -g @modelcontextprotocol/server-linear
    npm install -g @modelcontextprotocol/server-vercel
    ```
 
 2. **Configure environment**:
+
    ```bash
    cp env.example .env
    # Fill in your API keys
@@ -169,12 +172,14 @@ All pages share data via `localStorage` - changes sync automatically!
 ### Option 1: Local Development (Recommended for Beginners)
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/ak-eyther/LCT-commit.git
    cd LCT-commit
    ```
 
 2. **Open in browser**
+
    ```bash
    # Simply open the main HTML file
    open src/app/index.html
@@ -210,6 +215,7 @@ feature/* branches
 ```
 
 **Deployment Rules:**
+
 - ✅ **Push to `main`** → Automatic production deployment
 - ✅ **Push to `feature/*`** → Automatic preview deployment
 - ✅ **Open PR** → Preview URL added to PR comments
@@ -233,11 +239,13 @@ vercel
 ## 📊 The 31 Success Criteria
 
 ### 1. Clinical Accuracy (3 items)
+
 - ICD matches billed service
 - Service-Diagnosis consistency with pre-auth
 - Medical notes completeness
 
 ### 2. Financial & Policy Compliance (6 items)
+
 - **[CRITICAL]** Invoice amount precedence
 - Invoice date within policy period
 - Preauthorization linkage accuracy
@@ -246,6 +254,7 @@ vercel
 - **[CRITICAL]** Tariff and price validation
 
 ### 3. Fraud & Duplication Safeguards (18 items)
+
 - Duplicate visit detection
 - **[CRITICAL]** Repeated service detection
 - Invoice number format consistency
@@ -266,14 +275,16 @@ vercel
 - Provider service scope validation
 
 ### 4. Vetting Completeness (2 items)
+
 - 100% vetting completeness per visit
 - Query criteria definition
 
 ### 5. Process Efficiency (2 items)
+
 - Vetting TAT (<2 mins per claim)
 - Cost savings by provider/scheme
 
-*For detailed explanations of each criterion, see the tracker dashboard.*
+_For detailed explanations of each criterion, see the tracker dashboard._
 
 ---
 
@@ -323,12 +334,14 @@ See [docs/BRANCHING_STRATEGY.md](./docs/BRANCHING_STRATEGY.md) for complete work
 ## 📤 Using the Tracker
 
 ### Dashboard View
+
 - View overall progress (% complete)
 - See breakdown by priority level
 - Monitor section-level completion
 - Track critical items status
 
 ### Checklist View
+
 - Filter by priority or status
 - Expand criteria to see detailed explanations
 - Update status and ownership
@@ -336,6 +349,7 @@ See [docs/BRANCHING_STRATEGY.md](./docs/BRANCHING_STRATEGY.md) for complete work
 - Auto-saves as you work
 
 ### Exporting Data
+
 - **Save:** Auto-saves to browser localStorage
 - **Export JSON:** Full data export for backup
 - **Export CSV:** Spreadsheet-friendly format
@@ -347,6 +361,7 @@ See [docs/BRANCHING_STRATEGY.md](./docs/BRANCHING_STRATEGY.md) for complete work
 ### Vercel Configuration
 
 The `vercel.json` file configures:
+
 - Static file serving
 - Security headers (X-Frame-Options, CSP, etc.)
 - Route rewrites
@@ -357,8 +372,9 @@ The `vercel.json` file configures:
 Data is saved to: `lctTrackerData`
 
 To clear data:
+
 ```javascript
-localStorage.removeItem('lctTrackerData')
+localStorage.removeItem('lctTrackerData');
 ```
 
 ---
@@ -372,6 +388,7 @@ localStorage.removeItem('lctTrackerData')
    - Check existing issues/PRs to avoid duplication
 
 2. **Create a branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -400,18 +417,21 @@ See [docs/BRANCHING_STRATEGY.md](./docs/BRANCHING_STRATEGY.md) for detailed guid
 Every commit and PR automatically triggers **three elite AI review agents**:
 
 **🐰 CodeRabbit - Primary Code Reviewer**
+
 - Comprehensive code analysis & best practices
 - Performance optimization suggestions
 - Documentation & maintainability reviews
 - Refactoring recommendations
 
 **💻 Codex - AI Code Analysis Agent**
+
 - Deep code understanding & pattern recognition
 - Algorithm efficiency analysis
 - Context-aware suggestions
 - Code structure optimization
 
 **🛡️ Sentinel - Senior Security & QA Agent**
+
 - Security scanning (OWASP Top 10 2025)
   - Hardcoded secrets detection
   - SQL injection & XSS vulnerability scanning
@@ -426,6 +446,7 @@ Every commit and PR automatically triggers **three elite AI review agents**:
 - **Blocks merge** when CRITICAL security issues detected
 
 **📊 Linear Integration - Issue Tracking**
+
 - Automatically creates Linear issues from AI reviewer comments
 - Works with Sentinel, CodeRabbit, and any AI reviewer
 - Maps priorities: 🔴 CRITICAL → Priority 1, 🟠 HIGH → Priority 2, etc.
@@ -449,19 +470,24 @@ Reviews appear as comments on commits and PRs automatically.
 ## 🎯 Priority Levels
 
 ### CRITICAL (4 items)
+
 Must work perfectly to achieve 90% accuracy goal:
+
 - Invoice amount precedence
 - Tariff validation
 - Repeated service detection
 - Cross-provider duplicate service
 
 ### High (17 items)
+
 Very important for quality metrics and fraud detection
 
 ### Medium (8 items)
+
 Nice to have, improves overall system quality
 
 ### Low (2 items)
+
 Future enhancements
 
 ---
@@ -469,16 +495,19 @@ Future enhancements
 ## 🚨 Troubleshooting
 
 ### Data Not Saving
+
 - Check browser localStorage is enabled
 - Try exporting to JSON as backup
 - Clear browser cache and reload
 
 ### Vercel Deployment Issues
+
 - Verify `vercel.json` is in root directory
 - Check Vercel build logs for errors
 - Ensure `main` and `develop` branches exist
 
 ### Browser Compatibility
+
 - Tested on: Chrome, Firefox, Safari, Edge
 - Requires modern browser with localStorage support
 - JavaScript must be enabled
@@ -511,10 +540,12 @@ Track real-time progress by opening the tracker dashboard!
 ## 👥 Team
 
 **LCT Group (Kenya)**
+
 - Healthcare claims management experts
 - Domain knowledge and validation
 
 **Vitraya Technologies (India)**
+
 - AI/ML engineering
 - Software development
 
@@ -531,6 +562,7 @@ Track real-time progress by opening the tracker dashboard!
 ## 📞 Support
 
 For questions or issues:
+
 - Create an issue in this repository
 - Review existing documentation in `CLAUDE.md` and `docs/agents.md`
 - Contact project maintainers
@@ -571,6 +603,6 @@ For questions or issues:
 
 ---
 
-*Last Updated: October 11, 2025*
-*Version: 1.0.0*
-*Built with Claude Code*
+_Last Updated: October 11, 2025_
+_Version: 1.0.0_
+_Built with Claude Code_

@@ -7,12 +7,14 @@
 ## 🤔 Why They Can Work Together
 
 ### mem0ai Architecture
+
 - **Cloud-Based**: mem0ai stores memories in the cloud (not locally)
 - **API-Based**: Both devices connect via API keys
 - **Shared Access**: Same API keys = Same memory data
 - **Synced Automatically**: Changes from either device are instantly available
 
 ### How It Works
+
 ```
 Mac (this computer)              mem0ai Cloud              Laptop
      ↓                                ↓                       ↓
@@ -38,6 +40,7 @@ Mac (this computer)              mem0ai Cloud              Laptop
 ### Same Configuration on Both Devices
 
 **API Keys** (from mem0ai.com):
+
 - mem0ai API key
 - OpenAI API key (for embeddings)
 - Qdrant API key (optional, for vector store)
@@ -53,6 +56,7 @@ Mac (this computer)              mem0ai Cloud              Laptop
 If you haven't already:
 
 1. **mem0ai Account**
+
    ```
    Visit: https://app.mem0.ai/
    Sign up or login
@@ -94,6 +98,7 @@ Once you have the keys, set them up on the Mac:
 #### Option A: Environment Variables (Recommended)
 
 1. **Create/Edit shell config**:
+
    ```bash
    # For zsh (default on Mac)
    nano ~/.zshrc
@@ -103,6 +108,7 @@ Once you have the keys, set them up on the Mac:
    ```
 
 2. **Add these lines**:
+
    ```bash
    # mem0ai Configuration
    export MEM0_API_KEY="your_mem0ai_api_key_here"
@@ -117,11 +123,13 @@ Once you have the keys, set them up on the Mac:
 #### Option B: Config File
 
 1. **Create config directory**:
+
    ```bash
    mkdir -p ~/.mem0
    ```
 
 2. **Create config file**:
+
    ```bash
    nano ~/.mem0/config.json
    ```
@@ -138,11 +146,13 @@ Once you have the keys, set them up on the Mac:
 #### Option C: Project .env File
 
 1. **Create .env file** (already in .gitignore):
+
    ```bash
    nano .env
    ```
 
 2. **Add keys**:
+
    ```bash
    MEM0_API_KEY=your_mem0ai_api_key_here
    OPENAI_API_KEY=your_openai_api_key_here
@@ -186,6 +196,7 @@ print(f"✅ Connected! Found {len(results)} memories")
 ## 🔄 Daily Workflow
 
 ### Scenario 1: Working on Laptop
+
 ```bash
 # On laptop
 python3 scripts/sync_to_mem0ai.py
@@ -195,6 +206,7 @@ python3 scripts/sync_to_mem0ai.py
 ```
 
 ### Scenario 2: Working on Mac
+
 ```bash
 # On Mac (once configured)
 python3 scripts/sync_to_mem0ai.py
@@ -204,6 +216,7 @@ python3 scripts/sync_to_mem0ai.py
 ```
 
 ### Scenario 3: Query from Either Device
+
 ```python
 # Works on both Mac and Laptop
 from mem0 import Memory
@@ -218,12 +231,14 @@ results = memory.search("project structure", user_id="lct_project")
 ## 🎯 Key Points
 
 ### What's Shared (Cloud)
+
 - ✅ All memories
 - ✅ Metadata and tags
 - ✅ Search results
 - ✅ Embeddings
 
 ### What's Local (Not Shared)
+
 - 🔑 API keys (need to configure on each device)
 - 💾 Cache (device-specific)
 - 📂 Local JSON files (until synced)
@@ -233,12 +248,14 @@ results = memory.search("project structure", user_id="lct_project")
 ## 🔐 Security Best Practices
 
 ### DO:
+
 - ✅ Store API keys in environment variables
 - ✅ Use .env file (already in .gitignore)
 - ✅ Keep keys secure and private
 - ✅ Use same user_id: "lct_project" on both devices
 
 ### DON'T:
+
 - ❌ Commit API keys to git
 - ❌ Share API keys publicly
 - ❌ Hardcode keys in scripts
@@ -249,20 +266,26 @@ results = memory.search("project structure", user_id="lct_project")
 ## 🐛 Troubleshooting
 
 ### Problem: "No memories found"
+
 **Solution**: Check you're using same user_id on both devices
+
 ```python
 # Always use: user_id="lct_project"
 memory.search("query", user_id="lct_project")
 ```
 
 ### Problem: "API key invalid"
+
 **Solution**: Verify keys are set correctly
+
 ```bash
 echo $MEM0_API_KEY  # Should show your key
 ```
 
 ### Problem: "Different results on each device"
+
 **Solution**: Ensure both devices use same API keys
+
 ```python
 # Check config
 from mem0 import Memory
@@ -275,12 +298,14 @@ print(memory.config)  # Should match on both devices
 ## 📊 Quick Setup Checklist
 
 ### On Laptop (Already Done)
+
 - [x] mem0ai installed
 - [x] API keys configured
 - [x] Can sync memories
 - [x] Memories stored in cloud
 
 ### On Mac (To Do)
+
 - [ ] Get API keys from laptop
 - [ ] Install mem0ai in virtual environment
 - [ ] Configure API keys (env vars or config file)
@@ -292,18 +317,21 @@ print(memory.config)  # Should match on both devices
 ## 🚀 Next Steps
 
 1. **On your laptop**: Export the API keys
+
    ```bash
    echo $MEM0_API_KEY
    echo $OPENAI_API_KEY
    ```
 
 2. **On this Mac**: Configure with same keys
+
    ```bash
    export MEM0_API_KEY="..."
    export OPENAI_API_KEY="..."
    ```
 
 3. **Test on Mac**:
+
    ```bash
    source .venv/bin/activate
    pip install mem0ai
@@ -337,11 +365,13 @@ Once both devices have the same API keys, they work as one seamless system.
 **Answer**: Yes, your Mac and Laptop CAN work together!
 
 **What's needed**:
+
 1. Same API keys on both devices
 2. mem0ai installed on both
 3. Use same user_id: "lct_project"
 
 **Result**:
+
 - Memories synced instantly
 - Work from any device
 - No manual syncing between devices
@@ -351,5 +381,5 @@ Once both devices have the same API keys, they work as one seamless system.
 
 ---
 
-*Last Updated: October 12, 2025*
-*Status: Ready to configure*
+_Last Updated: October 12, 2025_
+_Status: Ready to configure_

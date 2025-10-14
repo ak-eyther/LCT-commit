@@ -34,6 +34,7 @@ git commit -m "Test Sentinel"
 ## 📖 What Gets Checked?
 
 ### 🔴 CRITICAL (Blocks Commits)
+
 - Hardcoded API keys, passwords, secrets
 - SQL injection vulnerabilities
 - XSS (Cross-Site Scripting) risks
@@ -41,12 +42,14 @@ git commit -m "Test Sentinel"
 - `eval()` usage on user input
 
 ### 🟠 HIGH (Warns, Doesn't Block)
+
 - Missing accessibility attributes
 - Async functions without error handling
 - Unsafe DOM manipulation
 - Missing input labels
 
 ### 🟡 MEDIUM (Informational)
+
 - `console.log` statements
 - TODO/FIXME comments
 - Code quality improvements
@@ -56,16 +59,19 @@ git commit -m "Test Sentinel"
 ## 🎯 Where Does Sentinel Run?
 
 ### 1️⃣ Local (Pre-Commit Hook)
+
 **When:** Every `git commit`
 **Action:** Blocks CRITICAL issues, warns on others
 **Bypass:** `git commit --no-verify` (use sparingly!)
 
 ### 2️⃣ GitHub (On PR)
+
 **When:** Pull request created/updated
 **Action:** Posts comment with full analysis + inline comments
 **Blocks:** Merge if CRITICAL issues found
 
 ### 3️⃣ GitHub (On Push)
+
 **When:** Code pushed to main/qa/develop
 **Action:** Posts commit comment with results
 **Creates:** Linear issues for tracking
@@ -97,10 +103,12 @@ Please fix the issues above before committing.
 **Issues Found:** 2 CRITICAL, 3 HIGH, 5 MEDIUM
 
 ### 🔴 CRITICAL Issues (2)
+
 - Hardcoded password in api/auth.js:28
 - SQL injection in db/queries.js:156
 
 ### 📊 Linear Issues Created
+
 - [SEN-123] - Hardcoded credential detected
 - [SEN-124] - SQL injection vulnerability
 
@@ -130,6 +138,7 @@ Get keys from: https://linear.app/settings/api
 ### "Can I bypass Sentinel?"
 
 Yes, but **only for emergencies**:
+
 ```bash
 git commit --no-verify -m "Emergency hotfix"
 ```
@@ -177,6 +186,7 @@ vim .github/workflows/code-review.yml
 ## 🎯 LCT commit Specific
 
 Sentinel knows about:
+
 - **PHI/PII Protection**: Patient data encryption requirements
 - **Financial Accuracy**: Server-side validation only
 - **90% Goal**: Adjudication accuracy target

@@ -1,6 +1,7 @@
 # Website Navigation and Architecture - LCT-Vitraya Healthcare Claims System
 
 ## Overview
+
 This document describes the navigation flow and architecture for the LCT-Vitraya healthcare claims adjudication system. The website is designed to be beginner-friendly, secure, and focused on achieving 90%+ accuracy across 31 criteria. All components are static HTML/JS/CSS with lightweight Node.js APIs for simplicity and security.
 
 - **Primary Goal**: Track and validate claims against 31 success criteria for pilot-to-commercial transition.
@@ -9,14 +10,17 @@ This document describes the navigation flow and architecture for the LCT-Vitraya
 - **Last Updated**: October 2025.
 
 ## Navigation Flow
+
 Users start at the main dashboard and navigate through criteria tracking, reports, and settings. Navigation is linear and intuitive, with no complex routing—rely on browser history and direct links.
 
 ### Entry Points
+
 - **Main Dashboard**: `src/app/index.html` - Overview of 31 criteria, progress tracking, and quick actions.
 - **Login Page**: `src/app/login.html` - Authentication (mocks available via `api/auth/`).
 - **Reports**: `src/app/reports.html` - Analytics on claims, savings, and criteria status.
 
 ### Key Navigation Paths
+
 1. **Start Here**:
    - Open `src/app/index.html` in a browser.
    - View criteria matrix (31 items across 5 categories).
@@ -40,12 +44,15 @@ Users start at the main dashboard and navigate through criteria tracking, report
    - `src/app/documentation.html` - Inline help for criteria and usage.
 
 ### User Journey Example
+
 - User logs in → Views dashboard → Tracks criterion #4 (Invoice Validation) → Saves progress → Exports report → Logs out.
 
 ## Architecture Overview
+
 High-level structure: Static frontend with API support for auth and data. No build process—run directly in browser.
 
 ### High-Level Diagram (Text-Based)
+
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Browser       │    │   API Endpoints │    │   Database      │
@@ -60,6 +67,7 @@ High-level structure: Static frontend with API support for auth and data. No bui
 ```
 
 ### Key Components
+
 - **Frontend (src/app/)**:
   - HTML files for pages (e.g., `index.html` for dashboard).
   - JavaScript for interactivity (e.g., `auth.js` for login logic).
@@ -92,11 +100,13 @@ High-level structure: Static frontend with API support for auth and data. No bui
   - Memory System: `memory/` for agent learnings.
 
 ### Security Architecture
+
 - **Enforced Rules**: No hardcoded secrets; input validation; OWASP Top 10 compliance via Sentinel.
 - **Data Flow**: Claims data → Validate → Store locally → Export securely.
 - **Access**: Agents access via `docs/` or memory APIs.
 
 ## Running the Website
+
 1. **Local Development**:
    - Open `src/app/index.html` in a browser (no build needed).
    - Test APIs: Run `node api/auth/login.js` for mocks.
@@ -109,6 +119,7 @@ High-level structure: Static frontend with API support for auth and data. No bui
    - Auto-deploy to Vercel on push to main.
 
 ## Agent Accessibility
+
 - **Storage**: This doc is in `docs/`—agents can read via `read_file` or memory system.
 - **Updates**: Modify via commits; notify agents via memory.
 - **Related Docs**: See `CLAUDE.md`, `docs/agents/`, `docs/TECH_STACK.md`.

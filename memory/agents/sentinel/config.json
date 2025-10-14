@@ -6,13 +6,6 @@
     "Track issue resolution patterns",
     "Learn from false positives/negatives"
   ],
-  "memory_categories": [
-    "development",
-    "shared"
-  ],
-  "memory_types": [
-    "pattern",
-    "learning",
-    "issue"
-  ]
+  "memory_categories": ["development", "shared"],
+  "memory_types": ["pattern", "learning", "issue"]
 }

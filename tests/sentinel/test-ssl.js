@@ -2,7 +2,7 @@
 const https = require('https');
 
 const agent = new https.Agent({
-  rejectUnauthorized: false // Disables SSL verification
+  rejectUnauthorized: false, // Disables SSL verification
 });
 
 fetch('https://api.example.com', { agent });

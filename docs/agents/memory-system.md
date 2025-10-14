@@ -11,6 +11,7 @@
 The LCT Commit project uses **mem0** to create a shared memory system that all agents can access and contribute to. This ensures consistent context, prevents information loss, and enables collaborative intelligence across the entire development workflow.
 
 ### Key Benefits
+
 - **Persistent Context:** Agents remember decisions, learnings, and context across sessions
 - **Shared Knowledge:** All agents access the same memory base
 - **Collaborative Intelligence:** Agents build on each other's insights
@@ -21,6 +22,7 @@ The LCT Commit project uses **mem0** to create a shared memory system that all a
 ## 🏗️ Architecture
 
 ### Memory Hierarchy
+
 ```
 LCT Commit Memory System
 ├── Project Context (Long-term)
@@ -43,18 +45,21 @@ LCT Commit Memory System
 ### Memory Categories
 
 #### 1. **Project Memories** (Persistent)
+
 - Business context and requirements
 - Technical architecture decisions
 - Success criteria progress
 - Team member preferences and expertise
 
 #### 2. **Development Memories** (Semi-persistent)
+
 - Code patterns and best practices
 - Feature implementation history
 - Bug resolution patterns
 - Performance optimization learnings
 
 #### 3. **Session Memories** (Temporary)
+
 - Current work context
 - Recent user interactions
 - Active issues and blockers
@@ -121,6 +126,7 @@ LCT Commit Memory System
 Each agent has specific memory responsibilities:
 
 #### Primary Developer Agent
+
 ```python
 # Memory responsibilities
 - Store coding patterns and best practices
@@ -130,6 +136,7 @@ Each agent has specific memory responsibilities:
 ```
 
 #### Sentinel Agent
+
 ```python
 # Memory responsibilities
 - Store security patterns and vulnerabilities
@@ -139,6 +146,7 @@ Each agent has specific memory responsibilities:
 ```
 
 #### Security Auditor Agent
+
 ```python
 # Memory responsibilities
 - Store compliance requirements
@@ -148,6 +156,7 @@ Each agent has specific memory responsibilities:
 ```
 
 #### Documentation Writer Agent
+
 ```python
 # Memory responsibilities
 - Store documentation patterns
@@ -184,23 +193,23 @@ class LCTMemorySystem:
         self.memory = mem0.Memory()
         self.project_root = os.path.dirname(os.path.dirname(__file__))
         self.memory_dir = os.path.join(self.project_root, "memory")
-        
+
         # Initialize memory structure
         self._init_memory_structure()
-    
+
     def _init_memory_structure(self):
         """Initialize the memory directory structure"""
         directories = [
             "project", "development", "sessions", "shared"
         ]
-        
+
         for directory in directories:
             os.makedirs(os.path.join(self.memory_dir, directory), exist_ok=True)
-    
+
     def add_memory(self, category, memory_type, content, metadata=None):
         """Add a new memory to the system"""
         memory_id = f"{category}_{memory_type}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-        
+
         memory_data = {
             "memory_id": memory_id,
             "category": category,
@@ -211,7 +220,7 @@ class LCTMemorySystem:
             "last_updated": datetime.now().isoformat(),
             "access_count": 0
         }
-        
+
         # Store in mem0
         self.memory.add(
             content["description"],
@@ -222,12 +231,12 @@ class LCTMemorySystem:
                 **metadata or {}
             }
         )
-        
+
         # Store in file system for backup
         self._save_memory_file(memory_data)
-        
+
         return memory_id
-    
+
     def get_memories(self, category=None, memory_type=None, tags=None, limit=10):
         """Retrieve memories based on criteria"""
         query = ""
@@ -237,21 +246,21 @@ class LCTMemorySystem:
             query += f"type:{memory_type} "
         if tags:
             query += " ".join([f"tag:{tag}" for tag in tags])
-        
+
         return self.memory.search(query, limit=limit)
-    
+
     def update_memory(self, memory_id, updates):
         """Update an existing memory"""
         # Update in mem0
         # Update in file system
         pass
-    
+
     def _save_memory_file(self, memory_data):
         """Save memory to file system"""
         category = memory_data["category"]
         filename = f"{memory_data['memory_id']}.json"
         filepath = os.path.join(self.memory_dir, category, filename)
-        
+
         with open(filepath, 'w') as f:
             json.dump(memory_data, f, indent=2)
 
@@ -269,7 +278,7 @@ class AgentMemoryIntegration:
     def __init__(self, agent_name):
         self.agent_name = agent_name
         self.memory_system = LCTMemorySystem()
-    
+
     def store_decision(self, decision, context, impact):
         """Store a decision made by the agent"""
         return self.memory_system.add_memory(
@@ -288,7 +297,7 @@ class AgentMemoryIntegration:
                 "lct_criteria": self._extract_criteria(decision)
             }
         )
-    
+
     def store_learning(self, learning, pattern, success_rate):
         """Store a learning from the agent's experience"""
         return self.memory_system.add_memory(
@@ -307,14 +316,14 @@ class AgentMemoryIntegration:
                 "success_rate": success_rate
             }
         )
-    
+
     def get_relevant_memories(self, query, limit=5):
         """Get memories relevant to current context"""
         return self.memory_system.get_memories(
             tags=[self.agent_name.lower()],
             limit=limit
         )
-    
+
     def _extract_criteria(self, text):
         """Extract LCT criteria numbers from text"""
         import re
@@ -327,6 +336,7 @@ class AgentMemoryIntegration:
 ## 📊 Memory Usage Patterns
 
 ### 1. **Primary Developer Agent**
+
 ```python
 # Store coding patterns
 memory.store_learning(
@@ -344,6 +354,7 @@ memory.store_decision(
 ```
 
 ### 2. **Sentinel Agent**
+
 ```python
 # Store security patterns
 memory.store_learning(
@@ -361,6 +372,7 @@ memory.store_learning(
 ```
 
 ### 3. **Cross-Agent Learning**
+
 ```python
 # Store insights that benefit all agents
 memory.store_learning(
@@ -375,26 +387,31 @@ memory.store_learning(
 ## 🔄 Memory Lifecycle
 
 ### 1. **Creation**
+
 - Agent makes decision or learns something
 - Memory is stored with metadata
 - Cross-references are created
 
 ### 2. **Retrieval**
+
 - Agent queries memory based on context
 - Relevant memories are returned
 - Access count is incremented
 
 ### 3. **Updates**
+
 - Memory is updated when new information is available
 - Version history is maintained
 - Related memories are notified
 
 ### 4. **Expiration**
+
 - Session memories expire after 24 hours
 - Development memories expire after 30 days
 - Project memories persist indefinitely
 
 ### 5. **Cleanup**
+
 - Expired memories are archived
 - Low-value memories are removed
 - Memory database is optimized
@@ -409,15 +426,18 @@ Add memory integration to each agent:
 
 ```markdown
 # In docs/agents/primary-developer.md
+
 ## Memory Integration
 
 This agent uses the shared memory system to:
+
 - Remember user preferences and skill level
 - Store successful teaching patterns
 - Learn from code implementation decisions
 - Share insights with other agents
 
 ### Memory Operations
+
 - `store_decision()` - Store implementation decisions
 - `store_learning()` - Store teaching patterns
 - `get_relevant_memories()` - Retrieve context
@@ -433,7 +453,7 @@ from agent_memory_integration import AgentMemoryIntegration
 class PrimaryDeveloperMemory(AgentMemoryIntegration):
     def __init__(self):
         super().__init__("primary_developer")
-    
+
     def store_teaching_success(self, topic, approach, user_feedback):
         """Store successful teaching approaches"""
         return self.store_learning(
@@ -441,7 +461,7 @@ class PrimaryDeveloperMemory(AgentMemoryIntegration):
             pattern=approach,
             success_rate=user_feedback
         )
-    
+
     def get_user_context(self, user_id):
         """Get user-specific context and preferences"""
         return self.get_relevant_memories(
@@ -473,18 +493,21 @@ print_success "Shared memory system configured"
 ## 📈 Memory Analytics
 
 ### 1. **Memory Usage Metrics**
+
 - Total memories by category
 - Memory access patterns
 - Agent contribution rates
 - Memory effectiveness scores
 
 ### 2. **Cross-Agent Insights**
+
 - Which agents benefit from shared memories
 - Common learning patterns
 - Decision consistency across agents
 - Knowledge transfer effectiveness
 
 ### 3. **Project Impact**
+
 - Memory correlation with success criteria
 - Learning acceleration over time
 - Context preservation across sessions
@@ -495,18 +518,21 @@ print_success "Shared memory system configured"
 ## 🚨 Memory Management Best Practices
 
 ### 1. **Memory Quality**
+
 - Store meaningful, actionable information
 - Include sufficient context
 - Use consistent tagging
 - Regular cleanup of outdated memories
 
 ### 2. **Privacy and Security**
+
 - No sensitive data in memories
 - Encrypt memory files if needed
 - Regular backup of memory system
 - Access control for sensitive memories
 
 ### 3. **Performance**
+
 - Limit memory size per agent
 - Regular cleanup of expired memories
 - Efficient search and retrieval
@@ -519,6 +545,7 @@ print_success "Shared memory system configured"
 ### Common Issues
 
 **1. Memory System Not Initializing**
+
 ```bash
 # Check mem0 installation
 pip show mem0
@@ -531,6 +558,7 @@ python scripts/test-memory-integration.py
 ```
 
 **2. Agents Not Accessing Memories**
+
 ```bash
 # Check memory directory permissions
 ls -la memory/
@@ -540,6 +568,7 @@ python scripts/agents/test-agent-memory.py
 ```
 
 **3. Memory Performance Issues**
+
 ```bash
 # Check memory database size
 du -sh memory/
@@ -553,11 +582,13 @@ python scripts/cleanup-memories.py
 ## 📚 Resources
 
 ### Documentation
+
 - [mem0 Documentation](https://docs.mem0.ai/)
 - [Memory System Architecture](docs/agents/memory-system.md)
 - [Agent Integration Guide](docs/agents/integrations.md)
 
 ### Tools
+
 - Memory System Setup: `scripts/init-memory-system.py`
 - Agent Integration: `scripts/agent-memory-integration.py`
 - Memory Analytics: `scripts/memory-analytics.py`

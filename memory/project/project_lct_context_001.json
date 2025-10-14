@@ -6,11 +6,7 @@
     "title": "LCT-Vitraya Partnership Context",
     "description": "Healthcare claims adjudication system for Kenya. Goal: 90%+ accuracy by October 7, 2025. Market: 1B KES immediate, 4.5B KES potential.",
     "context": "Critical business context for all agents",
-    "tags": [
-      "business",
-      "partnership",
-      "goals"
-    ],
+    "tags": ["business", "partnership", "goals"],
     "priority": "high"
   },
   "metadata": {

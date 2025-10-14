@@ -51,22 +51,28 @@ function validateInvoiceAmount(lctAmount, etimsAmount, documentAmount) {
   // Check ETIMS discrepancy
   if (etimsAmount < lctAmount) {
     status = 'Query';
-    reasons.push(`ETIMS amount (${etimsAmount} KES) less than LCT amount (${lctAmount} KES)`);
+    reasons.push(
+      `ETIMS amount (${etimsAmount} KES) less than LCT amount (${lctAmount} KES)`
+    );
     severity = 'High';
   }
 
   // Check document variance
   const variance = Math.abs(documentAmount - lctAmount) / lctAmount;
 
-  if (variance > 0.50) {
+  if (variance > 0.5) {
     // >50% variance - critical fraud indicator
     status = 'Rejected';
-    reasons.push(`Critical variance: ${(variance * 100).toFixed(1)}% between LCT and document`);
+    reasons.push(
+      `Critical variance: ${(variance * 100).toFixed(1)}% between LCT and document`
+    );
     severity = 'Critical';
-  } else if (variance > 0.10) {
+  } else if (variance > 0.1) {
     // >10% variance - flag for review
     status = 'Query';
-    reasons.push(`High variance: ${(variance * 100).toFixed(1)}% between LCT and document`);
+    reasons.push(
+      `High variance: ${(variance * 100).toFixed(1)}% between LCT and document`
+    );
     severity = Math.max(severity, 'Medium');
   }
 
@@ -80,8 +86,8 @@ function validateInvoiceAmount(lctAmount, etimsAmount, documentAmount) {
       etimsAmount,
       documentAmount,
       variance: `${(variance * 100).toFixed(2)}%`,
-      precedence: 'LCT'
-    }
+      precedence: 'LCT',
+    },
   };
 }
 
@@ -122,7 +128,7 @@ function validateTariffs(services, tariffDatabase) {
         serviceCode: service.code,
         serviceName: service.name,
         issue: 'Service code not found in tariff database',
-        severity: 'High'
+        severity: 'High',
       });
       return;
     }
@@ -141,7 +147,7 @@ function validateTariffs(services, tariffDatabase) {
         overcharge,
         overchargePercent: `${overchargePercent.toFixed(1)}%`,
         issue: `Billed amount exceeds tariff maximum`,
-        severity: overchargePercent > 20 ? 'Critical' : 'High'
+        severity: overchargePercent > 20 ? 'Critical' : 'High',
       });
 
       totalVariance += overcharge;
@@ -156,7 +162,7 @@ function validateTariffs(services, tariffDatabase) {
         billedAmount: service.amount,
         tariffMin: tariff.minPrice,
         issue: `Billed amount below tariff minimum (possible coding error)`,
-        severity: 'Medium'
+        severity: 'Medium',
       });
     }
   });
@@ -167,22 +173,22 @@ function validateTariffs(services, tariffDatabase) {
     totalServices: services.length,
     violationCount: violations.length,
     totalOvercharge: totalVariance,
-    complianceRate: `${((1 - violations.length / services.length) * 100).toFixed(1)}%`
+    complianceRate: `${((1 - violations.length / services.length) * 100).toFixed(1)}%`,
   };
 }
 
 // Example tariff database
 const tariffDB = {
-  'LAB001': { minPrice: 250, maxPrice: 500, name: 'Malaria Test' },
-  'MED001': { minPrice: 1000, maxPrice: 1500, name: 'Antimalarial Medication' },
-  'CONS01': { minPrice: 500, maxPrice: 1000, name: 'Doctor Consultation' }
+  LAB001: { minPrice: 250, maxPrice: 500, name: 'Malaria Test' },
+  MED001: { minPrice: 1000, maxPrice: 1500, name: 'Antimalarial Medication' },
+  CONS01: { minPrice: 500, maxPrice: 1000, name: 'Doctor Consultation' },
 };
 
 // Example usage
 const services = [
   { code: 'LAB001', name: 'Malaria Test', amount: 300 },
   { code: 'MED001', name: 'Antimalarial', amount: 2000 }, // Over tariff!
-  { code: 'CONS01', name: 'Consultation', amount: 800 }
+  { code: 'CONS01', name: 'Consultation', amount: 800 },
 ];
 
 const tariffResult = validateTariffs(services, tariffDB);
@@ -214,7 +220,9 @@ function detectDuplicateServices(claims, currentClaim, daysWindow = 30) {
     if (claim.memberID !== currentClaim.memberID) return false;
 
     const claimDate = new Date(claim.serviceDate);
-    const daysDiff = Math.abs((currentDate - claimDate) / (1000 * 60 * 60 * 24));
+    const daysDiff = Math.abs(
+      (currentDate - claimDate) / (1000 * 60 * 60 * 24)
+    );
 
     return daysDiff <= daysWindow;
   });
@@ -225,7 +233,8 @@ function detectDuplicateServices(claims, currentClaim, daysWindow = 30) {
       otherClaim.services.forEach(otherService => {
         if (currentService.code === otherService.code) {
           const daysDiff = Math.abs(
-            (currentDate - new Date(otherClaim.serviceDate)) / (1000 * 60 * 60 * 24)
+            (currentDate - new Date(otherClaim.serviceDate)) /
+              (1000 * 60 * 60 * 24)
           );
 
           duplicates.push({
@@ -239,7 +248,7 @@ function detectDuplicateServices(claims, currentClaim, daysWindow = 30) {
             duplicateDate: otherClaim.serviceDate,
             daysBetween: Math.round(daysDiff),
             isCrossProvider: currentClaim.provider !== otherClaim.provider,
-            suspicionLevel: daysDiff < 7 ? 'High' : 'Medium'
+            suspicionLevel: daysDiff < 7 ? 'High' : 'Medium',
           });
         }
       });
@@ -250,10 +259,15 @@ function detectDuplicateServices(claims, currentClaim, daysWindow = 30) {
     hasDuplicates: duplicates.length > 0,
     duplicateCount: duplicates.length,
     duplicates,
-    riskLevel: duplicates.some(d => d.isCrossProvider) ? 'Critical' :
-               duplicates.length > 2 ? 'High' :
-               duplicates.length > 0 ? 'Medium' : 'Low',
-    recommendation: duplicates.length > 0 ? 'Flag for manual review' : 'Approved'
+    riskLevel: duplicates.some(d => d.isCrossProvider)
+      ? 'Critical'
+      : duplicates.length > 2
+        ? 'High'
+        : duplicates.length > 0
+          ? 'Medium'
+          : 'Low',
+    recommendation:
+      duplicates.length > 0 ? 'Flag for manual review' : 'Approved',
   };
 }
 ```
@@ -275,7 +289,8 @@ function analyzeProviderBillingPattern(providerID, allClaims) {
   if (providerClaims.length < 10) {
     return {
       sufficientData: false,
-      message: 'Insufficient data for pattern analysis (minimum 10 claims required)'
+      message:
+        'Insufficient data for pattern analysis (minimum 10 claims required)',
     };
   }
 
@@ -283,7 +298,9 @@ function analyzeProviderBillingPattern(providerID, allClaims) {
   const amounts = providerClaims.map(c => c.lctAmount);
   const mean = amounts.reduce((sum, amt) => sum + amt, 0) / amounts.length;
 
-  const variance = amounts.reduce((sum, amt) => sum + Math.pow(amt - mean, 2), 0) / amounts.length;
+  const variance =
+    amounts.reduce((sum, amt) => sum + Math.pow(amt - mean, 2), 0) /
+    amounts.length;
   const stdDev = Math.sqrt(variance);
 
   // Detect outliers (values > 2 standard deviations from mean)
@@ -296,22 +313,26 @@ function analyzeProviderBillingPattern(providerID, allClaims) {
   const patterns = [];
 
   // Pattern 1: Consistently high amounts
-  const highAmountClaims = providerClaims.filter(c => c.lctAmount > mean + stdDev);
+  const highAmountClaims = providerClaims.filter(
+    c => c.lctAmount > mean + stdDev
+  );
   if (highAmountClaims.length / providerClaims.length > 0.3) {
     patterns.push({
       type: 'High Billing',
       description: `${((highAmountClaims.length / providerClaims.length) * 100).toFixed(1)}% of claims above average + 1 SD`,
-      severity: 'Medium'
+      severity: 'Medium',
     });
   }
 
   // Pattern 2: Round number billing (possible estimation fraud)
-  const roundNumberClaims = providerClaims.filter(c => c.lctAmount % 1000 === 0);
+  const roundNumberClaims = providerClaims.filter(
+    c => c.lctAmount % 1000 === 0
+  );
   if (roundNumberClaims.length / providerClaims.length > 0.5) {
     patterns.push({
       type: 'Round Number Billing',
       description: `${((roundNumberClaims.length / providerClaims.length) * 100).toFixed(1)}% of claims are round numbers`,
-      severity: 'Medium'
+      severity: 'Medium',
     });
   }
 
@@ -327,7 +348,7 @@ function analyzeProviderBillingPattern(providerID, allClaims) {
     patterns.push({
       type: 'High Volume Day',
       description: `${maxClaimsPerDay} claims submitted on same day`,
-      severity: 'High'
+      severity: 'High',
     });
   }
 
@@ -339,7 +360,7 @@ function analyzeProviderBillingPattern(providerID, allClaims) {
       meanAmount: Math.round(mean),
       standardDeviation: Math.round(stdDev),
       minAmount: Math.min(...amounts),
-      maxAmount: Math.max(...amounts)
+      maxAmount: Math.max(...amounts),
     },
     outliers: {
       count: outliers.length,
@@ -347,13 +368,19 @@ function analyzeProviderBillingPattern(providerID, allClaims) {
       claims: outliers.map(c => ({
         invoiceNumber: c.invoiceNumber,
         amount: c.lctAmount,
-        zScore: ((c.lctAmount - mean) / stdDev).toFixed(2)
-      }))
+        zScore: ((c.lctAmount - mean) / stdDev).toFixed(2),
+      })),
     },
     suspiciousPatterns: patterns,
-    riskLevel: patterns.some(p => p.severity === 'High') ? 'High' :
-               patterns.length > 2 ? 'Medium' : 'Low',
-    recommendation: patterns.length > 0 ? 'Enhanced monitoring recommended' : 'Normal pattern'
+    riskLevel: patterns.some(p => p.severity === 'High')
+      ? 'High'
+      : patterns.length > 2
+        ? 'Medium'
+        : 'Low',
+    recommendation:
+      patterns.length > 0
+        ? 'Enhanced monitoring recommended'
+        : 'Normal pattern',
   };
 }
 ```
@@ -385,7 +412,7 @@ function detectHighCostClustering(claim, benchmarks) {
         amount: service.amount,
         benchmark: benchmark.percentile90,
         excess: service.amount - benchmark.percentile90,
-        percentile: 'Top 10%'
+        percentile: 'Top 10%',
       });
 
       totalHighCost += service.amount;
@@ -401,12 +428,18 @@ function detectHighCostClustering(claim, benchmarks) {
     highCostServices,
     totalHighCost,
     highCostRatio: `${(highCostRatio * 100).toFixed(1)}%`,
-    severity: highCostServices.length >= 5 ? 'Critical' :
-              highCostRatio > 0.7 ? 'High' :
-              highCostRatio > 0.5 ? 'Medium' : 'Low',
-    recommendation: highCostServices.length >= 3 ?
-      'Request detailed clinical justification' :
-      'Standard processing'
+    severity:
+      highCostServices.length >= 5
+        ? 'Critical'
+        : highCostRatio > 0.7
+          ? 'High'
+          : highCostRatio > 0.5
+            ? 'Medium'
+            : 'Low',
+    recommendation:
+      highCostServices.length >= 3
+        ? 'Request detailed clinical justification'
+        : 'Standard processing',
   };
 }
 ```
@@ -433,7 +466,7 @@ function validateICDServiceMatch(diagnosisCode, services, clinicalRules) {
     return {
       valid: false,
       error: `Unknown ICD-10 code: ${diagnosisCode}`,
-      severity: 'High'
+      severity: 'High',
     };
   }
 
@@ -452,7 +485,7 @@ function validateICDServiceMatch(diagnosisCode, services, clinicalRules) {
         serviceName: service.name,
         diagnosis: diagnosis.name,
         issue: 'Service not typically associated with this diagnosis',
-        severity: 'Medium'
+        severity: 'Medium',
       });
     }
   });
@@ -467,7 +500,7 @@ function validateICDServiceMatch(diagnosisCode, services, clinicalRules) {
         criticalMissing.push({
           expectedService: required.name,
           issue: 'Required service missing for diagnosis',
-          severity: 'Medium'
+          severity: 'Medium',
         });
       }
     });
@@ -479,34 +512,42 @@ function validateICDServiceMatch(diagnosisCode, services, clinicalRules) {
     mismatches,
     criticalMissing,
     matchRate: `${((1 - mismatches.length / services.length) * 100).toFixed(1)}%`,
-    severity: criticalMissing.length > 0 ? 'High' :
-              mismatches.length > services.length * 0.5 ? 'High' :
-              mismatches.length > 0 ? 'Medium' : 'Low',
-    recommendation: mismatches.length > 0 || criticalMissing.length > 0 ?
-      'Request clinical notes for justification' :
-      'Clinically appropriate'
+    severity:
+      criticalMissing.length > 0
+        ? 'High'
+        : mismatches.length > services.length * 0.5
+          ? 'High'
+          : mismatches.length > 0
+            ? 'Medium'
+            : 'Low',
+    recommendation:
+      mismatches.length > 0 || criticalMissing.length > 0
+        ? 'Request clinical notes for justification'
+        : 'Clinically appropriate',
   };
 }
 
 // Example clinical rules
 const clinicalRules = {
-  'B50': { // Malaria
+  B50: {
+    // Malaria
     name: 'Plasmodium falciparum malaria',
     commonServices: [
       { prefix: 'LAB', name: 'Lab tests', required: true },
       { prefix: 'MED', name: 'Medication', required: true },
-      { prefix: 'CONS', name: 'Consultation', required: true }
+      { prefix: 'CONS', name: 'Consultation', required: true },
     ],
-    uncommonServices: ['SURG', 'XRAY'] // Suspicious if present
+    uncommonServices: ['SURG', 'XRAY'], // Suspicious if present
   },
-  'J00': { // Acute URTI
+  J00: {
+    // Acute URTI
     name: 'Acute upper respiratory infection',
     commonServices: [
       { prefix: 'CONS', name: 'Consultation', required: true },
-      { prefix: 'MED', name: 'Medication', required: false }
+      { prefix: 'MED', name: 'Medication', required: false },
     ],
-    uncommonServices: ['LAB', 'SURG', 'SCAN'] // Usually not needed
-  }
+    uncommonServices: ['LAB', 'SURG', 'SCAN'], // Usually not needed
+  },
 };
 ```
 
@@ -544,10 +585,16 @@ function calculateSavings(billedAmount, approvedAmount) {
     approvedAmount,
     savings,
     savingsPercent: `${savingsPercent.toFixed(2)}%`,
-    savingsCategory: savingsPercent === 0 ? 'None' :
-                     savingsPercent < 5 ? 'Low' :
-                     savingsPercent < 15 ? 'Medium' :
-                     savingsPercent < 30 ? 'High' : 'Very High'
+    savingsCategory:
+      savingsPercent === 0
+        ? 'None'
+        : savingsPercent < 5
+          ? 'Low'
+          : savingsPercent < 15
+            ? 'Medium'
+            : savingsPercent < 30
+              ? 'High'
+              : 'Very High',
   };
 }
 
@@ -559,21 +606,24 @@ function calculateSavings(billedAmount, approvedAmount) {
  * @returns {Object} Aggregate savings
  */
 function calculateAggregateSavings(claims, scheme = null) {
-  const filteredClaims = scheme ?
-    claims.filter(c => c.scheme === scheme) :
-    claims;
+  const filteredClaims = scheme
+    ? claims.filter(c => c.scheme === scheme)
+    : claims;
 
-  const total = filteredClaims.reduce((acc, claim) => {
-    return {
-      totalBilled: acc.totalBilled + claim.lctAmount,
-      totalApproved: acc.totalApproved + (claim.approvedAmount || 0),
-      count: acc.count + 1
-    };
-  }, { totalBilled: 0, totalApproved: 0, count: 0 });
+  const total = filteredClaims.reduce(
+    (acc, claim) => {
+      return {
+        totalBilled: acc.totalBilled + claim.lctAmount,
+        totalApproved: acc.totalApproved + (claim.approvedAmount || 0),
+        count: acc.count + 1,
+      };
+    },
+    { totalBilled: 0, totalApproved: 0, count: 0 }
+  );
 
   const totalSavings = total.totalBilled - total.totalApproved;
-  const avgSavingsPercent = total.totalBilled > 0 ?
-    (totalSavings / total.totalBilled) * 100 : 0;
+  const avgSavingsPercent =
+    total.totalBilled > 0 ? (totalSavings / total.totalBilled) * 100 : 0;
 
   return {
     scheme: scheme || 'All Schemes',
@@ -583,7 +633,7 @@ function calculateAggregateSavings(claims, scheme = null) {
     totalSavings,
     avgSavingsPercent: `${avgSavingsPercent.toFixed(2)}%`,
     avgClaimAmount: Math.round(total.totalBilled / total.count),
-    avgSavingsPerClaim: Math.round(totalSavings / total.count)
+    avgSavingsPerClaim: Math.round(totalSavings / total.count),
   };
 }
 ```
@@ -658,7 +708,7 @@ function validateInput(input, type) {
   const result = {
     valid: true,
     sanitized: input,
-    errors: []
+    errors: [],
   };
 
   switch (type) {
@@ -722,7 +772,10 @@ function exportToCSV(data, filename) {
     const values = headers.map(header => {
       const value = row[header];
       // Handle commas and quotes in values
-      if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+      if (
+        typeof value === 'string' &&
+        (value.includes(',') || value.includes('"'))
+      ) {
         return `"${value.replace(/"/g, '""')}"`;
       }
       return value;
@@ -775,65 +828,65 @@ Save this as `lib/lct-functions.js`:
 const LCT = {
   // Invoice Validation
   invoice: {
-    validateAmount: function(lctAmount, etimsAmount, documentAmount) {
+    validateAmount: function (lctAmount, etimsAmount, documentAmount) {
       // Implementation from section 1.1
     },
-    validateTariffs: function(services, tariffDB) {
+    validateTariffs: function (services, tariffDB) {
       // Implementation from section 1.2
-    }
+    },
   },
 
   // Fraud Detection
   fraud: {
-    detectDuplicateServices: function(claims, currentClaim, daysWindow) {
+    detectDuplicateServices: function (claims, currentClaim, daysWindow) {
       // Implementation from section 2.1
     },
-    analyzeProviderPattern: function(providerID, allClaims) {
+    analyzeProviderPattern: function (providerID, allClaims) {
       // Implementation from section 2.2
     },
-    detectHighCostClustering: function(claim, benchmarks) {
+    detectHighCostClustering: function (claim, benchmarks) {
       // Implementation from section 2.3
-    }
+    },
   },
 
   // Clinical Validation
   clinical: {
-    validateICDMatch: function(diagnosisCode, services, rules) {
+    validateICDMatch: function (diagnosisCode, services, rules) {
       // Implementation from section 3.1
-    }
+    },
   },
 
   // Financial Calculations
   financial: {
-    calculateSavings: function(billedAmount, approvedAmount) {
+    calculateSavings: function (billedAmount, approvedAmount) {
       // Implementation from section 4.1
     },
-    calculateAggregateSavings: function(claims, scheme) {
+    calculateAggregateSavings: function (claims, scheme) {
       // Implementation from section 4.1
-    }
+    },
   },
 
   // Utilities
   utils: {
-    isWithinPolicyPeriod: function(serviceDate, policyStart, policyEnd) {
+    isWithinPolicyPeriod: function (serviceDate, policyStart, policyEnd) {
       // Implementation from section 5.1
     },
-    daysBetween: function(date1, date2) {
+    daysBetween: function (date1, date2) {
       // Implementation from section 5.1
     },
-    sanitizeInvoiceNumber: function(invoiceNumber) {
+    sanitizeInvoiceNumber: function (invoiceNumber) {
       // Implementation from section 5.2
     },
-    validateInput: function(input, type) {
+    validateInput: function (input, type) {
       // Implementation from section 5.2
     },
-    exportToCSV: function(data, filename) {
+    exportToCSV: function (data, filename) {
       // Implementation from section 5.3
     },
-    exportToJSON: function(data, filename) {
+    exportToJSON: function (data, filename) {
       // Implementation from section 5.3
-    }
-  }
+    },
+  },
 };
 
 // Export for use in Node.js or browser
@@ -856,7 +909,11 @@ if (typeof module !== 'undefined' && module.exports) {
   console.log(invoiceResult);
 
   // Detect fraud
-  const fraudResult = LCT.fraud.detectDuplicateServices(allClaims, currentClaim, 30);
+  const fraudResult = LCT.fraud.detectDuplicateServices(
+    allClaims,
+    currentClaim,
+    30
+  );
   if (fraudResult.hasDuplicates) {
     alert('Duplicate services detected!');
   }
@@ -900,7 +957,10 @@ Always test your functions with edge cases:
 console.log('Testing invoice validation...');
 
 // Normal case
-test(validateInvoiceAmount(1000, 1000, 1000), 'should approve matching amounts');
+test(
+  validateInvoiceAmount(1000, 1000, 1000),
+  'should approve matching amounts'
+);
 
 // ETIMS less than LCT
 test(validateInvoiceAmount(1000, 800, 1000), 'should query when ETIMS < LCT');

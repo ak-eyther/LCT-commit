@@ -8,7 +8,11 @@
     "test:ui": "node scripts/athena-guard.js",
     "test:ui:local": "./scripts/run-ui-tests-local.sh",
     "setup:athena-guard": "./setup-athena-guard.sh",
-    "generate:tests": "node scripts/ai-integrations/test-generator.js"
+    "generate:tests": "node scripts/ai-integrations/test-generator.js",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
@@ -21,10 +25,16 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.37.0",
     "@playwright/test": "^1.56.0",
     "axe-core": "^4.11.0",
     "axios": "^1.12.2",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "globals": "^16.4.0",
     "lighthouse": "^11.7.1",
-    "playwright-core": "^1.56.0"
+    "playwright-core": "^1.56.0",
+    "prettier": "^3.6.2"
   }
 }

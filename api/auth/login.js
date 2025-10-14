@@ -32,11 +32,11 @@ const rateLimit = require('express-rate-limit');
 
 // Create rate limiter for login endpoint
 const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // limit each IP to 5 requests per windowMs
-    message: 'Too many login attempts, please try again later',
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 requests per windowMs
+  message: 'Too many login attempts, please try again later',
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
 // Production-safe logging utility
@@ -47,7 +47,7 @@ const logger = {
     }
     // In production, this would integrate with your logging service
     // e.g., Sentry, LogRocket, CloudWatch, etc.
-  }
+  },
 };
 
 module.exports = async function handler(req, res) {
@@ -55,14 +55,14 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({
       success: false,
-      error: 'Method not allowed. Use POST.'
+      error: 'Method not allowed. Use POST.',
     });
   }
 
   // Apply rate limiting (for Vercel serverless)
   // Note: In production, use a distributed rate limiter with Redis or similar
   await new Promise((resolve, reject) => {
-    loginLimiter(req, res, (err) => {
+    loginLimiter(req, res, err => {
       if (err) reject(err);
       else resolve();
     });
@@ -83,7 +83,7 @@ module.exports = async function handler(req, res) {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        error: 'Email and password are required'
+        error: 'Email and password are required',
       });
     }
 
@@ -92,7 +92,7 @@ module.exports = async function handler(req, res) {
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid email format'
+        error: 'Invalid email format',
       });
     }
 
@@ -106,7 +106,7 @@ module.exports = async function handler(req, res) {
     if (userResult.rows.length === 0) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid email or password'
+        error: 'Invalid email or password',
       });
     }
 
@@ -114,11 +114,11 @@ module.exports = async function handler(req, res) {
 
     // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
-    
+
     if (!isValidPassword) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid email or password'
+        error: 'Invalid email or password',
       });
     }
 
@@ -127,7 +127,7 @@ module.exports = async function handler(req, res) {
       logger.error('CRITICAL: JWT_SECRET is not configured');
       return res.status(500).json({
         success: false,
-        error: 'Server configuration error. Please contact support.'
+        error: 'Server configuration error. Please contact support.',
       });
     }
 
@@ -138,7 +138,7 @@ module.exports = async function handler(req, res) {
     const token = jwt.sign(
       {
         userId: user.id,
-        email: user.email
+        email: user.email,
       },
       process.env.JWT_SECRET,
       { expiresIn }
@@ -157,16 +157,15 @@ module.exports = async function handler(req, res) {
       token: token,
       user: {
         id: user.id,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
-
   } catch (error) {
     logger.error('Login error:', error);
 
     return res.status(500).json({
       success: false,
-      error: 'Internal server error. Please try again.'
+      error: 'Internal server error. Please try again.',
     });
   }
-}
+};

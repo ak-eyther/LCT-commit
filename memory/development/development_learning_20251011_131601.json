@@ -6,10 +6,7 @@
     "title": "Learning: Successfully taught Test topic using Test approach",
     "description": "Agent primary_developer learned: Successfully taught Test topic using Test approach",
     "context": "Pattern: Test approach",
-    "tags": [
-      "learning",
-      "primary_developer"
-    ],
+    "tags": ["learning", "primary_developer"],
     "priority": "high",
     "created_at": "2025-10-11T13:16:01.119471",
     "last_updated": "2025-10-11T13:16:01.119473",

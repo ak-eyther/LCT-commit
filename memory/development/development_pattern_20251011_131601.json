@@ -6,10 +6,7 @@
     "title": "Pattern: Security: Test vulnerability",
     "description": "Security pattern for Test vulnerability: Test pattern",
     "context": "Code pattern or best practice",
-    "tags": [
-      "pattern",
-      "sentinel"
-    ],
+    "tags": ["pattern", "sentinel"],
     "priority": "high",
     "code_example": "Test pattern",
     "created_at": "2025-10-11T13:16:01.119821",

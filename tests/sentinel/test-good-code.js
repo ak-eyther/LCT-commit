@@ -13,10 +13,9 @@ async function processInvoice(invoiceData) {
     }
 
     // Parameterized query (safe from SQL injection)
-    const result = await db.query(
-      'SELECT * FROM invoices WHERE id = ?',
-      [invoiceData.id]
-    );
+    const result = await db.query('SELECT * FROM invoices WHERE id = ?', [
+      invoiceData.id,
+    ]);
 
     return { success: true, result };
   } catch (error) {

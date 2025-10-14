@@ -67,6 +67,7 @@ This document describes the error handling architecture implemented across the L
 **Purpose:** Define error types with automatic tracking IDs
 
 **Key Classes:**
+
 - `AppError` - Base class for all errors
 - `ValidationError` - User input errors (400)
 - `AuthenticationError` - Login required (401)
@@ -78,10 +79,12 @@ This document describes the error handling architecture implemented across the L
 - `ServiceUnavailableError` - Temporary outages (503)
 
 **Key Functions:**
+
 - `generateErrorId()` - Creates unique 8-char tracking ID
 - `handleOpenAIError()` - Maps OpenAI errors to our error types
 
 **Features:**
+
 - Automatic error ID generation
 - Correct HTTP status codes
 - JSON serialization with `toJSON()`
@@ -96,23 +99,28 @@ This document describes the error handling architecture implemented across the L
 **Key Functions:**
 
 **`sendErrorResponse(res, error)`**
+
 - Handles both AppError and native Error objects
 - Logs error with context
 - Returns standardized JSON response
 - Masks sensitive data from users
 
 **`sendSuccessResponse(res, data)`**
+
 - Consistent success response format
 - Always includes `success: true`
 
 **`validateMethod(req, res, allowedMethods)`**
+
 - Checks if HTTP method is allowed
 - Returns 405 if method not allowed
 
 **`setCORSHeaders(res)`**
+
 - Sets CORS headers for API endpoints
 
 **`handlePreflightRequest(req, res)`**
+
 - Handles OPTIONS preflight requests
 
 ---
@@ -124,17 +132,20 @@ This document describes the error handling architecture implemented across the L
 **Key Functions:**
 
 **`validateConfig()`**
+
 - Checks all required environment variables
 - Validates format (e.g., API keys start with "sk-")
 - Logs warnings for missing optional vars
 - Can throw error or return validation result
 
 **`getOpenAIKey()`**
+
 - Returns OpenAI API key with fallback logic
 - Prefers OPENAI_BRAINDUMPS_KEY over OPENAI_API_KEY
 - Throws clear error if no key configured
 
 **`getConfigSummary()`**
+
 - Returns safe config summary for logging
 - Masks sensitive values (shows first 8 + last 4 chars)
 
@@ -189,6 +200,7 @@ Request → Validation ✓ → OpenAI API call ✗
 ```
 
 **Fields:**
+
 - `success` (boolean) - Always `false` for errors
 - `error` (string) - User-friendly message
 - `errorId` (string) - 8-char tracking ID (always present)
@@ -213,11 +225,13 @@ Request → Validation ✓ → OpenAI API call ✗
 **Method:** `crypto.randomBytes(4).toString('hex')`
 
 **Why crypto random?**
+
 - Collision-resistant (very low probability of duplicates)
 - Unpredictable (security benefit)
 - Standard across all platforms
 
 **Why 8 characters?**
+
 - Easy to communicate verbally
 - Short enough for screenshots
 - Long enough to be unique (16^8 = 4.3 billion combinations)
@@ -233,13 +247,14 @@ console.error(`[${errorId}] ${error.name}:`, error.message, {
   statusCode: error.statusCode,
   code: error.code,
   metadata: error.metadata,
-  stack: error.stack
+  stack: error.stack,
 });
 ```
 
 ### Production
 
 **Console logs** (captured by Vercel):
+
 ```javascript
 console.error(`[${errorId}] ${error.name}:`, {
   message: error.message,
@@ -251,10 +266,11 @@ console.error(`[${errorId}] ${error.name}:`, {
 ```
 
 **Sentry integration** (future):
+
 ```javascript
 Sentry.captureException(error, {
   tags: { errorId },
-  level: error.statusCode >= 500 ? 'error' : 'warning'
+  level: error.statusCode >= 500 ? 'error' : 'warning',
 });
 ```
 
@@ -309,7 +325,7 @@ async function callAPI(data) {
     const response = await fetch('/api/endpoint', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
 
     const result = await response.json();
@@ -321,7 +337,6 @@ async function callAPI(data) {
     }
 
     return result;
-
   } catch (networkError) {
     showError('Network error. Please check your connection.');
     return null;
@@ -334,6 +349,7 @@ async function callAPI(data) {
 **User reports:** "I got error ID a3f2b1c4"
 
 **Support searches:**
+
 ```bash
 # Vercel logs
 vercel logs | grep "a3f2b1c4"
@@ -352,6 +368,7 @@ grep "a3f2b1c4" /var/log/app.log
 ### What Gets Logged
 
 ✅ **Safe to log:**
+
 - Error IDs
 - Error types and codes
 - HTTP status codes
@@ -360,6 +377,7 @@ grep "a3f2b1c4" /var/log/app.log
 - Generic error messages
 
 ❌ **Never log:**
+
 - API keys or secrets
 - Passwords or tokens
 - Patient data (PHI)
@@ -369,12 +387,14 @@ grep "a3f2b1c4" /var/log/app.log
 ### What Gets Sent to Users
 
 ✅ **Safe to send:**
+
 - User-friendly error messages
 - Error IDs
 - Error codes
 - Retry suggestions
 
 ❌ **Never send:**
+
 - Stack traces
 - File paths
 - API keys
@@ -405,12 +425,14 @@ grep "a3f2b1c4" /var/log/app.log
 ## Future Enhancements
 
 ### Phase 3 (Next Sprint)
+
 - [ ] Sentry integration for error tracking
 - [ ] Automatic Linear issue creation from critical errors
 - [ ] Error rate monitoring dashboard
 - [ ] Alert rules for error spikes
 
 ### Phase 4 (Q1 2026)
+
 - [ ] Error pattern analysis (ML-based)
 - [ ] Automatic retry logic for transient errors
 - [ ] User-facing error recovery suggestions
@@ -423,6 +445,7 @@ grep "a3f2b1c4" /var/log/app.log
 ### For Existing Endpoints
 
 **Before:**
+
 ```javascript
 export default async function handler(req, res) {
   try {
@@ -433,7 +456,6 @@ export default async function handler(req, res) {
 
     const result = await callAPI();
     return res.status(200).json({ result });
-
   } catch (error) {
     console.error('Error:', error);
     return res.status(500).json({ error: 'Something went wrong' });
@@ -442,9 +464,13 @@ export default async function handler(req, res) {
 ```
 
 **After:**
+
 ```javascript
 import { ValidationError, handleOpenAIError } from '../../src/lib/errors.js';
-import { sendErrorResponse, sendSuccessResponse } from '../../src/lib/error-handler.js';
+import {
+  sendErrorResponse,
+  sendSuccessResponse,
+} from '../../src/lib/error-handler.js';
 
 function validateInput(data) {
   if (!data.field) throw new ValidationError('Field required');
@@ -462,7 +488,6 @@ export default async function handler(req, res) {
     }
 
     return sendSuccessResponse(res, { result });
-
   } catch (error) {
     return sendErrorResponse(res, error);
   }
@@ -476,6 +501,7 @@ export default async function handler(req, res) {
 See: `tests/integration/brain-dumps-api-contract.test.js`
 
 **Test coverage:**
+
 - ✅ All error types return correct status codes
 - ✅ All errors include tracking IDs
 - ✅ Error IDs are unique

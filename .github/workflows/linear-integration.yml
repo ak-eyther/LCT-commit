@@ -1,4 +1,4 @@
-name: "Linear Issue Creation from AI Reviews"
+name: 'Linear Issue Creation from AI Reviews'
 
 on:
   workflow_dispatch:

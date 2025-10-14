@@ -2,7 +2,7 @@
 
 /**
  * LCT Authentication - Database Setup Script
- * 
+ *
  * This script creates the users table in Vercel Postgres database.
  * Run with: node scripts/setup-database.js
  */
@@ -29,13 +29,13 @@ async function setupDatabase() {
 
     // Create database client with direct connection
     client = new Client({
-      connectionString: process.env.POSTGRES_URL
+      connectionString: process.env.POSTGRES_URL,
     });
 
     console.log('Connecting to database...');
     await client.connect();
     console.log('✅ Connected to database');
-    
+
     // Create users table
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS users (
@@ -46,28 +46,31 @@ async function setupDatabase() {
         last_login TIMESTAMP
       );
     `;
-    
+
     await client.query(createTableQuery);
     console.log('✅ Users table created successfully');
-    
+
     // Create index on email for faster lookups
     const createIndexQuery = `
       CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
     `;
-    
+
     await client.query(createIndexQuery);
     console.log('✅ Email index created');
-    
+
     console.log('🎉 Database setup complete!');
     console.log('📝 Next steps:');
-    console.log('   1. Run: node scripts/add-user.js "email@example.com" "your-secure-password"');
+    console.log(
+      '   1. Run: node scripts/add-user.js "email@example.com" "your-secure-password"'
+    );
     console.log('   2. Test login at: /login.html');
-    
   } catch (error) {
     console.error('❌ Database setup failed:', error.message);
     console.error('💡 Make sure:');
     console.error('   - Vercel Postgres is set up in your project');
-    console.error('   - POSTGRES_URL environment variable is configured in .env');
+    console.error(
+      '   - POSTGRES_URL environment variable is configured in .env'
+    );
     console.error('   - You have run: npm install');
     process.exit(1);
   } finally {

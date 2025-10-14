@@ -6,11 +6,7 @@
     "title": "Invoice Amount Precedence Pattern",
     "description": "Invoice amount precedence: LCT \u2192 ETIMS \u2192 Document. LCT amount always takes precedence (Criteria #4 - CRITICAL).",
     "context": "Financial validation logic",
-    "tags": [
-      "invoice",
-      "validation",
-      "precedence"
-    ],
+    "tags": ["invoice", "validation", "precedence"],
     "priority": "high"
   },
   "metadata": {

@@ -3,17 +3,20 @@
 ## Quick Start (5 minutes)
 
 1. **Clone the repository**
+
    ```bash
    git clone [repository-url]
    cd LCT-commit
    ```
 
 2. **Run agent setup**
+
    ```bash
    ./scripts/agent-setup.sh
    ```
 
 3. **Validate installation**
+
    ```bash
    ./scripts/validate-agents.sh
    ```
@@ -44,6 +47,7 @@
 ## Environment Variables
 
 Add to your `.env` file:
+
 ```bash
 LINEAR_API_KEY=your_linear_api_key
 LINEAR_TEAM_ID=your_team_id
@@ -52,17 +56,20 @@ LINEAR_TEAM_ID=your_team_id
 ## Troubleshooting
 
 **If Sentinel blocks commits:**
+
 1. Read the error message carefully
 2. Fix the security issue
 3. Commit again
 4. Use `git commit --no-verify` only in emergencies
 
 **If Cursor doesn't load agent context:**
+
 1. Restart Cursor IDE
 2. Check `.cursor/rules/claude.md` exists
 3. Verify no syntax errors in claude.md
 
 **If GitHub Actions fail:**
+
 1. Check workflow syntax
 2. Verify environment variables
 3. Review GitHub Actions logs

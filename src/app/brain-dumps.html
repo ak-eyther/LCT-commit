@@ -1188,7 +1188,7 @@ PARKING LOT
         // Past meetings storage
         let pastMeetings = [];
         let currentAIResults = null;
-        let autoSaveTimer = null;
+        let autoSaveInterval = null;
 
         // Initialize
         window.addEventListener('DOMContentLoaded', () => {
@@ -1207,6 +1207,14 @@ PARKING LOT
             setupAutoSave();
         });
 
+        // Cleanup on page unload (prevents memory leak)
+        window.addEventListener('beforeunload', () => {
+            if (autoSaveInterval) {
+                clearInterval(autoSaveInterval);
+                autoSaveInterval = null;
+            }
+        });
+
         // Character counter
         function setupCharCounter() {
             const textarea = document.getElementById('meetingNotes');
@@ -1217,7 +1225,12 @@ PARKING LOT
 
         // Auto-save every 30 seconds
         function setupAutoSave() {
-            setInterval(() => {
+            // Clear existing interval if any
+            if (autoSaveInterval) {
+                clearInterval(autoSaveInterval);
+            }
+
+            autoSaveInterval = setInterval(() => {
                 const notes = document.getElementById('meetingNotes').value;
                 if (notes.length > 10) {
                     localStorage.setItem('brainDumps_draft', JSON.stringify({

@@ -25,7 +25,10 @@
 ```javascript
 // 1. Import error utilities
 import { ValidationError, handleOpenAIError } from '../../src/lib/errors.js';
-import { sendErrorResponse, sendSuccessResponse } from '../../src/lib/error-handler.js';
+import {
+  sendErrorResponse,
+  sendSuccessResponse,
+} from '../../src/lib/error-handler.js';
 import { getOpenAIKey } from '../../src/lib/config.js';
 
 // 2. Validate config at startup
@@ -51,6 +54,7 @@ export default async function handler(req, res) {
 ```
 
 That's it! The infrastructure handles:
+
 - ✅ Automatic error IDs
 - ✅ Correct HTTP status codes
 - ✅ Structured logging
@@ -76,11 +80,13 @@ throw new ValidationError('Email required');
 ### 2. **Be Specific, Not Generic**
 
 Different errors need different handling:
+
 - User typo → 400 Bad Request
 - API rate limit → 429 Too Many Requests
 - Database down → 503 Service Unavailable
 
 **Don't use:**
+
 ```javascript
 catch (error) {
   return res.status(500).json({ error: 'Something went wrong' });
@@ -88,8 +94,13 @@ catch (error) {
 ```
 
 **Use:**
+
 ```javascript
-import { ValidationError, ExternalAPIError, ServiceUnavailableError } from './errors.js';
+import {
+  ValidationError,
+  ExternalAPIError,
+  ServiceUnavailableError,
+} from './errors.js';
 
 // Throw specific types
 throw new ValidationError('Invalid email format');
@@ -100,15 +111,18 @@ throw new ServiceUnavailableError('Database connection failed');
 ### 3. **User-Friendly Messages**
 
 Users don't care about stack traces. They want to know:
+
 - What went wrong?
 - How to fix it?
 
 **Bad:**
+
 ```
 Error: ECONNREFUSED 127.0.0.1:5432
 ```
 
 **Good:**
+
 ```
 Unable to connect to database. Please try again in a few moments.
 Error ID: c3d2e1f0 (Report this to support if issue persists)
@@ -119,6 +133,7 @@ Error ID: c3d2e1f0 (Report this to support if issue persists)
 Logs are your time machine for debugging.
 
 **What to log:**
+
 - ✅ Error ID
 - ✅ Timestamp (ISO 8601)
 - ✅ Error type and message
@@ -126,6 +141,7 @@ Logs are your time machine for debugging.
 - ✅ Stack trace
 
 **What NOT to log:**
+
 - ❌ API keys
 - ❌ Passwords
 - ❌ Patient data (PHI)
@@ -141,14 +157,14 @@ Located in `src/lib/errors.js`:
 
 ```javascript
 import {
-  ValidationError,        // 400 - Bad user input
-  AuthenticationError,    // 401 - Not logged in
-  AuthorizationError,     // 403 - No permission
-  NotFoundError,          // 404 - Resource doesn't exist
-  RateLimitError,         // 429 - Too many requests
-  InternalServerError,    // 500 - Unexpected error
-  ExternalAPIError,       // 502 - External service failed
-  ServiceUnavailableError // 503 - Service down
+  ValidationError, // 400 - Bad user input
+  AuthenticationError, // 401 - Not logged in
+  AuthorizationError, // 403 - No permission
+  NotFoundError, // 404 - Resource doesn't exist
+  RateLimitError, // 429 - Too many requests
+  InternalServerError, // 500 - Unexpected error
+  ExternalAPIError, // 502 - External service failed
+  ServiceUnavailableError, // 503 - Service down
 } from '../../src/lib/errors.js';
 ```
 
@@ -158,11 +174,11 @@ Located in `src/lib/error-handler.js`:
 
 ```javascript
 import {
-  sendErrorResponse,      // Sends error with consistent format
-  sendSuccessResponse,    // Sends success with consistent format
-  validateMethod,         // Checks HTTP method
-  setCORSHeaders,         // Sets CORS headers
-  handlePreflightRequest  // Handles OPTIONS requests
+  sendErrorResponse, // Sends error with consistent format
+  sendSuccessResponse, // Sends success with consistent format
+  validateMethod, // Checks HTTP method
+  setCORSHeaders, // Sets CORS headers
+  handlePreflightRequest, // Handles OPTIONS requests
 } from '../../src/lib/error-handler.js';
 ```
 
@@ -172,10 +188,10 @@ Located in `src/lib/config.js`:
 
 ```javascript
 import {
-  validateConfig,    // Validates all environment variables
-  getOpenAIKey,      // Gets OpenAI key with fallback
-  isProduction,      // Checks if production environment
-  isDevelopment      // Checks if development environment
+  validateConfig, // Validates all environment variables
+  getOpenAIKey, // Gets OpenAI key with fallback
+  isProduction, // Checks if production environment
+  isDevelopment, // Checks if development environment
 } from '../../src/lib/config.js';
 ```
 
@@ -187,7 +203,10 @@ import {
 
 ```javascript
 import { ValidationError } from '../../src/lib/errors.js';
-import { sendErrorResponse, sendSuccessResponse } from '../../src/lib/error-handler.js';
+import {
+  sendErrorResponse,
+  sendSuccessResponse,
+} from '../../src/lib/error-handler.js';
 
 function validateMeetingData(data) {
   if (!data.title) {
@@ -212,7 +231,6 @@ export default async function handler(req, res) {
     const result = await processMeeting(req.body);
 
     return sendSuccessResponse(res, { result });
-
   } catch (error) {
     return sendErrorResponse(res, error);
   }
@@ -241,7 +259,7 @@ export default async function handler(req, res) {
     try {
       completion = await openai.chat.completions.create({
         model: 'gpt-4',
-        messages: [{ role: 'user', content: req.body.prompt }]
+        messages: [{ role: 'user', content: req.body.prompt }],
       });
     } catch (openaiError) {
       // Convert OpenAI errors to our error types
@@ -249,7 +267,6 @@ export default async function handler(req, res) {
     }
 
     return sendSuccessResponse(res, { result: completion });
-
   } catch (error) {
     return sendErrorResponse(res, error);
   }
@@ -257,6 +274,7 @@ export default async function handler(req, res) {
 ```
 
 **What handleOpenAIError does:**
+
 - Rate limit (429) → RateLimitError with retry-after
 - Quota exceeded → ExternalAPIError with support message
 - Invalid key (401) → InternalServerError (masked from user)
@@ -292,7 +310,6 @@ export default async function handler(req, res) {
     }
 
     return sendSuccessResponse(res, { user });
-
   } catch (error) {
     return sendErrorResponse(res, error);
   }
@@ -336,7 +353,6 @@ export default async function handler(req, res) {
     }
 
     return sendSuccessResponse(res, { result: parsed });
-
   } catch (error) {
     return sendErrorResponse(res, error);
   }
@@ -350,6 +366,7 @@ export default async function handler(req, res) {
 ### 1. Validate Config at Startup, Not Per-Request
 
 **❌ Bad:** Check every request
+
 ```javascript
 export default async function handler(req, res) {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -361,6 +378,7 @@ export default async function handler(req, res) {
 ```
 
 **✅ Good:** Check once at module load
+
 ```javascript
 import { getOpenAIKey } from '../../src/lib/config.js';
 
@@ -375,12 +393,14 @@ export default async function handler(req, res) {
 ### 2. Validate Input Before Expensive Operations
 
 **❌ Bad:** API call before validation
+
 ```javascript
 const result = await expensiveAPICall(data);
 if (!data.field) throw new Error('Field required');
 ```
 
 **✅ Good:** Validate first
+
 ```javascript
 if (!data.field) throw new ValidationError('Field required');
 const result = await expensiveAPICall(data);
@@ -389,11 +409,13 @@ const result = await expensiveAPICall(data);
 ### 3. Log Errors with Context
 
 **❌ Bad:** Generic logging
+
 ```javascript
 console.error('Error:', error);
 ```
 
 **✅ Good:** Structured logging
+
 ```javascript
 console.error(`[${error.errorId}] ${error.name}:`, error.message, {
   statusCode: error.statusCode,
@@ -401,7 +423,7 @@ console.error(`[${error.errorId}] ${error.name}:`, error.message, {
   timestamp: new Date().toISOString(),
   method: req.method,
   path: req.url,
-  stack: error.stack
+  stack: error.stack,
 });
 ```
 
@@ -430,6 +452,7 @@ test('handles rate limit errors', async () => {
 ## Anti-Patterns
 
 ### ❌ Silent Failures
+
 ```javascript
 try {
   await criticalOperation();
@@ -439,6 +462,7 @@ try {
 ```
 
 **Fix:** Always handle or rethrow
+
 ```javascript
 try {
   await criticalOperation();
@@ -449,6 +473,7 @@ try {
 ```
 
 ### ❌ Generic Error Messages
+
 ```javascript
 catch (error) {
   return res.status(500).json({ error: 'Something went wrong' });
@@ -456,6 +481,7 @@ catch (error) {
 ```
 
 **Fix:** Be specific
+
 ```javascript
 catch (error) {
   return sendErrorResponse(res, error); // Automatically determines message
@@ -463,26 +489,30 @@ catch (error) {
 ```
 
 ### ❌ Exposing Secrets
+
 ```javascript
 return res.status(500).json({
-  error: `API key ${process.env.API_KEY} is invalid`
+  error: `API key ${process.env.API_KEY} is invalid`,
 });
 ```
 
 **Fix:** Mask sensitive data
+
 ```javascript
 return res.status(500).json({
   error: 'Server configuration error. Please contact support.',
-  errorId: generateErrorId()
+  errorId: generateErrorId(),
 });
 ```
 
 ### ❌ Missing Error IDs
+
 ```javascript
 return res.status(400).json({ error: 'Invalid input' });
 ```
 
 **Fix:** Always include error ID
+
 ```javascript
 throw new ValidationError('Invalid input'); // Automatically includes errorId
 ```
@@ -530,22 +560,24 @@ test('API returns error with tracking ID', async ({ request }) => {
 ## Quick Reference
 
 **Import this:**
+
 ```javascript
 import {
   ValidationError,
   ExternalAPIError,
-  handleOpenAIError
+  handleOpenAIError,
 } from '../../src/lib/errors.js';
 
 import {
   sendErrorResponse,
-  sendSuccessResponse
+  sendSuccessResponse,
 } from '../../src/lib/error-handler.js';
 
 import { getOpenAIKey } from '../../src/lib/config.js';
 ```
 
 **Template:**
+
 ```javascript
 // Config validation
 const apiKey = getOpenAIKey();

@@ -11,6 +11,7 @@ This checklist is used by Sentinel and other review agents to ensure consistent,
 ## 🎯 Core Principles
 
 All error handling must:
+
 1. **Include tracking IDs** - Every error needs a unique ID for support
 2. **Be specific** - Different error types require different handling
 3. **Be user-friendly** - Error messages must help users, not confuse them
@@ -26,6 +27,7 @@ All error handling must:
 **Rule:** All error responses MUST include a unique tracking ID
 
 **Check:**
+
 - [ ] Every error response includes `errorId` field
 - [ ] Error ID format is consistent (8-char lowercase alphanumeric recommended)
 - [ ] Error ID is generated using crypto random, not timestamps
@@ -33,10 +35,11 @@ All error handling must:
 - [ ] Error ID is displayed to users for support reference
 
 **Example:**
+
 ```javascript
 // ✅ GOOD
 throw new ValidationError('Invalid input', {
-  errorId: generateErrorId() // e.g., "a3f2b1c4"
+  errorId: generateErrorId(), // e.g., "a3f2b1c4"
 });
 
 // ❌ BAD
@@ -44,6 +47,7 @@ throw new Error('Invalid input'); // No tracking ID
 ```
 
 **Sentinel Action:**
+
 - 🔴 CRITICAL if any error response lacks errorId
 - Report: "Missing error tracking ID in [file:line]"
 
@@ -54,6 +58,7 @@ throw new Error('Invalid input'); // No tracking ID
 **Rule:** Use specific error types instead of generic catch-all handlers
 
 **Check:**
+
 - [ ] Try-catch blocks handle specific error types
 - [ ] Validation errors return 400 status
 - [ ] Authentication errors return 401 status
@@ -64,6 +69,7 @@ throw new Error('Invalid input'); // No tracking ID
 - [ ] Each error type has appropriate handling
 
 **Anti-pattern:**
+
 ```javascript
 // ❌ BAD - Broad catch-all
 try {
@@ -76,6 +82,7 @@ try {
 ```
 
 **Best Practice:**
+
 ```javascript
 // ✅ GOOD - Specific error handling
 try {
@@ -98,6 +105,7 @@ try {
 ```
 
 **Sentinel Action:**
+
 - 🟠 HIGH if try-catch spans multiple operation types without specific handling
 - Report: "Broad error handler may mask different error types in [file:line]"
 
@@ -108,12 +116,14 @@ try {
 **Rule:** Input validation should happen before entering try-catch blocks
 
 **Check:**
+
 - [ ] Input validation is extracted into separate functions
 - [ ] Validation errors are thrown as ValidationError (not caught generically)
 - [ ] Validation happens before expensive operations
 - [ ] Validation functions have clear names (e.g., `validateInput()`)
 
 **Example:**
+
 ```javascript
 // ✅ GOOD - Validation first, then try-catch
 function validateInput(data) {
@@ -134,6 +144,7 @@ export default async function handler(req, res) {
 ```
 
 **Sentinel Action:**
+
 - 🟡 MEDIUM if validation is done inside broad try-catch
 - Report: "Move validation outside try-catch for better error specificity in [file:line]"
 
@@ -144,6 +155,7 @@ export default async function handler(req, res) {
 **Rule:** Required environment variables must be validated before processing requests
 
 **Check:**
+
 - [ ] API keys validated before initialization
 - [ ] Database connections tested before accepting requests
 - [ ] Required config values checked at startup
@@ -151,6 +163,7 @@ export default async function handler(req, res) {
 - [ ] Fail fast - don't start if misconfigured
 
 **Example:**
+
 ```javascript
 // ✅ GOOD - Config validation at module load
 import { validateConfig, getOpenAIKey } from './config.js';
@@ -171,6 +184,7 @@ try {
 ```
 
 **Sentinel Action:**
+
 - 🔴 CRITICAL if API keys are accessed without validation
 - Report: "API key used without startup validation in [file:line]"
 
@@ -181,6 +195,7 @@ try {
 **Rule:** Error messages must help users understand what went wrong and how to fix it
 
 **Check:**
+
 - [ ] Error messages are actionable
 - [ ] Technical jargon is minimized
 - [ ] Error messages don't expose internal details
@@ -188,20 +203,22 @@ try {
 - [ ] Error messages are consistent in tone
 
 **Example:**
+
 ```javascript
 // ❌ BAD
-'Invalid input'
-'Error occurred'
-'Failed to process'
+'Invalid input';
+'Error occurred';
+'Failed to process';
 
 // ✅ GOOD
-'Email address is required. Please enter your email.'
-'Date must be in YYYY-MM-DD format (e.g., 2025-10-14)'
-'Meeting notes must be at least 50 characters for meaningful extraction'
-'AI service rate limit exceeded. Please wait 60 seconds and try again.'
+'Email address is required. Please enter your email.';
+'Date must be in YYYY-MM-DD format (e.g., 2025-10-14)';
+'Meeting notes must be at least 50 characters for meaningful extraction';
+'AI service rate limit exceeded. Please wait 60 seconds and try again.';
 ```
 
 **Sentinel Action:**
+
 - 🟡 MEDIUM if error messages are generic or unclear
 - Report: "Improve error message clarity in [file:line]"
 
@@ -212,6 +229,7 @@ try {
 **Rule:** Errors must be logged with sufficient context for debugging
 
 **Check:**
+
 - [ ] Error ID is logged
 - [ ] Timestamp is logged (ISO 8601)
 - [ ] Request context is logged (method, path, user ID if available)
@@ -220,6 +238,7 @@ try {
 - [ ] Structured logging format (JSON) is used
 
 **Example:**
+
 ```javascript
 // ✅ GOOD
 console.error(`[${errorId}] ${error.name}:`, error.message, {
@@ -229,11 +248,12 @@ console.error(`[${errorId}] ${error.name}:`, error.message, {
   timestamp: new Date().toISOString(),
   method: req.method,
   path: req.url,
-  stack: error.stack
+  stack: error.stack,
 });
 ```
 
 **Sentinel Action:**
+
 - 🟡 MEDIUM if errors are logged without context
 - Report: "Add error ID and context to logging in [file:line]"
 
@@ -244,6 +264,7 @@ console.error(`[${errorId}] ${error.name}:`, error.message, {
 **Rule:** OpenAI errors must be handled with specific status codes and retry logic
 
 **Check:**
+
 - [ ] Rate limit errors (429) include retry-after header
 - [ ] Quota errors (402) direct users to contact support
 - [ ] Invalid request errors (400) provide actionable feedback
@@ -252,6 +273,7 @@ console.error(`[${errorId}] ${error.name}:`, error.message, {
 - [ ] All OpenAI errors include tracking IDs
 
 **Example:**
+
 ```javascript
 // ✅ GOOD - Using handleOpenAIError utility
 import { handleOpenAIError } from './errors.js';
@@ -264,6 +286,7 @@ try {
 ```
 
 **Sentinel Action:**
+
 - 🟠 HIGH if OpenAI errors are not handled specifically
 - Report: "Use handleOpenAIError() for OpenAI-specific error mapping in [file:line]"
 
@@ -274,6 +297,7 @@ try {
 **Rule:** Error messages must never expose API keys, passwords, tokens, or internal paths
 
 **Check:**
+
 - [ ] API keys are not included in error messages
 - [ ] Database connection strings are not exposed
 - [ ] File paths are not exposed
@@ -282,20 +306,22 @@ try {
 - [ ] Configuration errors mask sensitive values
 
 **Example:**
+
 ```javascript
 // ❌ BAD
 return res.status(500).json({
-  error: `API key ${process.env.OPENAI_API_KEY} is invalid`
+  error: `API key ${process.env.OPENAI_API_KEY} is invalid`,
 });
 
 // ✅ GOOD
 return res.status(500).json({
   error: 'AI service not configured. Please contact support.',
-  errorId: generateErrorId()
+  errorId: generateErrorId(),
 });
 ```
 
 **Sentinel Action:**
+
 - 🔴 CRITICAL if secrets or paths are exposed in errors
 - Report: "Security risk: sensitive data exposed in error message at [file:line]"
 
@@ -306,6 +332,7 @@ return res.status(500).json({
 **Rule:** Async functions must have proper error handling
 
 **Check:**
+
 - [ ] All async functions are wrapped in try-catch or use .catch()
 - [ ] Unhandled promise rejections are caught
 - [ ] Async errors include tracking IDs
@@ -313,6 +340,7 @@ return res.status(500).json({
 - [ ] Timeouts are implemented for external API calls
 
 **Example:**
+
 ```javascript
 // ✅ GOOD
 export const handler = asyncHandler(async (req, res) => {
@@ -323,6 +351,7 @@ export const handler = asyncHandler(async (req, res) => {
 ```
 
 **Sentinel Action:**
+
 - 🟠 HIGH if async functions lack try-catch
 - Report: "Async function missing error handling in [file:line]"
 
@@ -333,6 +362,7 @@ export const handler = asyncHandler(async (req, res) => {
 **Rule:** All error responses must follow the same structure
 
 **Check:**
+
 - [ ] All errors return `{ success: false, error: string, errorId: string }`
 - [ ] Optional fields (code, metadata) are used consistently
 - [ ] Success responses return `{ success: true, ...data }`
@@ -340,6 +370,7 @@ export const handler = asyncHandler(async (req, res) => {
 - [ ] Content-Type is application/json
 
 **Example:**
+
 ```javascript
 // ✅ GOOD - Consistent format
 {
@@ -357,6 +388,7 @@ export const handler = asyncHandler(async (req, res) => {
 ```
 
 **Sentinel Action:**
+
 - 🟡 MEDIUM if error response format is inconsistent
 - Report: "Use standard error response format in [file:line]"
 
@@ -365,6 +397,7 @@ export const handler = asyncHandler(async (req, res) => {
 ## 🔍 Common Anti-Patterns to Flag
 
 ### 1. Silent Failures
+
 ```javascript
 // ❌ CRITICAL
 try {
@@ -375,6 +408,7 @@ try {
 ```
 
 ### 2. Generic Error Messages
+
 ```javascript
 // ❌ BAD
 catch (error) {
@@ -383,24 +417,27 @@ catch (error) {
 ```
 
 ### 3. Missing Error IDs
+
 ```javascript
 // ❌ CRITICAL
 return res.status(500).json({
-  error: 'Failed to process request'
+  error: 'Failed to process request',
   // No errorId field
 });
 ```
 
 ### 4. Exposing Stack Traces
+
 ```javascript
 // ❌ CRITICAL SECURITY RISK
 return res.status(500).json({
   error: error.message,
-  stack: error.stack // Never send to frontend!
+  stack: error.stack, // Never send to frontend!
 });
 ```
 
 ### 5. No Validation Before Expensive Operations
+
 ```javascript
 // ❌ BAD - Calls API before validating input
 try {
@@ -416,6 +453,7 @@ try {
 ## 🚀 Quick Reference
 
 **For New API Endpoints:**
+
 1. ✅ Validate config at startup
 2. ✅ Validate input outside try-catch
 3. ✅ Use specific error types in try-catch
@@ -425,6 +463,7 @@ try {
 7. ✅ Test all error scenarios
 
 **For Existing Code Review:**
+
 1. Search for `catch (error)` - check if it's generic
 2. Search for `res.status(500)` - check if error ID is included
 3. Search for `throw new Error` - check if specific error type is used

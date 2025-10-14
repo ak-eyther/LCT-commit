@@ -9,6 +9,7 @@
 ## 🤖 Agent Role & Responsibilities
 
 You are assisting with a **mission-critical healthcare project** in Kenya. Your role is to:
+
 1. Help implement the 31-criteria success matrix
 2. Build/modify tracking and reporting tools
 3. Explain technical concepts in beginner-friendly terms
@@ -24,6 +25,7 @@ You are assisting with a **mission-critical healthcare project** in Kenya. Your 
 ### What is Sentinel?
 
 Sentinel is an elite AI-powered code review agent that automatically:
+
 - 🔐 Detects security vulnerabilities (OWASP Top 10 2025)
 - 🎨 Checks UI/UX accessibility (WCAG 2.2)
 - ⚙️ Finds functional bugs and edge cases
@@ -33,12 +35,14 @@ Sentinel is an elite AI-powered code review agent that automatically:
 ### How It Works
 
 **Local Pre-Commit Hook:**
+
 - Runs on every `git commit`
 - Blocks CRITICAL security issues
 - Warns about HIGH/MEDIUM issues
 - Located: `.git/hooks/pre-commit`
 
 **GitHub Actions (PR Review):**
+
 - Analyzes all changed files on PR
 - Posts detailed review comments
 - Adds inline code comments
@@ -46,6 +50,7 @@ Sentinel is an elite AI-powered code review agent that automatically:
 - Blocks merge if CRITICAL issues found
 
 **GitHub Actions (Push to Main/QA/Develop):**
+
 - Reviews commits to protected branches
 - Posts commit comments
 - Creates Linear issues for tracking
@@ -53,6 +58,7 @@ Sentinel is an elite AI-powered code review agent that automatically:
 ### When Working on Code
 
 **Before Committing:**
+
 ```bash
 # Sentinel will automatically check your code
 git add .
@@ -63,6 +69,7 @@ git commit -m "Your message"
 ```
 
 **Understanding Sentinel Feedback:**
+
 - 🔴 **CRITICAL**: Must fix immediately (blocks commit/PR)
 - 🟠 **HIGH**: Should fix before release
 - 🟡 **MEDIUM**: Fix in next sprint
@@ -71,6 +78,7 @@ git commit -m "Your message"
 ### Common Sentinel Detections
 
 **Security (CRITICAL):**
+
 - Hardcoded API keys, passwords, secrets
 - SQL injection vulnerabilities
 - XSS (Cross-Site Scripting) risks
@@ -78,11 +86,13 @@ git commit -m "Your message"
 - `eval()` on user input
 
 **Accessibility (HIGH):**
+
 - Images without alt text
 - Inputs without labels
 - Removed focus indicators
 
 **Code Quality (MEDIUM):**
+
 - `console.log` statements
 - TODO/FIXME comments
 - Missing error handling
@@ -97,6 +107,7 @@ git commit -m "Your message"
 ### Working With Sentinel
 
 **Best Practices:**
+
 1. Don't bypass security warnings without understanding them
 2. Read Sentinel comments carefully
 3. Fix CRITICAL issues before pushing
@@ -104,6 +115,7 @@ git commit -m "Your message"
 5. Learn from the feedback to write better code
 
 **If Sentinel is Wrong (False Positive):**
+
 1. Add a comment explaining why it's safe
 2. Use `git commit --no-verify` for that specific commit
 3. Consider reporting to improve Sentinel's accuracy
@@ -111,6 +123,7 @@ git commit -m "Your message"
 ### Integration with LCT commit
 
 Sentinel has deep context about this project:
+
 - Understands PHI/PII protection requirements
 - Knows about financial validation rules
 - Aware of 90% accuracy goal
@@ -118,6 +131,7 @@ Sentinel has deep context about this project:
 - Protects healthcare data compliance
 
 **Example - Sentinel protecting invoice validation:**
+
 ```javascript
 // ❌ BAD - Client-side validation only
 function calculateSavings(billed, approved) {
@@ -146,6 +160,7 @@ function calculateSavings(billed, approved) {
 ### Sentinel and the 31 Criteria
 
 Sentinel helps achieve the 90% accuracy goal by:
+
 - Preventing security vulnerabilities that could expose PHI
 - Ensuring accessibility for all users
 - Catching logic errors in financial calculations
@@ -153,6 +168,7 @@ Sentinel helps achieve the 90% accuracy goal by:
 - Maintaining code quality across the team
 
 **Criteria Alignment:**
+
 - **Criteria #4 (CRITICAL)**: Invoice validation - Sentinel checks calculation logic
 - **Criteria #6 (CRITICAL)**: Tariff validation - Sentinel ensures server-side checks
 - **Criteria #11 (CRITICAL)**: Fraud detection - Sentinel protects algorithm integrity
@@ -163,6 +179,7 @@ Sentinel helps achieve the 90% accuracy goal by:
 ## ⚡ Quick Context (Read First)
 
 ### Project Summary
+
 ```yaml
 Client: LCT Group (Kenya) + Vitraya Technologies (India)
 Problem: Manual healthcare claims take 60 days, high fraud
@@ -173,12 +190,14 @@ Market Size: 1B KES now, 4.5B KES potential
 ```
 
 ### Success Criteria
+
 - **31 evaluation criteria** across 5 categories
 - **4 CRITICAL priority** items (must work perfectly)
 - **17 High priority** items (very important)
 - **10 Medium/Low** items (nice to have)
 
 ### User Profile
+
 - **Skill Level:** Beginner coder
 - **Preference:** Small incremental steps
 - **Needs:** Clear explanations, working examples
@@ -189,6 +208,7 @@ Market Size: 1B KES now, 4.5B KES potential
 ## 📁 File Structure & Purpose
 
 ### Documentation Files
+
 ```
 CLAUDE.md                              # This agent guide
 AGENT.md                               # Human-readable project overview
@@ -196,6 +216,7 @@ LCT_Vitraya_Complete_Project_Context.md # Full business context (150+ pages)
 ```
 
 ### Code Files
+
 ```
 lct-success-matrix-checklist.tsx       # React component (17 items)
 lct-tracker-html.html                  # Standalone tracker (31 items) ⭐ PRIMARY
@@ -208,6 +229,7 @@ lct-tracker-html.html                  # Standalone tracker (31 items) ⭐ PRIMA
 ## 🎯 Core Mission: The 31 Criteria
 
 ### Category 1: Clinical Accuracy (3 items)
+
 ```javascript
 [High] ICD matches billed service (≥95%)
 [High] Service-Diagnosis consistency with pre-auth (≥95%)
@@ -215,6 +237,7 @@ lct-tracker-html.html                  # Standalone tracker (31 items) ⭐ PRIMA
 ```
 
 ### Category 2: Financial & Policy Compliance (6 items)
+
 ```javascript
 [CRITICAL] Invoice amount precedence: LCT → ETIMS → Document (100%)
 [Medium]   Invoice date within policy period (100%)
@@ -225,6 +248,7 @@ lct-tracker-html.html                  # Standalone tracker (31 items) ⭐ PRIMA
 ```
 
 ### Category 3: Fraud & Duplication Safeguards (18 items)
+
 ```javascript
 [High]     Duplicate visit detection (100%)
 [CRITICAL] Repeated service detection (100%)
@@ -247,12 +271,14 @@ lct-tracker-html.html                  # Standalone tracker (31 items) ⭐ PRIMA
 ```
 
 ### Category 4: Vetting Completeness (2 items)
+
 ```javascript
 [High] 100% vetting completeness per visit (100%)
 [High] Query criteria definition (100%)
 ```
 
 ### Category 5: Process Efficiency (2 items)
+
 ```javascript
 [Medium] Vetting TAT (<2 mins per claim)
 [Medium] Cost savings by provider/scheme (Track & Report)
@@ -265,6 +291,7 @@ lct-tracker-html.html                  # Standalone tracker (31 items) ⭐ PRIMA
 ### When User Requests a Feature
 
 **Step 1: Understand**
+
 ```
 - Which of the 31 criteria does this relate to?
 - What's the priority level?
@@ -273,6 +300,7 @@ lct-tracker-html.html                  # Standalone tracker (31 items) ⭐ PRIMA
 ```
 
 **Step 2: Plan**
+
 ```
 - Break into smallest possible steps
 - Identify dependencies
@@ -281,6 +309,7 @@ lct-tracker-html.html                  # Standalone tracker (31 items) ⭐ PRIMA
 ```
 
 **Step 3: Implement**
+
 ```
 - Write code with extensive comments
 - Use descriptive variable names
@@ -289,6 +318,7 @@ lct-tracker-html.html                  # Standalone tracker (31 items) ⭐ PRIMA
 ```
 
 **Step 4: Explain**
+
 ```
 - Show what you built
 - Explain how it works
@@ -299,6 +329,7 @@ lct-tracker-html.html                  # Standalone tracker (31 items) ⭐ PRIMA
 ### Code Style Requirements
 
 #### ✅ Good Practices
+
 ```javascript
 // GOOD: Clear, commented, simple
 function validateInvoiceAmount(lctAmount, etimsAmount, documentAmount) {
@@ -310,24 +341,28 @@ function validateInvoiceAmount(lctAmount, etimsAmount, documentAmount) {
     return {
       status: 'Query',
       amount: approvedAmount,
-      reason: 'ETIMS amount less than LCT amount'
+      reason: 'ETIMS amount less than LCT amount',
     };
   }
 
   return {
     status: 'Approved',
-    amount: approvedAmount
+    amount: approvedAmount,
   };
 }
 ```
 
 #### ❌ Bad Practices
+
 ```javascript
 // BAD: Cryptic, no comments, complex
-function vIA(l,e,d){return e<l?{s:'Q',a:l,r:'E<L'}:{s:'A',a:l}}
+function vIA(l, e, d) {
+  return e < l ? { s: 'Q', a: l, r: 'E<L' } : { s: 'A', a: l };
+}
 ```
 
 ### Error Handling Pattern
+
 ```javascript
 // Always handle errors gracefully for beginners
 function processData(data) {
@@ -339,7 +374,7 @@ function processData(data) {
     return {
       success: false,
       error: error.message,
-      helpfulMessage: 'Check if data has required fields'
+      helpfulMessage: 'Check if data has required fields',
     };
   }
 }
@@ -373,6 +408,7 @@ Request received
 ### For Every Feature Built
 
 **1. Unit Test (Function Level)**
+
 ```javascript
 // Test individual functions
 console.log('Testing invoice validation...');
@@ -381,18 +417,20 @@ console.log(validateInvoiceAmount(1700, 1500, 3370));
 ```
 
 **2. Integration Test (Feature Level)**
+
 ```javascript
 // Test how functions work together
 const testClaim = {
   lctAmount: 1700,
   etimsAmount: 1500,
-  documentAmount: 3370
+  documentAmount: 3370,
 };
 const result = processClaim(testClaim);
 console.log('Full claim processing:', result);
 ```
 
 **3. User Test (Manual)**
+
 ```
 - Open HTML file in browser
 - Click through the feature
@@ -405,24 +443,25 @@ console.log('Full claim processing:', result);
 ## 📊 Data Structure Reference
 
 ### Claim Object Structure
+
 ```javascript
 const claim = {
-  id: 1,                              // Unique identifier
-  invoiceNumber: 'CB-109764-25',      // Provider invoice ID
+  id: 1, // Unique identifier
+  invoiceNumber: 'CB-109764-25', // Provider invoice ID
   memberName: 'John Doe',
-  diagnosis: 'B50',                   // ICD-10 code
+  diagnosis: 'B50', // ICD-10 code
   diagnosisText: 'Malaria',
 
   // Financial data
-  lctAmount: 1700,                    // Amount in LCT system (PRIORITY)
-  etimsAmount: 1500,                  // Tax system amount
-  documentAmount: 3370,               // Amount in physical docs
-  approvedAmount: null,               // Calculated amount
+  lctAmount: 1700, // Amount in LCT system (PRIORITY)
+  etimsAmount: 1500, // Tax system amount
+  documentAmount: 3370, // Amount in physical docs
+  approvedAmount: null, // Calculated amount
 
   // Clinical data
   services: [
     { code: 'LAB001', name: 'Malaria test', amount: 300 },
-    { code: 'MED001', name: 'Antimalarial', amount: 1400 }
+    { code: 'MED001', name: 'Antimalarial', amount: 1400 },
   ],
 
   // Dates
@@ -432,18 +471,19 @@ const claim = {
   policyEndDate: '2025-11-30',
 
   // Status
-  status: 'Not Started',              // Not Started, In Progress, Completed
-  vettingStatus: null,                // Approved, Rejected, Query
+  status: 'Not Started', // Not Started, In Progress, Completed
+  vettingStatus: null, // Approved, Rejected, Query
   vettingReason: null,
 
   // Metadata
   provider: 'Bliss Healthcare',
   scheme: 'MTRH',
-  priority: 'High'
+  priority: 'High',
 };
 ```
 
 ### Criteria Tracking Object
+
 ```javascript
 const criteriaItem = {
   id: 4,
@@ -453,7 +493,7 @@ const criteriaItem = {
   priority: 'CRITICAL',
 
   // Implementation tracking
-  status: 'In Progress',              // Not Started, Planned, In Progress, Completed, Blocked
+  status: 'In Progress', // Not Started, Planned, In Progress, Completed, Blocked
   currentCoverage: 'Basic validation in place',
   futurePlan: 'Add ETIMS integration by Oct 15',
   owner: 'Vidya Ratan',
@@ -462,7 +502,7 @@ const criteriaItem = {
   // Technical details
   explanation: 'Priority order: LCT → ETIMS → Document...',
   example: 'LCT: 1700 | ETIMS: 1500 | Doc: 3370...',
-  outputType: 'Approve / Query'
+  outputType: 'Approve / Query',
 };
 ```
 
@@ -471,6 +511,7 @@ const criteriaItem = {
 ## 🔍 Common Scenarios & Responses
 
 ### Scenario 1: "Add fraud detection feature"
+
 ```
 Response Pattern:
 1. "Great! Which of the 18 fraud criteria are we implementing?"
@@ -482,6 +523,7 @@ Response Pattern:
 ```
 
 ### Scenario 2: "Why is this not working?"
+
 ```
 Response Pattern:
 1. "Let me help debug. Can you share the error message?"
@@ -496,6 +538,7 @@ Response Pattern:
 ```
 
 ### Scenario 3: "Make the UI better"
+
 ```
 Response Pattern:
 1. "What specifically would you like to improve?"
@@ -506,6 +549,7 @@ Response Pattern:
 ```
 
 ### Scenario 4: "I want to export data"
+
 ```
 Response Pattern:
 1. "Let's add CSV and JSON export"
@@ -520,6 +564,7 @@ Response Pattern:
 ## 💾 Data Persistence Strategy
 
 ### Current Implementation (HTML File)
+
 ```javascript
 // Save to localStorage
 function saveData() {
@@ -542,6 +587,7 @@ function exportJSON() {
 ```
 
 ### Future Database Schema (Reference)
+
 ```sql
 -- For when backend is needed
 CREATE TABLE criteria (
@@ -596,17 +642,20 @@ Before considering any feature "complete":
 ### When Explaining Code
 
 **Level 1: What it does**
+
 ```javascript
 // This function checks if an invoice amount is valid
 ```
 
 **Level 2: How it works**
+
 ```javascript
 // We compare three sources: LCT (primary), ETIMS (tax), Document (paper)
 // LCT amount always takes precedence per Criteria #4
 ```
 
 **Level 3: Why it matters**
+
 ```javascript
 // This catches under-billing fraud. Example: Provider bills 1700 in system
 // but documents show 3370. This 98% variance is flagged for review.
@@ -625,6 +674,7 @@ Before considering any feature "complete":
 ## 📈 Progress Tracking
 
 ### Check Status Command
+
 ```javascript
 // Quick status check
 function getProjectStatus() {
@@ -637,33 +687,38 @@ function getProjectStatus() {
     percentComplete: Math.round((stats.completed / 31) * 100),
     criticalComplete: stats.criticalComplete,
     criticalTotal: 4,
-    readyForCommercial: stats.percentComplete >= 90
+    readyForCommercial: stats.percentComplete >= 90,
   };
 }
 ```
 
 ### Weekly Report Template
+
 ```markdown
 ## LCT commit Status - Week of [Date]
 
 **Overall Progress:** X% (Y of 31 criteria complete)
 
 **Critical Items (4 total):**
+
 - ✅ Invoice amount precedence: Completed
 - ✅ Tariff validation: Completed
 - ⏳ Repeated service detection: In Progress (80%)
 - ❌ Cross-provider duplicates: Not Started
 
 **High Priority (17 total):**
+
 - Completed: X
 - In Progress: Y
 - Not Started: Z
 
 **Blockers:**
+
 1. [Issue description]
 2. [Issue description]
 
 **Next Week Focus:**
+
 1. [Priority task]
 2. [Priority task]
 ```
@@ -673,19 +728,21 @@ function getProjectStatus() {
 ## 🔐 Security & Privacy Notes
 
 ### Data Handling
+
 - **No real patient data** in code examples
 - **Use fake data** for testing (John Doe, Jane Smith)
 - **Sanitize inputs** before displaying
 - **No hardcoded credentials** ever
 
 ### Example Safe Test Data
+
 ```javascript
 const testData = {
-  memberName: 'John Doe',          // Fake name
-  diagnosis: 'B50',                // Generic code
-  amount: 1700,                    // Round number
-  invoice: 'TEST-001',             // Obvious test ID
-  provider: 'Test Hospital'        // Fake provider
+  memberName: 'John Doe', // Fake name
+  diagnosis: 'B50', // Generic code
+  amount: 1700, // Round number
+  invoice: 'TEST-001', // Obvious test ID
+  provider: 'Test Hospital', // Fake provider
 };
 ```
 
@@ -694,6 +751,7 @@ const testData = {
 ## 🎯 Success Criteria for Agent
 
 You're doing well if:
+
 - ✅ User understands what you built
 - ✅ Code works on first try (or second)
 - ✅ Each step is small and testable
@@ -702,6 +760,7 @@ You're doing well if:
 - ✅ Progress toward 90% quality goal
 
 You need to adjust if:
+
 - ❌ User says "this is too complex"
 - ❌ Code doesn't run without fixes
 - ❌ Steps are too big
@@ -714,6 +773,7 @@ You need to adjust if:
 ## 📞 Escalation Points
 
 If user asks about:
+
 - **Business strategy**: Refer to context document
 - **LCT internal processes**: Suggest they check with LCT team
 - **Vitraya AI algorithms**: Black box, focus on integration
@@ -725,6 +785,7 @@ If user asks about:
 ## 🚀 Quick Start Checklist
 
 When starting a new session:
+
 1. [ ] Read CLAUDE.md for context
 2. [ ] Check which file user wants to work with (HTML vs React)
 3. [ ] Ask about their current priority

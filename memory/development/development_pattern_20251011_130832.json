@@ -6,10 +6,7 @@
     "title": "Pattern: Security: Hardcoded API keys",
     "description": "Security pattern for Hardcoded API keys: Check for sk_live_, sk_test_ patterns",
     "context": "Code pattern or best practice",
-    "tags": [
-      "pattern",
-      "sentinel"
-    ],
+    "tags": ["pattern", "sentinel"],
     "priority": "high",
     "code_example": "Check for sk_live_, sk_test_ patterns",
     "created_at": "2025-10-11T13:08:32.787438",

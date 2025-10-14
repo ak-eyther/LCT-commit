@@ -22,11 +22,11 @@ feature/*, fix/* (short-lived, 1-2 days max)
 
 ### Branch Descriptions
 
-| Branch | Purpose | Deploys To | Protected |
-|--------|---------|------------|-----------|
-| `main` | Production code | Vercel Production | ⚠️ Optional |
-| `feature/*` | New features | Local/Preview | ❌ No |
-| `fix/*` | Bug fixes | Local/Preview | ❌ No |
+| Branch      | Purpose         | Deploys To        | Protected   |
+| ----------- | --------------- | ----------------- | ----------- |
+| `main`      | Production code | Vercel Production | ⚠️ Optional |
+| `feature/*` | New features    | Local/Preview     | ❌ No       |
+| `fix/*`     | Bug fixes       | Local/Preview     | ❌ No       |
 
 ---
 
@@ -51,12 +51,14 @@ git checkout -b fix/export-csv-bug
 Format: `<type>/<short-description>`
 
 **Types:**
+
 - `feature/` - New functionality
 - `fix/` - Bug fixes
 - `docs/` - Documentation only
 - `refactor/` - Code cleanup
 
 **Examples:**
+
 ```
 feature/tariff-validation
 feature/fraud-detection-ui
@@ -90,6 +92,7 @@ git push -u origin feature/duplicate-detection
 ### Merging to Main
 
 **Option 1: Direct Merge (Fast, for solo work)**
+
 ```bash
 # After testing locally
 git checkout main
@@ -102,6 +105,7 @@ git push origin --delete feature/duplicate-detection
 ```
 
 **Option 2: Pull Request (Recommended for team work)**
+
 ```bash
 # Push your branch
 git push origin feature/duplicate-detection
@@ -137,6 +141,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ### Examples
 
 **Simple:**
+
 ```
 fix: Correct CSV export encoding
 
@@ -146,6 +151,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 **Detailed:**
+
 ```
 feat: Add duplicate service detection
 
@@ -277,11 +283,13 @@ Developer → feature/xxx
 For `main` branch, you CAN add protection (but not required for solo work):
 
 **Minimal Protection:**
+
 - ✅ Require pull request before merging (optional)
 - ❌ Approvals: Not needed for solo work
 - ✅ Do not allow force push (recommended)
 
 **How to enable:**
+
 - Go to: https://github.com/ak-eyther/LCT-commit/settings/branches
 - Add rule for `main`
 - Enable only what you need
@@ -297,6 +305,7 @@ Created → Work → Test → Push → Merge → Delete
 ```
 
 **Target Timeline:**
+
 - Feature development: 1-2 days
 - Testing: 5 minutes (open HTML in browser)
 - Merge: Fast
@@ -339,6 +348,7 @@ git log --oneline -5             # Recent commits
 ## 💡 Why This Simplified Approach?
 
 ### Perfect for:
+
 - ✅ Single HTML file projects
 - ✅ Small teams (1-3 people)
 - ✅ Fast iteration needed
@@ -346,12 +356,14 @@ git log --oneline -5             # Recent commits
 - ✅ Projects where testing = opening file in browser
 
 ### Not suitable for:
+
 - ❌ Large applications with build processes
 - ❌ Teams of 10+ developers
 - ❌ Complex deployment pipelines
 - ❌ Projects requiring extensive QA
 
 ### Your LCT Project:
+
 - 🎯 Single HTML file
 - 🎯 LocalStorage (no database)
 - 🎯 No build process
@@ -375,6 +387,7 @@ git log --oneline -5             # Recent commits
 **Common Issues:**
 
 **"I committed to main by accident"**
+
 ```bash
 # It's okay! Just revert
 git revert HEAD
@@ -382,6 +395,7 @@ git push origin main
 ```
 
 **"My branch is out of date"**
+
 ```bash
 git checkout main
 git pull origin main
@@ -390,6 +404,7 @@ git merge main
 ```
 
 **"I want to undo my last commit"**
+
 ```bash
 # Undo but keep changes
 git reset --soft HEAD~1

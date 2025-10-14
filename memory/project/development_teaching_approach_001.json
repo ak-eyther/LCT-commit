@@ -6,11 +6,7 @@
     "title": "Beginner-Friendly Teaching Pattern",
     "description": "Small incremental steps, extensive comments, one feature at a time, test after each step. Explain in 3 levels: what it does, how it works, why it matters.",
     "context": "Teaching approach for beginner users",
-    "tags": [
-      "teaching",
-      "beginner",
-      "methodology"
-    ],
+    "tags": ["teaching", "beginner", "methodology"],
     "priority": "high"
   },
   "metadata": {

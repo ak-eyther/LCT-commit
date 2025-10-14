@@ -6,14 +6,6 @@
     "Track knowledge gaps",
     "Learn from effective documentation"
   ],
-  "memory_categories": [
-    "development",
-    "sessions",
-    "shared"
-  ],
-  "memory_types": [
-    "pattern",
-    "learning",
-    "preference"
-  ]
+  "memory_categories": ["development", "sessions", "shared"],
+  "memory_types": ["pattern", "learning", "preference"]
 }

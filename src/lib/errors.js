@@ -54,7 +54,7 @@ export class AppError extends Error {
       error: this.message,
       errorId: this.errorId,
       code: this.code,
-      ...(Object.keys(this.metadata).length > 0 && { metadata: this.metadata })
+      ...(Object.keys(this.metadata).length > 0 && { metadata: this.metadata }),
     };
   }
 }
@@ -156,8 +156,8 @@ export function handleOpenAIError(error) {
         errorId,
         metadata: {
           retryAfter: error.headers?.['retry-after'],
-          originalError: error.code
-        }
+          originalError: error.code,
+        },
       }
     );
   }
@@ -168,7 +168,7 @@ export function handleOpenAIError(error) {
       'AI service quota exceeded. Please try again later or contact support.',
       {
         errorId,
-        metadata: { originalError: error.code }
+        metadata: { originalError: error.code },
       }
     );
   }
@@ -179,7 +179,7 @@ export function handleOpenAIError(error) {
       'Server configuration error. Please contact support.',
       {
         errorId,
-        metadata: { hint: 'API key invalid or missing' }
+        metadata: { hint: 'API key invalid or missing' },
       }
     );
   }
@@ -190,7 +190,7 @@ export function handleOpenAIError(error) {
       'Invalid request to AI service. Please check your input.',
       {
         errorId,
-        metadata: { originalError: error.message }
+        metadata: { originalError: error.message },
       }
     );
   }
@@ -201,7 +201,7 @@ export function handleOpenAIError(error) {
       'AI service temporarily unavailable. Please try again shortly.',
       {
         errorId,
-        metadata: { originalError: error.code }
+        metadata: { originalError: error.code },
       }
     );
   }
@@ -214,8 +214,8 @@ export function handleOpenAIError(error) {
       metadata: {
         status: error.status,
         code: error.code,
-        message: error.message
-      }
+        message: error.message,
+      },
     }
   );
 }

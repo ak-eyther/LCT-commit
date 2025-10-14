@@ -6,15 +6,6 @@
     "Track feature implementation decisions",
     "Learn from successful teaching approaches"
   ],
-  "memory_categories": [
-    "development",
-    "sessions",
-    "shared"
-  ],
-  "memory_types": [
-    "decision",
-    "learning",
-    "pattern",
-    "preference"
-  ]
+  "memory_categories": ["development", "sessions", "shared"],
+  "memory_types": ["decision", "learning", "pattern", "preference"]
 }

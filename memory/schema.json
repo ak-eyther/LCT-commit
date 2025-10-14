@@ -15,20 +15,12 @@
     "development": {
       "description": "Mid-term development context and patterns",
       "persistence": "semi-permanent",
-      "examples": [
-        "code_patterns",
-        "feature_history",
-        "bug_resolutions"
-      ]
+      "examples": ["code_patterns", "feature_history", "bug_resolutions"]
     },
     "sessions": {
       "description": "Short-term session context",
       "persistence": "temporary",
-      "examples": [
-        "current_work",
-        "active_issues",
-        "user_preferences"
-      ]
+      "examples": ["current_work", "active_issues", "user_preferences"]
     },
     "shared": {
       "description": "Cross-agent shared knowledge",

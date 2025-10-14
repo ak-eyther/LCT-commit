@@ -13,8 +13,11 @@ This guide explains how to build custom tools and integrations for the LCT commi
 ## 🛠️ Types of Tools You Can Build
 
 ### 1. Custom MCP Servers (Claude Desktop Integration)
+
 ### 2. Project Utilities (Scripts & Helpers)
+
 ### 3. Web Components (UI Features)
+
 ### 4. API Integrations (External Services)
 
 ---
@@ -26,17 +29,20 @@ Build specialized MCP servers that Claude Code can use when working on LCT commi
 ### Use Cases for LCT commit
 
 **LCT Claims Database Server:**
+
 - Query claims data directly
 - Validate invoice amounts against tariff database
 - Check for duplicate services across providers
 - Generate savings reports by scheme
 
 **ETIMS Integration Server:**
+
 - Verify invoice amounts against Kenya tax system
 - Validate provider tax compliance
 - Cross-reference billing data
 
 **Healthcare Fraud Detection Server:**
+
 - Run fraud detection algorithms
 - Pattern analysis for repeated services
 - Cross-provider duplicate detection
@@ -67,15 +73,16 @@ lct-claims-mcp/
 #### Example: LCT Claims MCP Server
 
 **src/index.ts:**
+
 ```typescript
 #!/usr/bin/env node
 
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
-} from "@modelcontextprotocol/sdk/types.js";
+} from '@modelcontextprotocol/sdk/types.js';
 
 // Database connection (example using pg)
 import { Pool } from 'pg';
@@ -87,8 +94,8 @@ const pool = new Pool({
 // Create server instance
 const server = new Server(
   {
-    name: "lct-claims-server",
-    version: "1.0.0",
+    name: 'lct-claims-server',
+    version: '1.0.0',
   },
   {
     capabilities: {
@@ -102,98 +109,99 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
       {
-        name: "query_claims",
-        description: "Query claims from LCT database with filters",
+        name: 'query_claims',
+        description: 'Query claims from LCT database with filters',
         inputSchema: {
-          type: "object",
+          type: 'object',
           properties: {
             scheme: {
-              type: "string",
-              description: "Scheme name (e.g., MTRH)",
+              type: 'string',
+              description: 'Scheme name (e.g., MTRH)',
             },
             status: {
-              type: "string",
-              enum: ["approved", "rejected", "pending", "query"],
-              description: "Claim vetting status",
+              type: 'string',
+              enum: ['approved', 'rejected', 'pending', 'query'],
+              description: 'Claim vetting status',
             },
             dateFrom: {
-              type: "string",
-              description: "Start date (ISO 8601)",
+              type: 'string',
+              description: 'Start date (ISO 8601)',
             },
             dateTo: {
-              type: "string",
-              description: "End date (ISO 8601)",
+              type: 'string',
+              description: 'End date (ISO 8601)',
             },
             limit: {
-              type: "number",
-              description: "Max results to return",
+              type: 'number',
+              description: 'Max results to return',
               default: 100,
             },
           },
         },
       },
       {
-        name: "validate_invoice",
-        description: "Validate invoice amount against LCT precedence rules",
+        name: 'validate_invoice',
+        description: 'Validate invoice amount against LCT precedence rules',
         inputSchema: {
-          type: "object",
+          type: 'object',
           properties: {
             lctAmount: {
-              type: "number",
-              description: "Amount in LCT system",
+              type: 'number',
+              description: 'Amount in LCT system',
             },
             etimsAmount: {
-              type: "number",
-              description: "Amount in ETIMS tax system",
+              type: 'number',
+              description: 'Amount in ETIMS tax system',
             },
             documentAmount: {
-              type: "number",
-              description: "Amount on physical document",
+              type: 'number',
+              description: 'Amount on physical document',
             },
           },
-          required: ["lctAmount", "etimsAmount", "documentAmount"],
+          required: ['lctAmount', 'etimsAmount', 'documentAmount'],
         },
       },
       {
-        name: "detect_duplicate_services",
-        description: "Check for duplicate services across providers (Criteria #15)",
+        name: 'detect_duplicate_services',
+        description:
+          'Check for duplicate services across providers (Criteria #15)',
         inputSchema: {
-          type: "object",
+          type: 'object',
           properties: {
             memberId: {
-              type: "string",
-              description: "Member/patient ID",
+              type: 'string',
+              description: 'Member/patient ID',
             },
             serviceCode: {
-              type: "string",
-              description: "Service code (e.g., LAB001)",
+              type: 'string',
+              description: 'Service code (e.g., LAB001)',
             },
             dateRange: {
-              type: "number",
-              description: "Days to look back",
+              type: 'number',
+              description: 'Days to look back',
               default: 30,
             },
           },
-          required: ["memberId", "serviceCode"],
+          required: ['memberId', 'serviceCode'],
         },
       },
       {
-        name: "calculate_savings",
-        description: "Calculate savings for a claim or scheme",
+        name: 'calculate_savings',
+        description: 'Calculate savings for a claim or scheme',
         inputSchema: {
-          type: "object",
+          type: 'object',
           properties: {
             claimId: {
-              type: "string",
-              description: "Specific claim ID (optional)",
+              type: 'string',
+              description: 'Specific claim ID (optional)',
             },
             scheme: {
-              type: "string",
-              description: "Scheme name (optional)",
+              type: 'string',
+              description: 'Scheme name (optional)',
             },
             period: {
-              type: "string",
-              description: "Time period: week, month, year",
+              type: 'string',
+              description: 'Time period: week, month, year',
             },
           },
         },
@@ -203,12 +211,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 });
 
 // Handle tool execution
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
+server.setRequestHandler(CallToolRequestSchema, async request => {
   const { name, arguments: args } = request.params;
 
   try {
     switch (name) {
-      case "query_claims": {
+      case 'query_claims': {
         const { scheme, status, dateFrom, dateTo, limit = 100 } = args;
 
         let query = `
@@ -264,14 +272,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return {
           content: [
             {
-              type: "text",
+              type: 'text',
               text: JSON.stringify(result.rows, null, 2),
             },
           ],
         };
       }
 
-      case "validate_invoice": {
+      case 'validate_invoice': {
         const { lctAmount, etimsAmount, documentAmount } = args;
 
         // Criteria #4 (CRITICAL): Invoice amount precedence
@@ -279,26 +287,26 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
         const approvedAmount = lctAmount; // LCT always takes precedence
 
-        let status = "Approved";
-        let reason = "";
+        let status = 'Approved';
+        let reason = '';
 
         // Check for discrepancies
         if (etimsAmount < lctAmount) {
-          status = "Query";
-          reason = "ETIMS amount less than LCT amount";
+          status = 'Query';
+          reason = 'ETIMS amount less than LCT amount';
         }
 
         const variance = Math.abs(documentAmount - lctAmount) / lctAmount;
-        if (variance > 0.10) {
+        if (variance > 0.1) {
           // More than 10% variance
-          status = "Query";
+          status = 'Query';
           reason = `High variance between LCT and document amounts (${(variance * 100).toFixed(1)}%)`;
         }
 
         return {
           content: [
             {
-              type: "text",
+              type: 'text',
               text: JSON.stringify(
                 {
                   status,
@@ -319,7 +327,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      case "detect_duplicate_services": {
+      case 'detect_duplicate_services': {
         const { memberId, serviceCode, dateRange = 30 } = args;
 
         // Criteria #15 (CRITICAL): Cross-provider duplicate service detection
@@ -346,7 +354,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return {
           content: [
             {
-              type: "text",
+              type: 'text',
               text: JSON.stringify(
                 {
                   isDuplicate: duplicates,
@@ -354,7 +362,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                   instances: result.rows,
                   flagReason: duplicates
                     ? `Service ${serviceCode} provided ${result.rows.length} times in ${dateRange} days`
-                    : "No duplicates detected",
+                    : 'No duplicates detected',
                 },
                 null,
                 2
@@ -364,7 +372,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      case "calculate_savings": {
+      case 'calculate_savings': {
         const { claimId, scheme, period } = args;
 
         let query = `
@@ -393,7 +401,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return {
           content: [
             {
-              type: "text",
+              type: 'text',
               text: JSON.stringify(result.rows[0], null, 2),
             },
           ],
@@ -407,7 +415,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     return {
       content: [
         {
-          type: "text",
+          type: 'text',
           text: `Error: ${error.message}`,
         },
       ],
@@ -420,16 +428,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("LCT Claims MCP server running on stdio");
+  console.error('LCT Claims MCP server running on stdio');
 }
 
-main().catch((error) => {
-  console.error("Fatal error:", error);
+main().catch(error => {
+  console.error('Fatal error:', error);
   process.exit(1);
 });
 ```
 
 **package.json:**
+
 ```json
 {
   "name": "lct-claims-mcp",
@@ -470,6 +479,7 @@ npm link
 ```
 
 **claude_desktop_config.json:**
+
 ```json
 {
   "mcpServers": {
@@ -505,6 +515,7 @@ Build helper scripts for common LCT commit tasks.
 ### Example: Claims Data Generator
 
 **scripts/generate-test-claims.js:**
+
 ```javascript
 #!/usr/bin/env node
 
@@ -526,13 +537,19 @@ function generateClaim(id) {
     invoiceNumber: `CB-${faker.number.int({ min: 100000, max: 999999 })}-25`,
     memberName: faker.person.fullName(),
     memberID: `M${faker.number.int({ min: 1000, max: 9999 })}`,
-    diagnosisCode: faker.helpers.arrayElement(['B50', 'J00', 'K29', 'M79', 'R50']),
+    diagnosisCode: faker.helpers.arrayElement([
+      'B50',
+      'J00',
+      'K29',
+      'M79',
+      'R50',
+    ]),
     diagnosisText: faker.helpers.arrayElement([
       'Malaria',
       'Acute Upper Respiratory Infection',
       'Gastritis',
       'Joint Pain',
-      'Fever'
+      'Fever',
     ]),
     lctAmount,
     etimsAmount: Math.round(etimsAmount),
@@ -545,12 +562,12 @@ function generateClaim(id) {
       'Bliss Healthcare',
       'MTRH',
       'Aga Khan Hospital',
-      'Nairobi Hospital'
+      'Nairobi Hospital',
     ]),
     scheme: faker.helpers.arrayElement(['MTRH', 'NHIF', 'Liaison Group']),
     status: 'Not Started',
     vettingStatus: null,
-    priority: faker.helpers.arrayElement(['High', 'Medium', 'Low'])
+    priority: faker.helpers.arrayElement(['High', 'Medium', 'Low']),
   };
 }
 
@@ -566,9 +583,9 @@ function generateServices() {
         'Consultation',
         'Medication',
         'X-Ray',
-        'Ultrasound'
+        'Ultrasound',
       ]),
-      amount: faker.number.int({ min: 100, max: 10000 })
+      amount: faker.number.int({ min: 100, max: 10000 }),
     });
   }
 
@@ -595,6 +612,7 @@ console.log(JSON.stringify(claims[0], null, 2));
 ### Example: Criteria Checker
 
 **scripts/check-criteria-compliance.js:**
+
 ```javascript
 #!/usr/bin/env node
 
@@ -615,9 +633,12 @@ function checkCriteria4(claim) {
     issues.push('ETIMS amount less than LCT amount - flag as Query');
   }
 
-  const variance = Math.abs(claim.documentAmount - claim.lctAmount) / claim.lctAmount;
-  if (variance > 0.10) {
-    issues.push(`High variance (${(variance * 100).toFixed(1)}%) between LCT and document`);
+  const variance =
+    Math.abs(claim.documentAmount - claim.lctAmount) / claim.lctAmount;
+  if (variance > 0.1) {
+    issues.push(
+      `High variance (${(variance * 100).toFixed(1)}%) between LCT and document`
+    );
   }
 
   return {
@@ -625,7 +646,7 @@ function checkCriteria4(claim) {
     criteriaName: 'Invoice amount precedence',
     priority: 'CRITICAL',
     passed: issues.length === 0,
-    issues
+    issues,
   };
 }
 
@@ -642,16 +663,18 @@ function checkCriteria11(claims, claimIndex) {
       claim.services.forEach(service => {
         claims[i].services.forEach(otherService => {
           if (service.code === otherService.code) {
-            const daysDiff = Math.abs(
-              new Date(claim.serviceDate) - new Date(claims[i].serviceDate)
-            ) / (1000 * 60 * 60 * 24);
+            const daysDiff =
+              Math.abs(
+                new Date(claim.serviceDate) - new Date(claims[i].serviceDate)
+              ) /
+              (1000 * 60 * 60 * 24);
 
             if (daysDiff <= 7) {
               duplicates.push({
                 service: service.name,
                 provider1: claim.provider,
                 provider2: claims[i].provider,
-                daysDiff: Math.round(daysDiff)
+                daysDiff: Math.round(daysDiff),
               });
             }
           }
@@ -665,7 +688,7 @@ function checkCriteria11(claims, claimIndex) {
     criteriaName: 'Repeated service detection',
     priority: 'CRITICAL',
     passed: duplicates.length === 0,
-    duplicates
+    duplicates,
   };
 }
 
@@ -673,17 +696,16 @@ function checkCriteria11(claims, claimIndex) {
 const claimsFile = process.argv[2] || 'test-claims.json';
 const claims = JSON.parse(fs.readFileSync(claimsFile, 'utf8'));
 
-console.log(`🔍 Checking ${claims.length} claims against success criteria...\n`);
+console.log(
+  `🔍 Checking ${claims.length} claims against success criteria...\n`
+);
 
 // Check each claim
 const results = claims.map((claim, index) => {
   return {
     claimId: claim.id,
     invoiceNumber: claim.invoiceNumber,
-    checks: [
-      checkCriteria4(claim),
-      checkCriteria11(claims, index)
-    ]
+    checks: [checkCriteria4(claim), checkCriteria11(claims, index)],
   };
 });
 
@@ -695,7 +717,9 @@ const failedChecks = results.reduce((sum, r) => {
 
 console.log(`\n📊 Summary:`);
 console.log(`Total checks: ${totalChecks}`);
-console.log(`Passed: ${totalChecks - failedChecks} (${((totalChecks - failedChecks) / totalChecks * 100).toFixed(1)}%)`);
+console.log(
+  `Passed: ${totalChecks - failedChecks} (${(((totalChecks - failedChecks) / totalChecks) * 100).toFixed(1)}%)`
+);
 console.log(`Failed: ${failedChecks}`);
 
 // Show failures
@@ -704,17 +728,21 @@ if (failures.length > 0) {
   console.log(`\n❌ Failed Claims:`);
   failures.forEach(f => {
     console.log(`\n  Invoice: ${f.invoiceNumber}`);
-    f.checks.filter(c => !c.passed).forEach(check => {
-      console.log(`    🔴 ${check.criteriaName} (${check.priority})`);
-      if (check.issues) {
-        check.issues.forEach(issue => console.log(`       - ${issue}`));
-      }
-      if (check.duplicates) {
-        check.duplicates.forEach(dup => {
-          console.log(`       - Duplicate ${dup.service} at ${dup.provider2} (${dup.daysDiff} days apart)`);
-        });
-      }
-    });
+    f.checks
+      .filter(c => !c.passed)
+      .forEach(check => {
+        console.log(`    🔴 ${check.criteriaName} (${check.priority})`);
+        if (check.issues) {
+          check.issues.forEach(issue => console.log(`       - ${issue}`));
+        }
+        if (check.duplicates) {
+          check.duplicates.forEach(dup => {
+            console.log(
+              `       - Duplicate ${dup.service} at ${dup.provider2} (${dup.daysDiff} days apart)`
+            );
+          });
+        }
+      });
   });
 }
 
@@ -725,8 +753,8 @@ const report = {
   totalChecks,
   passed: totalChecks - failedChecks,
   failed: failedChecks,
-  passRate: `${((totalChecks - failedChecks) / totalChecks * 100).toFixed(1)}%`,
-  failures
+  passRate: `${(((totalChecks - failedChecks) / totalChecks) * 100).toFixed(1)}%`,
+  failures,
 };
 
 fs.writeFileSync('compliance-report.json', JSON.stringify(report, null, 2));
@@ -742,6 +770,7 @@ Build reusable UI components for the HTML tracker.
 ### Example: Claims Chart Component
 
 **components/claims-chart.js:**
+
 ```javascript
 /**
  * Claims Volume Chart Component
@@ -829,16 +858,20 @@ class ClaimsChart extends HTMLElement {
       <div class="chart-container">
         <div class="chart-title">Claims Volume</div>
         <div class="chart-bars">
-          ${this._data.map(item => `
+          ${this._data
+            .map(
+              item => `
             <div
               class="bar"
-              style="height: ${(item.count / maxValue * 100)}%"
+              style="height: ${(item.count / maxValue) * 100}%"
               title="${item.label}: ${item.count} claims"
             >
               <div class="bar-value">${item.count}</div>
               <div class="bar-label">${item.label}</div>
             </div>
-          `).join('')}
+          `
+            )
+            .join('')}
         </div>
       </div>
     `;
@@ -849,25 +882,26 @@ customElements.define('claims-chart', ClaimsChart);
 ```
 
 **Usage in HTML:**
+
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <script src="components/claims-chart.js"></script>
-</head>
-<body>
-  <claims-chart id="chart"></claims-chart>
+  <head>
+    <script src="components/claims-chart.js"></script>
+  </head>
+  <body>
+    <claims-chart id="chart"></claims-chart>
 
-  <script>
-    // Set chart data
-    document.getElementById('chart').data = [
-      { label: 'Week 1', count: 847 },
-      { label: 'Week 2', count: 923 },
-      { label: 'Week 3', count: 1105 },
-      { label: 'Week 4', count: 894 }
-    ];
-  </script>
-</body>
+    <script>
+      // Set chart data
+      document.getElementById('chart').data = [
+        { label: 'Week 1', count: 847 },
+        { label: 'Week 2', count: 923 },
+        { label: 'Week 3', count: 1105 },
+        { label: 'Week 4', count: 894 },
+      ];
+    </script>
+  </body>
 </html>
 ```
 
@@ -880,6 +914,7 @@ Build wrappers for external services.
 ### Example: ETIMS API Client
 
 **lib/etims-client.js:**
+
 ```javascript
 /**
  * ETIMS (Kenya eTax) API Client
@@ -894,12 +929,15 @@ class EtimsClient {
 
   async validateInvoice(invoiceNumber) {
     try {
-      const response = await fetch(`${this.baseUrl}/invoices/${invoiceNumber}`, {
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        `${this.baseUrl}/invoices/${invoiceNumber}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`ETIMS API error: ${response.status}`);
@@ -915,13 +953,13 @@ class EtimsClient {
           taxAmount: data.taxAmount,
           date: data.invoiceDate,
           seller: data.sellerInfo,
-          items: data.items
-        }
+          items: data.items,
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -930,9 +968,9 @@ class EtimsClient {
     try {
       const response = await fetch(`${this.baseUrl}/sellers/${sellerPIN}`, {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!response.ok) {
@@ -943,12 +981,12 @@ class EtimsClient {
 
       return {
         success: true,
-        seller: data
+        seller: data,
       };
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -991,18 +1029,23 @@ lct-commit/
 ## 🚀 Getting Started
 
 ### 1. Start Small
+
 Begin with simple utility scripts before building complex MCP servers.
 
 ### 2. Test Locally
+
 Always test tools with sample data before using on real claims.
 
 ### 3. Document Well
+
 Add clear README files for each tool explaining usage.
 
 ### 4. Version Control
+
 Commit tools to the repository so the team can use them.
 
 ### 5. Security First
+
 Never hardcode credentials - use environment variables.
 
 ---
@@ -1010,18 +1053,21 @@ Never hardcode credentials - use environment variables.
 ## 💡 Tool Ideas for LCT commit
 
 ### High Priority
+
 1. **Claims Validator** - Batch validate claims against 31 criteria
 2. **Fraud Detector** - Run pattern analysis on claim history
 3. **Report Generator** - Weekly/monthly savings reports
 4. **Data Importer** - Import claims from Excel/CSV
 
 ### Medium Priority
+
 5. **Tariff Updater** - Sync tariff database with latest prices
 6. **Provider Dashboard** - Real-time stats for each provider
 7. **Alert System** - Email/Slack alerts for critical issues
 8. **Backup Tool** - Automated backups of localStorage data
 
 ### Nice to Have
+
 9. **Performance Monitor** - Track system response times
 10. **A/B Testing Tool** - Test different fraud detection algorithms
 11. **Training Data Generator** - Create ML training datasets

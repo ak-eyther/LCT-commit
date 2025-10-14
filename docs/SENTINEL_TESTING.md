@@ -42,11 +42,13 @@ git commit -m "Test Sentinel"
 **Purpose:** Verify Sentinel blocks bad commits locally
 
 **Steps:**
+
 1. Create a test file with a security issue
 2. Stage and commit
 3. Observe Sentinel blocking it
 
 **Example:**
+
 ```bash
 # Create test file
 cat > test-bad-code.js << 'EOF'
@@ -75,6 +77,7 @@ git commit -m "Test commit"
 **Expected Result:** ✅ Commit is BLOCKED
 
 **Clean up:**
+
 ```bash
 git reset HEAD test-bad-code.js
 rm test-bad-code.js
@@ -87,12 +90,14 @@ rm test-bad-code.js
 **Purpose:** Verify Sentinel reviews PRs and adds comments
 
 **Steps:**
+
 1. Create a new branch
 2. Add test file with issues
 3. Push and create PR
 4. Check for Sentinel comments
 
 **Example:**
+
 ```bash
 # Create branch
 git checkout -b test-sentinel-pr
@@ -121,6 +126,7 @@ gh pr create --title "Test Sentinel" --body "Testing automated review"
 ```
 
 **Expected Results:**
+
 - ✅ Sentinel posts a comment on the PR
 - ✅ Comment includes security issues found
 - ✅ Inline comments on problematic lines
@@ -128,21 +134,25 @@ gh pr create --title "Test Sentinel" --body "Testing automated review"
 - ✅ Linear issues created (if configured)
 
 **What to look for in PR:**
+
 ```markdown
 ## 🛡️ Sentinel Code Review Results
 
 **Files Reviewed:** 1
 
 ### 🔴 CRITICAL Issues (1)
+
 - SQL Injection in security-test.js:3
 
 ### 🟠 HIGH Issues (1)
+
 - Missing error handling in security-test.js:8
 
 ⛔ **PR BLOCKED** - Fix critical issues before merge
 ```
 
 **Clean up:**
+
 ```bash
 git checkout qa
 git branch -D test-sentinel-pr
@@ -158,21 +168,24 @@ git push origin --delete test-sentinel-pr
 #### 3.1 Security Issues (CRITICAL)
 
 **Test Hardcoded Secrets:**
+
 ```javascript
 // Should be detected
-const API_KEY = "sk_live_51H8xYz1234567890";
-const password = "supersecret";
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
+const API_KEY = 'sk_live_51H8xYz1234567890';
+const password = 'supersecret';
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9';
 ```
 
 **Test SQL Injection:**
+
 ```javascript
 // Should be detected
-const query = "SELECT * FROM users WHERE name = " + userName;
+const query = 'SELECT * FROM users WHERE name = ' + userName;
 db.execute(`DELETE FROM posts WHERE id = ${postId}`);
 ```
 
 **Test XSS:**
+
 ```javascript
 // Should be detected
 element.innerHTML = userInput;
@@ -181,6 +194,7 @@ document.write(untrustedData);
 ```
 
 **Test Disabled Security:**
+
 ```javascript
 // Should be detected
 const agent = { rejectUnauthorized: false };
@@ -190,6 +204,7 @@ auth = false;
 #### 3.2 Accessibility Issues (HIGH)
 
 **Test Missing Alt Text:**
+
 ```html
 <!-- Should be detected -->
 <img src="logo.png" />
@@ -197,6 +212,7 @@ auth = false;
 ```
 
 **Test Missing Labels:**
+
 ```html
 <!-- Should be detected -->
 <input type="text" placeholder="Name" />
@@ -204,6 +220,7 @@ auth = false;
 ```
 
 **Test Removed Focus:**
+
 ```css
 /* Should be detected */
 button:focus {
@@ -218,6 +235,7 @@ button:focus {
 #### 3.3 Code Quality Issues (MEDIUM)
 
 **Test Console Statements:**
+
 ```javascript
 // Should be detected
 console.log('Debug info');
@@ -226,6 +244,7 @@ console.info('Information');
 ```
 
 **Test TODO Comments:**
+
 ```javascript
 // Should be detected
 // TODO: Fix this later
@@ -234,6 +253,7 @@ console.info('Information');
 ```
 
 **Test Missing Error Handling:**
+
 ```javascript
 // Should be detected
 async function loadData() {
@@ -266,22 +286,21 @@ async function processInvoice(invoiceData) {
     }
 
     // Parameterized query (prevents SQL injection)
-    const invoice = await db.query(
-      'SELECT * FROM invoices WHERE id = ?',
-      [invoiceData.id]
-    );
+    const invoice = await db.query('SELECT * FROM invoices WHERE id = ?', [
+      invoiceData.id,
+    ]);
 
     // Sanitize output
     return {
       success: true,
-      data: sanitizeInvoiceData(invoice)
+      data: sanitizeInvoiceData(invoice),
     };
   } catch (error) {
     // Proper error handling without exposing details
     logger.error('Invoice processing failed', { invoiceId: invoiceData?.id });
     return {
       success: false,
-      error: 'Failed to process invoice'
+      error: 'Failed to process invoice',
     };
   }
 }
@@ -296,20 +315,24 @@ async function processInvoice(invoiceData) {
 **Purpose:** Verify issues are created in Linear
 
 **Prerequisites:**
+
 - `LINEAR_API_KEY` set in GitHub secrets
 - `LINEAR_TEAM_ID` set in GitHub secrets
 
 **Steps:**
+
 1. Push code with CRITICAL or HIGH issues
 2. Check Linear for auto-created issues
 
 **Expected in Linear:**
+
 - ✅ New issue created with title: `[Sentinel] {Type} in {file}:{line}`
 - ✅ Priority set correctly (CRITICAL = Urgent, HIGH = High)
 - ✅ Description includes code snippet and fix recommendation
 - ✅ Links back to GitHub PR/commit
 
 **Verify in Linear:**
+
 1. Go to your Linear workspace
 2. Search for issues with label `sentinel-critical` or `sentinel-high`
 3. Open issue and verify:
@@ -326,6 +349,7 @@ async function processInvoice(invoiceData) {
 Use this checklist to verify all Sentinel features:
 
 ### Local Pre-Commit Hook
+
 - [ ] Hook file exists at `.git/hooks/pre-commit`
 - [ ] Hook is executable (`chmod +x`)
 - [ ] Blocks CRITICAL security issues
@@ -334,6 +358,7 @@ Use this checklist to verify all Sentinel features:
 - [ ] Allows bypass with `--no-verify`
 
 ### GitHub Actions Workflow
+
 - [ ] Workflow file exists at `.github/workflows/code-review.yml`
 - [ ] Triggers on PR creation
 - [ ] Triggers on push to main/qa/develop
@@ -342,6 +367,7 @@ Use this checklist to verify all Sentinel features:
 - [ ] Fails check if CRITICAL issues found
 
 ### Security Detection
+
 - [ ] Detects hardcoded API keys
 - [ ] Detects hardcoded passwords
 - [ ] Detects SQL injection patterns
@@ -350,18 +376,21 @@ Use this checklist to verify all Sentinel features:
 - [ ] Detects unsafe `eval()` usage
 
 ### UI/UX Detection
+
 - [ ] Detects missing alt text on images
 - [ ] Detects inputs without labels
 - [ ] Detects removed focus indicators
 - [ ] Checks WCAG 2.2 guidelines
 
 ### Functional Detection
+
 - [ ] Detects console.log statements
 - [ ] Detects TODO/FIXME comments
 - [ ] Detects missing error handling
 - [ ] Detects async functions without try-catch
 
 ### Linear Integration
+
 - [ ] Creates issues for CRITICAL findings
 - [ ] Creates issues for HIGH findings
 - [ ] Sets correct priority levels
@@ -376,6 +405,7 @@ Use this checklist to verify all Sentinel features:
 ### "Pre-commit hook didn't run"
 
 **Check:**
+
 ```bash
 # Verify hook exists
 ls -la .git/hooks/pre-commit
@@ -390,6 +420,7 @@ chmod +x .git/hooks/pre-commit
 ### "Hook ran but didn't detect issues"
 
 **Verify patterns:**
+
 ```bash
 # Check if pattern exists in file
 grep -n "password" test-file.js
@@ -402,12 +433,14 @@ cat .git/hooks/pre-commit | grep -A5 "check_secrets"
 ### "GitHub Action didn't trigger"
 
 **Check:**
+
 1. Go to GitHub → Actions tab
 2. Look for "Elite Code Review Bot" workflow
 3. Check if it's enabled
 4. View logs for errors
 
 **Common issues:**
+
 - Workflow file syntax error
 - Branch not in trigger list
 - Permissions not set correctly
@@ -415,6 +448,7 @@ cat .git/hooks/pre-commit | grep -A5 "check_secrets"
 ### "Linear issues not created"
 
 **Check secrets:**
+
 ```bash
 # List secrets
 gh secret list
@@ -425,6 +459,7 @@ gh secret list
 ```
 
 **Verify API key:**
+
 ```bash
 curl -X POST https://api.linear.app/graphql \
   -H "Authorization: YOUR_LINEAR_API_KEY" \
@@ -476,11 +511,13 @@ After running tests, document results:
 ## Sentinel Test Report - [Date]
 
 **Environment:**
+
 - OS: [macOS/Linux/Windows]
 - Git Version: [version]
 - Node Version: [version]
 
 **Test Results:**
+
 - Pre-commit Hook: ✅ PASS / ❌ FAIL
 - GitHub Actions: ✅ PASS / ❌ FAIL
 - Security Detection: ✅ PASS / ❌ FAIL
@@ -489,10 +526,12 @@ After running tests, document results:
 - Linear Integration: ✅ PASS / ❌ FAIL / ⚠️ NOT CONFIGURED
 
 **Issues Found:**
+
 1. [Issue description]
 2. [Issue description]
 
 **Recommendations:**
+
 1. [Recommendation]
 2. [Recommendation]
 ```
@@ -502,6 +541,7 @@ After running tests, document results:
 ## Continuous Testing
 
 **Weekly Test:**
+
 ```bash
 # Run automated test suite
 ./test-sentinel.sh
@@ -511,6 +551,7 @@ After running tests, document results:
 ```
 
 **Monthly Review:**
+
 - Check false positive rate
 - Review detection patterns
 - Update for new vulnerabilities

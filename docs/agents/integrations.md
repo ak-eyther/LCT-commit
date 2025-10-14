@@ -8,6 +8,7 @@
 ## 🔄 Agent Interaction Workflow
 
 ### Development Cycle
+
 ```mermaid
 graph TD
     A[User Request] --> B[Primary Developer]
@@ -32,6 +33,7 @@ graph TD
 ```
 
 ### Agent Handoff Points
+
 1. **Primary Developer → Sentinel:** Code commit/PR
 2. **Sentinel → Linear:** Issue creation for findings
 3. **Security Auditor → Linear:** Weekly security reports
@@ -44,14 +46,17 @@ graph TD
 ### 1. Cursor IDE Integration
 
 **Primary Developer Agent**
+
 - **Location:** `.cursor/rules/claude.md`
 - **Trigger:** User opens Cursor Chat
 - **Context:** Full project context, user preferences, LCT criteria
 - **Output:** Code implementation, explanations, guidance
 
 **Configuration:**
+
 ```markdown
 # In .cursor/rules/claude.md
+
 ## Agent System
 
 This project uses a hybrid agent architecture. For detailed agent
@@ -67,12 +72,14 @@ definitions, see:
 ### 2. GitHub Actions Integration
 
 **Sentinel Code Review**
+
 - **Location:** `.github/workflows/sentinel-pr-review.yml`
 - **Trigger:** Pull request opened/updated
 - **Context:** Changed files, commit messages, PR description
 - **Output:** GitHub comments, Linear issues, PR status
 
 **Configuration:**
+
 ```yaml
 name: Sentinel PR Review
 on:
@@ -97,6 +104,7 @@ jobs:
 ```
 
 **Pre-commit Hook**
+
 - **Location:** `.git/hooks/pre-commit`
 - **Trigger:** `git commit`
 - **Context:** Staged files, commit message
@@ -105,11 +113,13 @@ jobs:
 ### 3. Linear Integration
 
 **Issue Creation Workflow**
+
 - **Trigger:** Sentinel finds CRITICAL/HIGH issues
 - **Context:** Issue details, file locations, severity
 - **Output:** Linear issues with proper labels and assignments
 
 **Configuration:**
+
 ```javascript
 // Linear issue creation
 const linearIssue = {
@@ -146,24 +156,26 @@ ${fixedCodeExample}
   `,
   priority: severity === 'CRITICAL' ? 1 : severity === 'HIGH' ? 2 : 3,
   labels: [`sentinel-${severity.toLowerCase()}`, category.toLowerCase()],
-  assignee: severity === 'CRITICAL' ? 'security-team' : 'tech-lead'
+  assignee: severity === 'CRITICAL' ? 'security-team' : 'tech-lead',
 };
 ```
 
 ### 4. Security Auditor Integration
 
 **Weekly Security Scans**
+
 - **Trigger:** Scheduled (every Monday)
 - **Context:** Full codebase, dependency audit, compliance check
 - **Output:** Security report, compliance status, Linear issues
 
 **Configuration:**
+
 ```yaml
 name: Weekly Security Audit
 on:
   schedule:
-    - cron: '0 9 * * 1'  # Every Monday at 9 AM
-  workflow_dispatch:  # Manual trigger
+    - cron: '0 9 * * 1' # Every Monday at 9 AM
+  workflow_dispatch: # Manual trigger
 
 jobs:
   security-audit:
@@ -187,11 +199,13 @@ jobs:
 ### 5. Documentation Writer Integration
 
 **On-demand Documentation**
+
 - **Trigger:** Manual request or after feature completion
 - **Context:** Code changes, API updates, feature descriptions
 - **Output:** Updated documentation, inline comments
 
 **Configuration:**
+
 ```javascript
 // Documentation update trigger
 const docUpdate = {
@@ -199,13 +213,13 @@ const docUpdate = {
   context: {
     feature: 'Invoice validation',
     files: ['src/validation.js', 'src/api.js'],
-    criteria: '#4 Invoice amount precedence'
+    criteria: '#4 Invoice amount precedence',
   },
   output: {
     apiDocs: 'docs/api/invoice-validation.md',
     inlineComments: 'src/validation.js',
-    userGuide: 'docs/user-guide/validation.md'
-  }
+    userGuide: 'docs/user-guide/validation.md',
+  },
 };
 ```
 
@@ -216,11 +230,13 @@ const docUpdate = {
 ### 1. Initial Setup
 
 **Run the setup script:**
+
 ```bash
 ./scripts/agent-setup.sh
 ```
 
 This script will:
+
 - Validate all agent files exist
 - Set up pre-commit hooks
 - Configure GitHub Actions
@@ -230,6 +246,7 @@ This script will:
 ### 2. Team Onboarding
 
 **For new team members:**
+
 1. Clone the repository
 2. Run `./scripts/agent-setup.sh`
 3. Read `docs/agents/README.md`
@@ -239,8 +256,10 @@ This script will:
 ### 3. Agent Configuration
 
 **Cursor Configuration:**
+
 ```markdown
 # .cursor/rules/claude.md
+
 ## Agent System
 
 This project uses a hybrid agent architecture. For detailed agent
@@ -254,8 +273,10 @@ definitions, see:
 ```
 
 **Claude Configuration:**
+
 ```markdown
 # .claude/agents/code-reviewer.md
+
 # Sentinel Code Review Agent
 
 > **Note:** This file is a Claude-specific configuration.
@@ -271,24 +292,28 @@ definitions, see:
 ### Agent Performance Metrics
 
 **Primary Developer:**
+
 - Feature completion rate
 - User satisfaction score
 - Code quality metrics
 - Teaching effectiveness
 
 **Sentinel:**
+
 - Security issues caught
 - False positive rate
 - Review time per PR
 - Issue resolution time
 
 **Security Auditor:**
+
 - Compliance score
 - Vulnerability detection rate
 - Audit coverage
 - Issue severity distribution
 
 **Documentation Writer:**
+
 - Documentation coverage
 - Clarity score
 - Update frequency
@@ -297,12 +322,14 @@ definitions, see:
 ### LCT Project Metrics
 
 **Success Criteria Tracking:**
+
 - 31 criteria completion percentage
 - CRITICAL criteria status (4 items)
 - HIGH priority progress (17 items)
 - Overall accuracy toward 90% goal
 
 **Quality Metrics:**
+
 - Security compliance score
 - Accessibility compliance
 - Performance benchmarks
@@ -315,6 +342,7 @@ definitions, see:
 ### Common Issues
 
 **1. Sentinel Not Running**
+
 ```bash
 # Check pre-commit hook
 ls -la .git/hooks/pre-commit
@@ -324,6 +352,7 @@ ls -la .git/hooks/pre-commit
 ```
 
 **2. Linear Issues Not Creating**
+
 ```bash
 # Check environment variables
 echo $LINEAR_API_KEY
@@ -334,6 +363,7 @@ echo $LINEAR_TEAM_ID
 ```
 
 **3. GitHub Actions Failing**
+
 ```bash
 # Check workflow files
 ls -la .github/workflows/
@@ -343,6 +373,7 @@ act -j sentinel-review
 ```
 
 **4. Cursor Not Loading Agent Context**
+
 ```bash
 # Check .cursor/rules/claude.md exists
 ls -la .cursor/rules/
@@ -354,18 +385,21 @@ ls -la .cursor/rules/
 ### Emergency Procedures
 
 **If Sentinel Blocks All Commits:**
+
 1. Review CRITICAL issues in GitHub
 2. Fix security vulnerabilities
 3. Use `git commit --no-verify` only in emergencies
 4. Create Linear issue for tracking
 
 **If Linear Integration Fails:**
+
 1. Check API key validity
 2. Verify team ID is correct
 3. Test with manual issue creation
 4. Escalate to team lead
 
 **If GitHub Actions Fail:**
+
 1. Check workflow syntax
 2. Verify environment variables
 3. Test scripts locally
@@ -378,15 +412,19 @@ ls -la .cursor/rules/
 ### 1. New Agent Integration
 
 **Step 1: Create Agent Definition**
+
 ```bash
 # Create new agent file
 touch docs/agents/[agent-name].md
 ```
 
 **Step 2: Define Integration Points**
+
 ```markdown
 # In docs/agents/[agent-name].md
+
 ## Integration Points
+
 - **Trigger:** [When this agent runs]
 - **Context:** [What information it needs]
 - **Output:** [What it produces]
@@ -394,12 +432,15 @@ touch docs/agents/[agent-name].md
 ```
 
 **Step 3: Update Registry**
+
 ```markdown
 # In docs/agents/README.md
+
 | [Agent Name] | [Role] | [When It Runs] | [Integration] | [Priority] |
 ```
 
 **Step 4: Configure Integration**
+
 - Add to `.cursor/rules/claude.md` if Cursor-specific
 - Add to `.claude/agents/` if Claude-specific
 - Add to GitHub Actions if automated
@@ -408,23 +449,27 @@ touch docs/agents/[agent-name].md
 ### 2. New Tool Integration
 
 **Step 1: Identify Integration Point**
+
 - Where does the tool fit in the workflow?
 - What triggers it?
 - What information does it need?
 - What does it produce?
 
 **Step 2: Create Integration Script**
+
 ```bash
 # Create integration script
 touch scripts/integrate-[tool-name].sh
 ```
 
 **Step 3: Update Workflows**
+
 - Add to GitHub Actions if automated
 - Add to pre-commit hooks if local
 - Add to documentation if manual
 
 **Step 4: Test Integration**
+
 ```bash
 # Test the integration
 ./scripts/integrate-[tool-name].sh --test
@@ -435,16 +480,19 @@ touch scripts/integrate-[tool-name].sh
 ## 📚 Resources
 
 ### Agent Documentation
+
 - [Agent Registry](README.md)
 - [Primary Developer](primary-developer.md)
 - [Sentinel Code Reviewer](code-reviewer-sentinel.md)
 
 ### Integration Guides
+
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Linear API Documentation](https://developers.linear.app/)
 - [Cursor IDE Documentation](https://cursor.sh/docs)
 
 ### LCT Project Context
+
 - [Project Overview](../claude.md)
 - [31 Success Criteria](../lct-tracker-html.html)
 - [Security Best Practices](../SECURITY_BEST_PRACTICES.md)

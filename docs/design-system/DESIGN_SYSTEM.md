@@ -43,40 +43,42 @@ This document is the **single source of truth** for design decisions across the 
 
 ```css
 /* Warm Minimal Theme */
---primary: #0a0a0a;           /* Near-black primary */
---accent: #d97757;            /* Terracotta accent (NO PURPLE!) */
---background: #ffffff;        /* Pure white background */
---surface: #ffffff;           /* Card/panel surface */
---text: #0a0a0a;             /* Primary text color */
---text-secondary: #525252;   /* Secondary text */
+--primary: #0a0a0a; /* Near-black primary */
+--accent: #d97757; /* Terracotta accent (NO PURPLE!) */
+--background: #ffffff; /* Pure white background */
+--surface: #ffffff; /* Card/panel surface */
+--text: #0a0a0a; /* Primary text color */
+--text-secondary: #525252; /* Secondary text */
 ```
 
 ### Neutral Colors
 
 ```css
---border: #e5e5e5;           /* Default borders */
---muted: #f5f5f5;            /* Muted backgrounds */
---muted-fg: #737373;         /* Muted foreground */
+--border: #e5e5e5; /* Default borders */
+--muted: #f5f5f5; /* Muted backgrounds */
+--muted-fg: #737373; /* Muted foreground */
 ```
 
 ### Semantic Colors
 
 ```css
---success: #16a34a;          /* Green - completed, approved */
---warning: #f59e0b;          /* Amber - warnings, planned */
---error: #dc2626;            /* Red - errors, critical */
---info: #737373;             /* Gray - info (NO BLUE!) */
+--success: #16a34a; /* Green - completed, approved */
+--warning: #f59e0b; /* Amber - warnings, planned */
+--error: #dc2626; /* Red - errors, critical */
+--info: #737373; /* Gray - info (NO BLUE!) */
 ```
 
 ### Color Usage Rules
 
 **✅ DO:**
+
 - Use `--accent` (#d97757) for interactive elements (hover states, active tabs, progress)
 - Use semantic colors (`--success`, `--warning`, `--error`) for their intended purpose only
 - Use `--info` (gray) instead of blue for informational elements
 - Maintain contrast ratios of 4.5:1 minimum for text
 
 **❌ DON'T:**
+
 - Use purple (#9333ea or any purple) anywhere
 - Use blue (#0066FF or any blue) except in legacy contexts being migrated
 - Use accent color for text (low contrast)
@@ -84,14 +86,14 @@ This document is the **single source of truth** for design decisions across the 
 
 ### Color Palette Reference
 
-| Color Name | Hex Code | RGB | Usage |
-|------------|----------|-----|-------|
-| Primary | #0a0a0a | rgb(10, 10, 10) | Primary text, buttons |
-| Accent | #d97757 | rgb(217, 119, 87) | Hover states, active items, progress |
-| Success | #16a34a | rgb(22, 163, 74) | Completed items, approvals |
-| Warning | #f59e0b | rgb(245, 158, 11) | Warnings, planned items |
-| Error | #dc2626 | rgb(220, 38, 38) | Errors, critical priority |
-| Info | #737373 | rgb(115, 115, 115) | Informational (NO BLUE) |
+| Color Name | Hex Code | RGB                | Usage                                |
+| ---------- | -------- | ------------------ | ------------------------------------ |
+| Primary    | #0a0a0a  | rgb(10, 10, 10)    | Primary text, buttons                |
+| Accent     | #d97757  | rgb(217, 119, 87)  | Hover states, active items, progress |
+| Success    | #16a34a  | rgb(22, 163, 74)   | Completed items, approvals           |
+| Warning    | #f59e0b  | rgb(245, 158, 11)  | Warnings, planned items              |
+| Error      | #dc2626  | rgb(220, 38, 38)   | Errors, critical priority            |
+| Info       | #737373  | rgb(115, 115, 115) | Informational (NO BLUE)              |
 
 ---
 
@@ -100,7 +102,9 @@ This document is the **single source of truth** for design decisions across the 
 ### Font Families
 
 ```css
---font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+--font-sans:
+  -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+  Arial, sans-serif;
 --font-mono: 'SF Mono', Consolas, Monaco, 'Courier New', monospace;
 ```
 
@@ -109,14 +113,14 @@ This document is the **single source of truth** for design decisions across the 
 ### Type Scale
 
 ```css
---text-xs: 0.75rem;    /* 12px - Small labels, captions */
---text-sm: 0.8125rem;  /* 13px - Compact UI elements */
+--text-xs: 0.75rem; /* 12px - Small labels, captions */
+--text-sm: 0.8125rem; /* 13px - Compact UI elements */
 --text-base: 0.875rem; /* 14px - Body text */
---text-lg: 1rem;       /* 16px - Card titles */
---text-xl: 1.125rem;   /* 18px - Section headings */
---text-2xl: 1.25rem;   /* 20px - Page titles */
---text-3xl: 1.5rem;    /* 24px - Dashboard headers */
---text-4xl: 2rem;      /* 32px - Display text */
+--text-lg: 1rem; /* 16px - Card titles */
+--text-xl: 1.125rem; /* 18px - Section headings */
+--text-2xl: 1.25rem; /* 20px - Page titles */
+--text-3xl: 1.5rem; /* 24px - Dashboard headers */
+--text-4xl: 2rem; /* 32px - Display text */
 ```
 
 ### Font Weights
@@ -131,22 +135,22 @@ This document is the **single source of truth** for design decisions across the 
 ### Line Heights
 
 ```css
---leading-tight: 1.25;    /* Headings */
---leading-normal: 1.5;    /* Body text */
---leading-relaxed: 1.75;  /* Long-form content */
+--leading-tight: 1.25; /* Headings */
+--leading-normal: 1.5; /* Body text */
+--leading-relaxed: 1.75; /* Long-form content */
 ```
 
 ### Typography Usage Matrix
 
-| Element | Size | Weight | Line Height | Example |
-|---------|------|--------|-------------|---------|
-| Display heading | 32px (text-4xl) | 600 | 1.25 | "Healthcare Claims Tracker" |
-| Page title | 24px (text-3xl) | 600 | 1.25 | "Success Matrix Dashboard" |
-| Section heading | 20px (text-2xl) | 600 | 1.25 | "Fraud Detection Criteria" |
-| Card title | 16px (text-lg) | 600 | 1.5 | "Invoice Validation" |
-| Body text | 14px (text-base) | 400 | 1.5 | Descriptions, explanations |
-| Small text | 13px (text-sm) | 400/500 | 1.5 | Button labels, compact UI |
-| Caption | 12px (text-xs) | 400 | 1.5 | Help text, labels |
+| Element         | Size             | Weight  | Line Height | Example                     |
+| --------------- | ---------------- | ------- | ----------- | --------------------------- |
+| Display heading | 32px (text-4xl)  | 600     | 1.25        | "Healthcare Claims Tracker" |
+| Page title      | 24px (text-3xl)  | 600     | 1.25        | "Success Matrix Dashboard"  |
+| Section heading | 20px (text-2xl)  | 600     | 1.25        | "Fraud Detection Criteria"  |
+| Card title      | 16px (text-lg)   | 600     | 1.5         | "Invoice Validation"        |
+| Body text       | 14px (text-base) | 400     | 1.5         | Descriptions, explanations  |
+| Small text      | 13px (text-sm)   | 400/500 | 1.5         | Button labels, compact UI   |
+| Caption         | 12px (text-xs)   | 400     | 1.5         | Help text, labels           |
 
 ---
 
@@ -158,27 +162,27 @@ All spacing MUST use multiples of 4px for consistency.
 
 ```css
 --spacing-0: 0;
---spacing-1: 0.25rem;  /* 4px */
---spacing-2: 0.5rem;   /* 8px */
---spacing-3: 0.75rem;  /* 12px */
---spacing-4: 1rem;     /* 16px */
---spacing-5: 1.25rem;  /* 20px */
---spacing-6: 1.5rem;   /* 24px */
---spacing-8: 2rem;     /* 32px */
---spacing-10: 2.5rem;  /* 40px */
---spacing-12: 3rem;    /* 48px */
---spacing-16: 4rem;    /* 64px */
---spacing-20: 5rem;    /* 80px */
+--spacing-1: 0.25rem; /* 4px */
+--spacing-2: 0.5rem; /* 8px */
+--spacing-3: 0.75rem; /* 12px */
+--spacing-4: 1rem; /* 16px */
+--spacing-5: 1.25rem; /* 20px */
+--spacing-6: 1.5rem; /* 24px */
+--spacing-8: 2rem; /* 32px */
+--spacing-10: 2.5rem; /* 40px */
+--spacing-12: 3rem; /* 48px */
+--spacing-16: 4rem; /* 64px */
+--spacing-20: 5rem; /* 80px */
 ```
 
 ### Spacing Usage Guide
 
-| Use Case | Spacing Value | Example |
-|----------|---------------|---------|
-| Compact gaps | 4px-8px | Button icon gaps, inline badges |
-| Component padding | 12px-16px | Card padding, button padding |
-| Section spacing | 20px-32px | Between sections, page margins |
-| Large gutters | 40px-64px | Page-level spacing |
+| Use Case          | Spacing Value | Example                         |
+| ----------------- | ------------- | ------------------------------- |
+| Compact gaps      | 4px-8px       | Button icon gaps, inline badges |
+| Component padding | 12px-16px     | Card padding, button padding    |
+| Section spacing   | 20px-32px     | Between sections, page margins  |
+| Large gutters     | 40px-64px     | Page-level spacing              |
 
 **✅ DO:** Use spacing variables (e.g., `padding: var(--spacing-3)`)
 **❌ DON'T:** Use arbitrary values (e.g., `padding: 14px`)
@@ -190,6 +194,7 @@ All spacing MUST use multiples of 4px for consistency.
 ### Button Sizes
 
 **Default (Compact)** - Inspired by X.com
+
 ```css
 padding: 6px 12px;
 font-size: 13px;
@@ -198,12 +203,14 @@ border-radius: 6px;
 ```
 
 **Small**
+
 ```css
 padding: 4px 8px;
 font-size: 12px;
 ```
 
 **Large**
+
 ```css
 padding: 8px 16px;
 font-size: 14px;
@@ -212,8 +219,9 @@ font-size: 14px;
 ### Button Variants
 
 #### Primary Button
+
 ```css
-background: var(--primary);     /* #0a0a0a */
+background: var(--primary); /* #0a0a0a */
 color: #ffffff;
 border: 1px solid var(--primary);
 
@@ -223,19 +231,21 @@ border: 1px solid var(--primary);
 ```
 
 #### Secondary Button
+
 ```css
-background: var(--surface);     /* #ffffff */
+background: var(--surface); /* #ffffff */
 color: var(--text);
 border: 1px solid var(--border);
 
 :hover {
-  background: var(--muted);     /* #f5f5f5 */
+  background: var(--muted); /* #f5f5f5 */
 }
 ```
 
 #### Accent Button (Use Sparingly)
+
 ```css
-background: var(--accent);      /* #d97757 */
+background: var(--accent); /* #d97757 */
 color: #ffffff;
 border: 1px solid var(--accent);
 
@@ -245,6 +255,7 @@ border: 1px solid var(--accent);
 ```
 
 #### Ghost Button
+
 ```css
 background: transparent;
 color: var(--text);
@@ -256,8 +267,9 @@ border: 1px solid transparent;
 ```
 
 #### Destructive Button
+
 ```css
-background: var(--error);       /* #dc2626 */
+background: var(--error); /* #dc2626 */
 color: #ffffff;
 border: 1px solid var(--error);
 
@@ -356,6 +368,7 @@ font-size: 11px;
 ### Badge Variants
 
 #### Critical Priority
+
 ```css
 background: #fef2f2;
 color: #991b1b;
@@ -363,6 +376,7 @@ border-color: #fecaca;
 ```
 
 #### High Priority
+
 ```css
 background: #fef3c7;
 color: #92400e;
@@ -370,6 +384,7 @@ border-color: #fde68a;
 ```
 
 #### Medium Priority
+
 ```css
 background: #dbeafe;
 color: #1e40af;
@@ -377,6 +392,7 @@ border-color: #bfdbfe;
 ```
 
 #### Low Priority
+
 ```css
 background: var(--muted);
 color: var(--text-secondary);
@@ -384,6 +400,7 @@ border-color: var(--border);
 ```
 
 #### Accent Badge
+
 ```css
 background: rgba(217, 119, 87, 0.1);
 color: var(--accent);
@@ -494,7 +511,7 @@ padding: 16px 24px;
 
 .progress-bar-fill {
   height: 100%;
-  background: var(--success);  /* Green for completion */
+  background: var(--success); /* Green for completion */
   transition: width 0.3s ease;
 }
 ```
@@ -579,12 +596,12 @@ padding: 16px 24px;
 
 ### Color Accessibility Matrix
 
-| Combination | Contrast Ratio | Pass/Fail |
-|-------------|----------------|-----------|
-| Text (#0a0a0a) on White (#ffffff) | 19.6:1 | ✅ AAA |
-| Accent (#d97757) on White | 3.2:1 | ⚠️ Large text only |
-| Success (#16a34a) on White | 3.4:1 | ⚠️ Large text only |
-| Text Secondary (#525252) on White | 7.5:1 | ✅ AAA |
+| Combination                       | Contrast Ratio | Pass/Fail          |
+| --------------------------------- | -------------- | ------------------ |
+| Text (#0a0a0a) on White (#ffffff) | 19.6:1         | ✅ AAA             |
+| Accent (#d97757) on White         | 3.2:1          | ⚠️ Large text only |
+| Success (#16a34a) on White        | 3.4:1          | ⚠️ Large text only |
+| Text Secondary (#525252) on White | 7.5:1          | ✅ AAA             |
 
 **Rule:** Never use accent color for body text. Only for large text (18px+) or backgrounds with white text.
 
@@ -595,10 +612,10 @@ padding: 16px 24px;
 ### Breakpoints
 
 ```css
---breakpoint-sm: 640px;   /* Mobile */
---breakpoint-md: 768px;   /* Tablet */
---breakpoint-lg: 1024px;  /* Desktop */
---breakpoint-xl: 1280px;  /* Large desktop */
+--breakpoint-sm: 640px; /* Mobile */
+--breakpoint-md: 768px; /* Tablet */
+--breakpoint-lg: 1024px; /* Desktop */
+--breakpoint-xl: 1280px; /* Large desktop */
 ```
 
 ### Mobile-First Approach
@@ -633,6 +650,7 @@ Always design for mobile first, then scale up.
 ### From Old Design → New Design
 
 1. **Replace Purple:**
+
    ```css
    /* OLD */
    color: #9333ea;
@@ -642,6 +660,7 @@ Always design for mobile first, then scale up.
    ```
 
 2. **Replace Blue (Info):**
+
    ```css
    /* OLD */
    color: #2563eb;
@@ -651,6 +670,7 @@ Always design for mobile first, then scale up.
    ```
 
 3. **Update Button Sizes:**
+
    ```css
    /* OLD */
    padding: 8px 16px;
@@ -662,6 +682,7 @@ Always design for mobile first, then scale up.
    ```
 
 4. **Standardize Spacing:**
+
    ```css
    /* OLD */
    margin: 14px;
@@ -695,6 +716,7 @@ Before creating ANY new component, verify:
 ### For Cursor AI
 
 When working in this codebase:
+
 1. Always reference `docs/design-system/DESIGN_SYSTEM.md` before styling
 2. Use the CSS variables from `src/assets/css/design-tokens.css`
 3. Never introduce purple or blue colors
@@ -703,6 +725,7 @@ When working in this codebase:
 ### For Claude Code
 
 When creating UI components:
+
 1. Read this document for design tokens
 2. Apply Warm Minimal theme (terracotta accent)
 3. Use compact button sizing (6px 12px)
@@ -711,12 +734,14 @@ When creating UI components:
 ### For All AI Agents
 
 **MUST DO:**
+
 - Read this file before any UI work
 - Use CSS variables (never hardcode colors)
 - Follow spacing system (4px multiples)
 - Maintain accessibility standards
 
 **NEVER DO:**
+
 - Use purple (#9333ea or any purple)
 - Use blue decoratively (only for semantics if absolutely necessary)
 - Create custom spacing values
@@ -729,11 +754,13 @@ When creating UI components:
 ### Most Common Patterns
 
 **Button:**
+
 ```html
 <button class="btn btn-primary">Save</button>
 ```
 
 **Card:**
+
 ```html
 <div class="card">
   <h3 class="card-title">Title</h3>
@@ -742,14 +769,15 @@ When creating UI components:
 ```
 
 **Badge:**
+
 ```html
 <span class="badge badge-critical">CRITICAL</span>
 ```
 
 **Input:**
+
 ```html
-<label class="form-label">Name</label>
-<input type="text" class="form-input" />
+<label class="form-label">Name</label> <input type="text" class="form-input" />
 ```
 
 ---
@@ -764,6 +792,7 @@ When creating UI components:
 ## 📞 Support
 
 Questions about design decisions:
+
 - Review this document first
 - Check `design-preview/design-system-preview.html` for live examples
 - Ask in PR comments if unclear

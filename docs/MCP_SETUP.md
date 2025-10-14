@@ -22,7 +22,7 @@ MCP servers provide enhanced automation and integration capabilities:
 # Install Linear MCP server
 npm install -g @modelcontextprotocol/server-linear
 
-# Install Vercel MCP server  
+# Install Vercel MCP server
 npm install -g @modelcontextprotocol/server-vercel
 ```
 
@@ -48,7 +48,7 @@ npm install -g @modelcontextprotocol/server-vercel
    ```bash
    # Add to your .env file or export in your shell
    LINEAR_TEAM_ID=your_team_id_here
-   
+
    # For LCT/Vitraya team, get the team ID from Linear settings
    # Team: Vitraya-ak
    ```
@@ -69,7 +69,7 @@ npm install -g @modelcontextprotocol/server-vercel
    ```bash
    # Install Vercel CLI
    npm install -g vercel
-   
+
    # Login and get project info
    vercel login
    vercel project ls
@@ -135,7 +135,7 @@ for (const criteria of incompleteCriteria) {
     title: `[CRITICAL] ${criteria.name}`,
     description: criteria.explanation,
     priority: criteria.priority === 'CRITICAL' ? 1 : 2,
-    teamId: process.env.LINEAR_TEAM_ID
+    teamId: process.env.LINEAR_TEAM_ID,
   });
 }
 ```
@@ -149,7 +149,7 @@ if (sentinelFindings.critical.length > 0) {
     title: `🔴 CRITICAL Security Issue - ${prTitle}`,
     description: sentinelFindings.critical[0].message,
     priority: 1,
-    labels: ['security', 'critical']
+    labels: ['security', 'critical'],
   });
 }
 ```
@@ -161,7 +161,7 @@ if (sentinelFindings.critical.length > 0) {
 const deployment = await getVercelDeployment(projectId);
 if (deployment.status === 'READY') {
   await updateLinearIssue(issueId, {
-    description: `Deployment successful: ${deployment.url}`
+    description: `Deployment successful: ${deployment.url}`,
   });
 }
 ```
@@ -171,12 +171,14 @@ if (deployment.status === 'READY') {
 ### Common Issues
 
 1. **Linear API Key Invalid**
+
    ```
    Error: Invalid Linear API key
    Solution: Regenerate key at https://linear.app/settings/api
    ```
 
 2. **Vercel Project Not Found**
+
    ```
    Error: Project not found
    Solution: Check project ID with `vercel project ls`
