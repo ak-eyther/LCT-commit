@@ -562,6 +562,7 @@ For questions or issues:
 - **Live Demo**: [lct-commit.vercel.app](https://lct-commit.vercel.app)
 - **Repository**: [github.com/ak-eyther/LCT-commit](https://github.com/ak-eyther/LCT-commit)
 - **Documentation**: [docs/README.md](./docs/README.md)
+- **Contributor Guide**: [AGENTS.md](./AGENTS.md)
 - **Team Onboarding**: [docs/TEAM_ONBOARDING.md](./docs/TEAM_ONBOARDING.md)
 
 ---
