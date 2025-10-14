@@ -5,14 +5,16 @@
   "scripts": {
     "setup-db": "node scripts/setup-database.js",
     "add-user": "node scripts/add-user.js",
+    "test": "playwright test",
+    "test:integration": "playwright test tests/integration",
+    "test:e2e": "playwright test tests/e2e",
+    "test:unit": "playwright test tests/unit",
+    "test:all": "playwright test --project=api-integration --project=unit --project=e2e-chromium",
+    "test:report": "playwright show-report test-results/html",
     "test:ui": "node scripts/athena-guard.js",
     "test:ui:local": "./scripts/run-ui-tests-local.sh",
     "setup:athena-guard": "./setup-athena-guard.sh",
-    "generate:tests": "node scripts/ai-integrations/test-generator.js",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "generate:tests": "node scripts/ai-integrations/test-generator.js"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
@@ -25,16 +27,10 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "@eslint/js": "^9.37.0",
     "@playwright/test": "^1.56.0",
     "axe-core": "^4.11.0",
     "axios": "^1.12.2",
-    "eslint": "^9.37.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
-    "globals": "^16.4.0",
     "lighthouse": "^11.7.1",
-    "playwright-core": "^1.56.0",
-    "prettier": "^3.6.2"
+    "playwright-core": "^1.56.0"
   }
 }

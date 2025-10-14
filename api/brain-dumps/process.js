@@ -3,30 +3,14 @@
 // Updated: October 14, 2025 - Added error handling infrastructure with tracking IDs
 
 import OpenAI from 'openai';
-import {
-  ValidationError,
-  handleOpenAIError,
-  InternalServerError,
-  generateErrorId,
-} from '../../src/lib/errors.js';
-import {
-  sendErrorResponse,
-  sendSuccessResponse,
-  setCORSHeaders,
-  handlePreflightRequest,
-  validateMethod,
-} from '../../src/lib/error-handler.js';
+import { ValidationError, handleOpenAIError, InternalServerError } from '../../src/lib/errors.js';
+import { sendErrorResponse, sendSuccessResponse, setCORSHeaders, handlePreflightRequest, validateMethod } from '../../src/lib/error-handler.js';
 import { getOpenAIKey, validateConfig } from '../../src/lib/config.js';
 
 // Validate configuration on function cold start
 const configValidation = validateConfig({ logWarnings: false });
 if (!configValidation.valid) {
-  const errorId = generateErrorId();
-  console.error(`[${errorId}] CRITICAL: Configuration validation failed`, {
-    errorId,
-    errors: configValidation.errors,
-    timestamp: new Date().toISOString(),
-  });
+  console.error('Configuration validation failed:', configValidation.errors);
 }
 
 // Initialize OpenAI client
@@ -35,14 +19,8 @@ try {
   const apiKey = getOpenAIKey();
   openai = new OpenAI({ apiKey });
 } catch (error) {
-  const errorId = generateErrorId();
-  console.error(`[${errorId}] CRITICAL: Failed to initialize OpenAI client`, {
-    errorId,
-    error: error.message,
-    stack: error.stack,
-    timestamp: new Date().toISOString(),
-  });
-  // OpenAI will be null, and requests will fail with clear error message at line 175
+  console.error('Failed to initialize OpenAI client:', error.message);
+  // OpenAI will be null, and requests will fail with clear error message
 }
 
 // System prompt for AI extraction
@@ -101,9 +79,7 @@ function validateInput(body) {
 
   // Check required fields
   if (!title || !date || !notes) {
-    throw new ValidationError(
-      'Missing required fields: title, date, and notes are required.'
-    );
+    throw new ValidationError('Missing required fields: title, date, and notes are required.');
   }
 
   // Validate title
@@ -135,19 +111,9 @@ function validateInput(body) {
 
   // PHI/Medical data detection
   const medicalKeywords = [
-    'patient',
-    'diagnosis',
-    'prescription',
-    'medical record',
-    'phi',
-    'hipaa',
-    'treatment',
-    'medication',
-    'symptom',
-    'icd-10',
-    'cpt code',
-    'pharmacy',
-    'hospital admission',
+    'patient', 'diagnosis', 'prescription', 'medical record',
+    'phi', 'hipaa', 'treatment', 'medication', 'symptom',
+    'icd-10', 'cpt code', 'pharmacy', 'hospital admission'
   ];
 
   const notesLower = notes.toLowerCase();
@@ -244,16 +210,16 @@ ${notes}`;
         messages: [
           {
             role: 'system',
-            content: SYSTEM_PROMPT,
+            content: SYSTEM_PROMPT
           },
           {
             role: 'user',
-            content: userMessage,
-          },
+            content: userMessage
+          }
         ],
         response_format: { type: 'json_object' },
-        temperature: 0.3, // Lower temperature for consistent extraction
-        max_tokens: 2000, // Sufficient for most meeting extractions
+        temperature: 0.3,  // Lower temperature for consistent extraction
+        max_tokens: 2000   // Sufficient for most meeting extractions
       });
     } catch (openaiError) {
       // Handle OpenAI-specific errors with proper error types
@@ -287,14 +253,15 @@ ${notes}`;
       results: {
         action_items: extracted.action_items,
         decisions: extracted.decisions,
-        blockers: extracted.blockers,
+        blockers: extracted.blockers
       },
       metadata: {
         model: completion.model,
         tokens_used: completion.usage.total_tokens,
-        processing_time: new Date().toISOString(),
-      },
+        processing_time: new Date().toISOString()
+      }
     });
+
   } catch (error) {
     // ==============================
     // CENTRALIZED ERROR HANDLING
