@@ -12,12 +12,12 @@
 const CONFIG_SCHEMA = {
   // OpenAI Configuration
   OPENAI_API_KEY: {
-    required: false, // Made optional because OPENAI_BRAINDUMPS_KEY can be used instead
+    required: false,
     description: 'OpenAI API key for general AI features',
     validate: value => value && value.startsWith('sk-'),
   },
   OPENAI_BRAINDUMPS_KEY: {
-    required: false, // At least one OpenAI key must be present
+    required: false,
     description: 'Dedicated OpenAI API key for Brain Dumps feature',
     validate: value => value && value.startsWith('sk-'),
   },
@@ -26,7 +26,9 @@ const CONFIG_SCHEMA = {
   DATABASE_URL: {
     required: false,
     description: 'PostgreSQL database connection string',
-    validate: value => value && value.startsWith('postgres'),
+    validate: value =>
+      value &&
+      (value.startsWith('postgres://') || value.startsWith('postgresql://')),
   },
 
   // Monitoring (optional)
@@ -51,17 +53,15 @@ const CONFIG_SCHEMA = {
  * @param {boolean} options.logWarnings - Log warnings for missing optional vars (default: true)
  * @returns {Object} Validation result { valid: boolean, errors: [], warnings: [] }
  */
-export function validateConfig(options = {}) {
+function validateConfig(options = {}) {
   const { throwOnError = false, logWarnings = true } = options;
 
   const errors = [];
   const warnings = [];
 
-  // Check each config value
   for (const [key, schema] of Object.entries(CONFIG_SCHEMA)) {
     const value = process.env[key];
 
-    // Check required fields
     if (schema.required && !value) {
       errors.push(
         `Missing required environment variable: ${key} (${schema.description})`
@@ -69,12 +69,10 @@ export function validateConfig(options = {}) {
       continue;
     }
 
-    // Validate format if value exists and validator provided
     if (value && schema.validate && !schema.validate(value)) {
       errors.push(`Invalid format for ${key}: ${schema.description}`);
     }
 
-    // Warn about missing optional fields
     if (!schema.required && !value && logWarnings) {
       warnings.push(
         `Optional environment variable not set: ${key} (${schema.description})`
@@ -82,7 +80,6 @@ export function validateConfig(options = {}) {
     }
   }
 
-  // Special validation: At least one OpenAI key must be present
   const hasOpenAIKey =
     process.env.OPENAI_API_KEY || process.env.OPENAI_BRAINDUMPS_KEY;
   if (!hasOpenAIKey) {
@@ -91,7 +88,6 @@ export function validateConfig(options = {}) {
     );
   }
 
-  // Log results
   if (errors.length > 0) {
     console.error('❌ Configuration validation failed:');
     errors.forEach(err => console.error(`  - ${err}`));
@@ -123,7 +119,7 @@ export function validateConfig(options = {}) {
  * @param {string} key - Config key
  * @returns {string|undefined} Config value or default
  */
-export function getConfig(key) {
+function getConfig(key) {
   const value = process.env[key];
   const schema = CONFIG_SCHEMA[key];
 
@@ -138,10 +134,10 @@ export function getConfig(key) {
  * Gets OpenAI API key with fallback logic
  * Prefers dedicated Brain Dumps key, falls back to general key
  *
- * @returns {string|undefined} OpenAI API key
+ * @returns {string} OpenAI API key
  * @throws {Error} If no key is configured
  */
-export function getOpenAIKey() {
+function getOpenAIKey() {
   const braindumpsKey = process.env.OPENAI_BRAINDUMPS_KEY;
   const generalKey = process.env.OPENAI_API_KEY;
 
@@ -161,7 +157,7 @@ export function getOpenAIKey() {
  *
  * @returns {boolean} True if production
  */
-export function isProduction() {
+function isProduction() {
   return process.env.NODE_ENV === 'production';
 }
 
@@ -170,8 +166,27 @@ export function isProduction() {
  *
  * @returns {boolean} True if development
  */
-export function isDevelopment() {
+function isDevelopment() {
   return !isProduction();
+}
+
+/**
+ * Safely masks sensitive configuration values for logging
+ *
+ * @param {string} value
+ * @returns {string}
+ */
+function maskSensitiveValue(value) {
+  if (!value) {
+    return '<not set>';
+  }
+  if (value.length <= 8) {
+    return '*'.repeat(value.length);
+  }
+  if (value.length <= 12) {
+    return `${value.substring(0, 3)}***${value.substring(value.length - 2)}`;
+  }
+  return `${value.substring(0, 6)}...${value.substring(value.length - 4)}`;
 }
 
 /**
@@ -179,21 +194,19 @@ export function isDevelopment() {
  *
  * @returns {Object} Safe config summary
  */
-export function getConfigSummary() {
+function getConfigSummary() {
   const summary = {};
 
   for (const key of Object.keys(CONFIG_SCHEMA)) {
     const value = process.env[key];
 
     if (value) {
-      // Mask sensitive values
       if (
         key.includes('KEY') ||
         key.includes('SECRET') ||
         key.includes('DSN')
       ) {
-        summary[key] =
-          `${value.substring(0, 8)}...${value.substring(value.length - 4)}`;
+        summary[key] = maskSensitiveValue(value);
       } else {
         summary[key] = value;
       }
@@ -205,8 +218,17 @@ export function getConfigSummary() {
   return summary;
 }
 
-// Run validation on module load (for serverful environments)
-// For serverless (Vercel), validation happens on each function invocation
 if (process.env.RUN_CONFIG_VALIDATION === 'true') {
   validateConfig({ throwOnError: true, logWarnings: false });
 }
+
+module.exports = {
+  CONFIG_SCHEMA,
+  getConfig,
+  getConfigSummary,
+  getOpenAIKey,
+  isDevelopment,
+  isProduction,
+  maskSensitiveValue,
+  validateConfig,
+};
