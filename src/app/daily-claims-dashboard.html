@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Claims Performance Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/design-tokens.css">
+    <link rel="stylesheet" href="../assets/css/daily-claims-dashboard.css">
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="index.html">Dashboard</a>
+        <a href="team-structure-v2.html">Team Structure</a>
+        <a href="reports.html">Reports</a>
+        <a href="documentation.html">Documentation</a>
+        <a href="settings.html">Settings</a>
+        <a href="daily-claims-dashboard.html" class="active" aria-current="page">Claims Dashboard</a>
+        <a href="#" id="logout-link" style="color: var(--error); margin-left: auto;">Logout</a>
+    </nav>
+
+    <main class="dashboard-wrapper">
+        <header class="dashboard-header">
+            <div class="dashboard-title">
+                <span aria-hidden="true" style="font-size: 30px;">🏥</span>
+                <div>
+                    <h1>Daily Claims Performance</h1>
+                    <p class="subtle-text">Real-time insights across visits, savings, provider behaviour, and QA signals.</p>
+                </div>
+            </div>
+            <div class="pill" id="last-updated-pill">
+                <span aria-hidden="true">⏱</span>
+                <span><span class="subtle-text">Last updated:</span> <strong id="last-updated-label">--</strong></span>
+            </div>
+        </header>
+
+        <section class="controls-wrapper">
+            <div class="controls-bar">
+                <div class="tab-list" role="tablist" aria-label="Dashboard Tabs">
+                    <button class="tab-button is-active" type="button" role="tab" aria-selected="true" data-tab="overview">Overview</button>
+                    <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="claims">Claims Table</button>
+                    <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="history">Upload History</button>
+                </div>
+
+                <div class="date-filter">
+                    <label for="period-select" class="subtle-text">Period</label>
+                    <div class="select">
+                        <select id="period-select" aria-label="Select period">
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="thisWeek" selected>This Week</option>
+                            <option value="lastWeek">Last Week</option>
+                            <option value="thisMonth">This Month</option>
+                            <option value="lastMonth">Last Month</option>
+                            <option value="custom">Custom Range</option>
+                            <option value="all">All Time</option>
+                        </select>
+                    </div>
+                    <div class="custom-range" id="custom-range" hidden>
+                        <label class="subtle-text" for="from-date">From</label>
+                        <input type="date" id="from-date">
+                        <label class="subtle-text" for="to-date">To</label>
+                        <input type="date" id="to-date">
+                        <button type="button" id="apply-range">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="overview-tab" class="tab-panel" role="tabpanel">
+            <div class="grid kpi-grid" id="kpi-grid" aria-live="polite"></div>
+
+            <div class="card">
+                <h2 class="card-title">AI Performance</h2>
+                <div style="display: grid; gap: var(--spacing-5); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); align-items: center;">
+                    <div class="progress-ring" id="extraction-ring" data-label="0%"></div>
+                    <div class="progress-ring" id="adjudication-ring" data-label="0%"></div>
+                    <div class="stat-row">
+                        <div class="stat-block">
+                            <h4>Failed Extractions</h4>
+                            <div class="value" id="failed-extractions">0</div>
+                            <p class="subtle-text">Claims needing manual capture</p>
+                        </div>
+                        <div class="stat-block">
+                            <h4>Pending Adjudication</h4>
+                            <div class="value" id="pending-adjudication">0</div>
+                            <p class="subtle-text">Extracted but awaiting VT decision</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; gap: var(--spacing-4); grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+                <div class="card">
+                    <h2 class="card-title">Savings Distribution</h2>
+                    <div class="donut-chart">
+                        <div class="donut-visual" id="savings-donut"></div>
+                        <div class="legend" id="savings-legend"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2 class="card-title">Financial Trends</h2>
+                    <div class="line-chart" id="trends-chart">Attach a lightweight line chart (Sparkline/SVG) when ready.</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Provider Performance</h2>
+                <div class="provider-grid" id="provider-performance"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Quality Alerts</h2>
+                <div class="quality-alerts" id="alerts-panel"></div>
+            </div>
+        </section>
+
+        <section id="claims-tab" class="tab-panel" role="tabpanel" hidden>
+            <div class="card table-card">
+                <header>
+                    <h2 class="card-title">Claims Register</h2>
+                    <p class="subtle-text">Deduplicated by visit number for accurate financials.</p>
+                </header>
+                <div class="table-toolbar">
+                    <div class="search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="search" id="claim-search" placeholder="Search visit, invoice, patient, provider">
+                    </div>
+                    <div style="display: flex; gap: var(--spacing-3); align-items: center;">
+                        <button class="btn" type="button" id="export-btn">Export CSV</button>
+                        <span class="subtle-text" id="claims-count-summary">Showing 0 of 0 claims</span>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table aria-describedby="claims-count-summary">
+                        <thead>
+                            <tr>
+                                <th scope="col" data-sort-key="visitNumber">Visit #</th>
+                                <th scope="col" data-sort-key="invoiceNumber">Invoice</th>
+                                <th scope="col" data-sort-key="patientName">Patient</th>
+                                <th scope="col" data-sort-key="providerName">Provider</th>
+                                <th scope="col" class="text-right" data-sort-key="totalRequestAmt">Requested</th>
+                                <th scope="col" class="text-right" data-sort-key="totalAllowedByVT">Allowed</th>
+                                <th scope="col" class="text-right">Savings</th>
+                                <th scope="col" class="text-right">Savings %</th>
+                                <th scope="col">Extracted</th>
+                                <th scope="col">Adjudicated</th>
+                                <th scope="col">Status</th>
+                                <th scope="col" data-sort-key="createdAt">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="claims-table-body"></tbody>
+                    </table>
+                </div>
+                <footer class="pagination">
+                    <span class="subtle-text" id="pagination-label">Page 1 of 1</span>
+                    <div style="display: flex; gap: var(--spacing-2);">
+                        <button type="button" id="prev-page">Previous</button>
+                        <button type="button" id="next-page">Next</button>
+                    </div>
+                </footer>
+            </div>
+        </section>
+
+        <section id="history-tab" class="tab-panel" role="tabpanel" hidden>
+            <div class="card table-card">
+                <header>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2 class="card-title">Upload History</h2>
+                            <p class="subtle-text">Auditable log of daily Excel feeds (newest first).</p>
+                        </div>
+                        <button class="btn-accent btn" type="button" id="open-upload-modal">
+                            <span aria-hidden="true">⤴</span>
+                            Upload File
+                        </button>
+                    </div>
+                </header>
+                <div id="upload-history-body">
+                    <div class="upload-empty" id="history-empty-state" hidden>
+                        <span aria-hidden="true" style="font-size: 32px;">📄</span>
+                        <p>No uploads yet. Upload your first claims file to get started.</p>
+                        <button class="btn-accent btn" type="button" data-trigger-upload>Upload File</button>
+                    </div>
+                    <div class="table-container">
+                        <table id="upload-history-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Uploaded</th>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Filename</th>
+                                    <th scope="col" class="text-right">Claims</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="upload-history-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal-backdrop" id="upload-modal" role="dialog" aria-modal="true" aria-labelledby="upload-modal-title">
+        <div class="modal">
+            <header>
+                <h3 id="upload-modal-title">Upload Claims File</h3>
+                <button class="modal-close" type="button" aria-label="Close upload modal">&times;</button>
+            </header>
+            <div class="modal-content">
+                <div class="drop-zone" id="drop-zone">
+                    <input type="file" id="file-input" accept=".xlsx,.xls" class="sr-only">
+                    <p style="font-size: var(--text-lg); font-weight: var(--font-semibold); margin-bottom: var(--spacing-2);">Drop Excel file here</p>
+                    <p class="subtle-text">Supports .xlsx or .xls up to 20MB</p>
+                    <button class="btn" type="button" id="browse-btn">Browse Files</button>
+                </div>
+                <div>
+                    <div class="progress-track">
+                        <div class="progress-value" id="upload-progress"></div>
+                    </div>
+                    <p class="subtle-text" id="progress-label">Waiting for file</p>
+                </div>
+                <div class="upload-summary" id="upload-summary" hidden></div>
+                <div style="display: flex; justify-content: flex-end; gap: var(--spacing-3);">
+                    <button class="btn" type="button" id="cancel-upload">Cancel</button>
+                    <button class="btn-accent" type="button" id="start-upload" disabled>Start Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="daily-claims-dashboard.js" type="module"></script>
+</body>
+</html>

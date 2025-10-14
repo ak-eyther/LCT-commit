@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 Daily Claims Performance Dashboard</title>
+
+    <!-- CDNs for external libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/chart.js"></script>
+    <script src="https://unpkg.com/date-fns@3.0.6/index.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/lucide@0.294.0/dist/umd/lucide.js" rel="stylesheet">
+
+    <!-- LCT Design Tokens -->
+    <link rel="stylesheet" href="assets/css/design-tokens.css">
+
+    <script>
+        // Tailwind config for custom colors
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'status-success': 'hsl(142, 71%, 45%)',
+                        'status-warning': 'hsl(38, 92%, 50%)',
+                        'status-error': 'hsl(0, 84%, 60%)',
+                        'savings-excellent': 'hsl(142, 71%, 45%)',
+                        'savings-good': 'hsl(142, 71%, 65%)',
+                        'savings-moderate': 'hsl(38, 92%, 50%)',
+                        'savings-low': 'hsl(25, 95%, 53%)',
+                        'savings-rejected': 'hsl(0, 84%, 60%)',
+                        'chart-blue': 'hsl(217, 91%, 60%)',
+                        'chart-green': 'hsl(142, 71%, 45%)',
+                        'chart-purple': 'hsl(271, 91%, 65%)',
+                        'chart-orange': 'hsl(25, 95%, 53%)',
+                        'chart-red': 'hsl(0, 84%, 60%)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom CSS variables for design system */
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 0 0% 0%;
+            --card: 0 0% 100%;
+            --card-foreground: 0 0% 0%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 0 0% 0%;
+            --primary: 0 0% 0%;
+            --primary-foreground: 0 0% 100%;
+            --secondary: 240 5% 96%;
+            --secondary-foreground: 0 0% 0%;
+            --muted: 240 5% 96%;
+            --muted-foreground: 240 4% 46%;
+            --accent: 240 4% 46%;
+            --accent-foreground: 0 0% 100%;
+            --destructive: 0 84% 60%;
+            --destructive-foreground: 0 0% 100%;
+            --border: 240 5% 91%;
+            --input: 240 5% 91%;
+            --ring: 240 4% 46%;
+            --radius: 0.5rem;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Metric Card Styles */
+        .metric-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .metric-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .metric-title {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .trend-up {
+            color: #10b981;
+        }
+
+        .trend-down {
+            color: #ef4444;
+        }
+
+        .trend-neutral {
+            color: #6b7280;
+        }
+
+        /* Tab Navigation */
+        .tab-active {
+            background: #000;
+            color: white;
+        }
+
+        .tab-inactive {
+            background: transparent;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+
+        /* Status Badges */
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-destructive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-8">
+                <h1 class="text-xl font-semibold text-gray-900">🏥 Daily Claims Performance</h1>
+                <div class="flex space-x-1">
+                    <button class="tab-button px-4 py-2 rounded-md text-sm font-medium transition-colors" data-tab="overview">Overview</button>
+                    <button class="tab-button px-4 py-2 rounded-md text-sm font-medium transition-colors" data-tab="claims">Claims</button>
+                    <button class="tab-button px-4 py-2 rounded-md text-sm font-medium transition-colors" data-tab="history">Upload History</button>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <select class="date-filter border border-gray-300 rounded-md px-3 py-2 text-sm">
+                    <option value="all">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="thisWeek">This Week</option>
+                    <option value="lastWeek">Last Week</option>
+                    <option value="thisMonth">This Month</option>
+                    <option value="lastMonth">Last Month</option>
+                    <option value="custom">Custom Date Range</option>
+                </select>
+                <div class="custom-date-range" style="display: none;">
+                    <input type="date" class="date-from border border-gray-300 rounded-md px-3 py-2 text-sm mr-2">
+                    <input type="date" class="date-to border border-gray-300 rounded-md px-3 py-2 text-sm">
+                </div>
+                <div class="text-sm text-gray-500 last-updated">Last updated: 9:34 AM</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 py-6">
+        <!-- Overview Tab -->
+        <div class="tab-content" data-tab="overview">
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4 mb-8">
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="metric-title">Total Visits</div>
+                        <i data-lucide="users" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                    <div class="metric-value">18</div>
+                    <div class="flex items-center mt-2">
+                        <i data-lucide="minus" class="w-3 h-3 trend-neutral mr-1"></i>
+                        <span class="text-xs trend-neutral">0%</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="metric-title">Total Invoices</div>
+                        <i data-lucide="file-text" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                    <div class="metric-value">18</div>
+                    <div class="flex items-center mt-2">
+                        <i data-lucide="minus" class="w-3 h-3 trend-neutral mr-1"></i>
+                        <span class="text-xs trend-neutral">0%</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="metric-title">Total Requested</div>
+                        <i data-lucide="trending-up" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                    <div class="metric-value">92.3K</div>
+                    <div class="flex items-center mt-2">
+                        <i data-lucide="minus" class="w-3 h-3 trend-neutral mr-1"></i>
+                        <span class="text-xs trend-neutral">0%</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="metric-title">Total Allowed</div>
+                        <i data-lucide="check-circle" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                    <div class="metric-value">87.3K</div>
+                    <div class="flex items-center mt-2">
+                        <i data-lucide="minus" class="w-3 h-3 trend-neutral mr-1"></i>
+                        <span class="text-xs trend-neutral">0%</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="metric-title">Total Savings</div>
+                        <i data-lucide="coins" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                    <div class="metric-value">5.0K</div>
+                    <div class="flex items-center mt-2">
+                        <i data-lucide="trending-up" class="w-3 h-3 trend-up mr-1"></i>
+                        <span class="text-xs trend-up">8.5%</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="metric-title">Extraction Rate</div>
+                        <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                    <div class="metric-value">100.0%</div>
+                    <div class="flex items-center mt-2">
+                        <i data-lucide="trending-up" class="w-3 h-3 trend-up mr-1"></i>
+                        <span class="text-xs trend-up">0%</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="metric-title">Adjudication Rate</div>
+                        <i data-lucide="check-square" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                    <div class="metric-value">100.0%</div>
+                    <div class="flex items-center mt-2">
+                        <i data-lucide="trending-up" class="w-3 h-3 trend-up mr-1"></i>
+                        <span class="text-xs trend-up">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Performance Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <div class="metric-card lg:col-span-1">
+                    <h3 class="text-lg font-semibold mb-4">AI Performance</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Extraction Success Rate</span>
+                            <div class="relative w-16 h-16">
+                                <svg class="w-16 h-16 transform -rotate-90">
+                                    <circle cx="32" cy="32" r="28" stroke="#e5e7eb" stroke-width="4" fill="none"></circle>
+                                    <circle cx="32" cy="32" r="28" stroke="#10b981" stroke-width="4" fill="none"
+                                            stroke-dasharray="175.93" stroke-dashoffset="0"
+                                            class="transition-all duration-300"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span class="text-lg font-semibold text-green-600">100%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Adjudication Rate</span>
+                            <div class="relative w-16 h-16">
+                                <svg class="w-16 h-16 transform -rotate-90">
+                                    <circle cx="32" cy="32" r="28" stroke="#e5e7eb" stroke-width="4" fill="none"></circle>
+                                    <circle cx="32" cy="32" r="28" stroke="#3b82f6" stroke-width="4" fill="none"
+                                            stroke-dasharray="175.93" stroke-dashoffset="0"
+                                            class="transition-all duration-300"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span class="text-lg font-semibold text-blue-600">100%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-gray-900">0</div>
+                                <div class="text-xs text-gray-500">Failed Extractions</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-gray-900">0</div>
+                                <div class="text-xs text-gray-500">Pending Adjudications</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Savings Distribution Chart -->
+                    <div class="metric-card">
+                        <h3 class="text-lg font-semibold mb-4">Savings Distribution</h3>
+                        <canvas id="savingsChart" width="400" height="200"></canvas>
+                    </div>
+
+                    <!-- Financial Trends Chart -->
+                    <div class="metric-card">
+                        <h3 class="text-lg font-semibold mb-4">Financial Trends</h3>
+                        <canvas id="trendsChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Provider Performance -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <div class="metric-card">
+                    <h3 class="text-lg font-semibold mb-4">Top Providers by Volume</h3>
+                    <canvas id="volumeChart" width="400" height="300"></canvas>
+                </div>
+
+                <div class="metric-card">
+                    <h3 class="text-lg font-semibold mb-4">Top Providers by Savings</h3>
+                    <canvas id="savingsProvidersChart" width="400" height="300"></canvas>
+                </div>
+
+                <div class="metric-card">
+                    <h3 class="text-lg font-semibold mb-4">Quality Alerts</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
+                            <i data-lucide="check-circle" class="w-5 h-5 text-green-600 mt-0.5"></i>
+                            <div>
+                                <div class="text-sm font-medium text-green-800">No Critical Issues</div>
+                                <div class="text-xs text-green-600">All metrics within normal ranges</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Claims Tab -->
+        <div class="tab-content hidden" data-tab="claims">
+            <div class="metric-card">
+                <h3 class="text-lg font-semibold mb-4">Claims Table</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visit Number</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Requested</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Allowed</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Savings</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Savings %</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">VIS-2025-001</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">John Kamau</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹8,500</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹7,950</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹550</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">6.5%</td>
+                                <td class="px-6 py-4 whitespace-nowrap"><span class="badge-success px-2 py-1 text-xs rounded-full">Approved</span></td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">VIS-2025-002</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Mary Wanjiku</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹6,200</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹5,890</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹310</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5.0%</td>
+                                <td class="px-6 py-4 whitespace-nowrap"><span class="badge-success px-2 py-1 text-xs rounded-full">Approved</span></td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">VIS-2025-003</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Peter Ochieng</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹4,500</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹4,280</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹220</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">4.9%</td>
+                                <td class="px-6 py-4 whitespace-nowrap"><span class="badge-success px-2 py-1 text-xs rounded-full">Approved</span></td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">VIS-2025-004</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jane Akinyi</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹7,800</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹7,350</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹450</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5.8%</td>
+                                <td class="px-6 py-4 whitespace-nowrap"><span class="badge-secondary px-2 py-1 text-xs rounded-full">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">VIS-2025-005</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">David Kipchoge</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹5,600</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹5,320</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹280</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5.0%</td>
+                                <td class="px-6 py-4 whitespace-nowrap"><span class="badge-success px-2 py-1 text-xs rounded-full">Approved</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload History Tab -->
+        <div class="tab-content hidden" data-tab="history">
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold">Upload History</h3>
+                    <button class="upload-btn bg-black text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors">
+                        <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
+                        Upload File
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date/Time</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploaded By</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Filename</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total Claims</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Oct 14, 2025, 8:15 AM</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">John Doe</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">claims_oct_14.xlsx</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">18</td>
+                                <td class="px-6 py-4 whitespace-nowrap"><span class="badge-success px-2 py-1 text-xs rounded-full">Success</span></td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Oct 13, 2025, 8:10 AM</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">John Doe</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">claims_oct_13.xlsx</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">16</td>
+                                <td class="px-6 py-4 whitespace-nowrap"><span class="badge-success px-2 py-1 text-xs rounded-full">Success</span></td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Oct 12, 2025, 8:05 AM</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jane Smith</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">claims_oct_12.xlsx</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">15</td>
+                                <td class="px-6 py-4 whitespace-nowrap"><span class="badge-success px-2 py-1 text-xs rounded-full">Success</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal (hidden by default) -->
+    <div class="upload-modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">Upload Claims File</h3>
+                <button class="close-modal text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <i data-lucide="upload" class="w-8 h-8 text-gray-400 mx-auto mb-2"></i>
+                    <p class="text-sm text-gray-600">Drag and drop your Excel file here, or click to browse</p>
+                    <input type="file" class="file-input hidden" accept=".xlsx,.xls">
+                    <button class="browse-btn mt-2 text-sm text-blue-600 hover:text-blue-800">Browse files</button>
+                </div>
+
+                <div class="text-xs text-gray-500">
+                    Supported formats: .xlsx, .xls<br>
+                    Maximum file size: 20MB
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3 mt-6">
+                <button class="cancel-upload px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50">Cancel</button>
+                <button class="upload-file-btn px-4 py-2 text-sm text-white bg-black rounded-md hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed">Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Lucide icons
+            lucide.createIcons();
+
+            // Tab navigation
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+
+                    // Update button states
+                    tabButtons.forEach(btn => {
+                        if (btn.getAttribute('data-tab') === tabName) {
+                            btn.className = 'tab-button px-4 py-2 rounded-md text-sm font-medium bg-black text-white';
+                        } else {
+                            btn.className = 'tab-button px-4 py-2 rounded-md text-sm font-medium bg-transparent text-gray-500 border border-gray-300';
+                        }
+                    });
+
+                    // Update content visibility
+                    tabContents.forEach(content => {
+                        if (content.getAttribute('data-tab') === tabName) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Date filter functionality
+            const dateFilter = document.querySelector('.date-filter');
+            const customDateRange = document.querySelector('.custom-date-range');
+            const dateFrom = document.querySelector('.date-from');
+            const dateTo = document.querySelector('.date-to');
+
+            dateFilter.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customDateRange.style.display = 'block';
+                } else {
+                    customDateRange.style.display = 'none';
+                }
+            });
+
+            // File upload modal
+            const uploadBtn = document.querySelector('.upload-btn');
+            const uploadModal = document.querySelector('.upload-modal');
+            const closeModal = document.querySelector('.close-modal');
+            const cancelUpload = document.querySelector('.cancel-upload');
+            const browseBtn = document.querySelector('.browse-btn');
+            const fileInput = document.querySelector('.file-input');
+            const uploadFileBtn = document.querySelector('.upload-file-btn');
+
+            function openModal() {
+                uploadModal.classList.remove('hidden');
+            }
+
+            function closeModalHandler() {
+                uploadModal.classList.add('hidden');
+            }
+
+            uploadBtn.addEventListener('click', openModal);
+            closeModal.addEventListener('click', closeModalHandler);
+            cancelUpload.addEventListener('click', closeModalHandler);
+
+            // Close modal when clicking outside
+            uploadModal.addEventListener('click', function(e) {
+                if (e.target === uploadModal) {
+                    closeModalHandler();
+                }
+            });
+
+            browseBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    if (validateFile(file)) {
+                        uploadFileBtn.disabled = false;
+                        uploadFileBtn.textContent = 'Upload ' + file.name;
+                    } else {
+                        uploadFileBtn.disabled = true;
+                        uploadFileBtn.textContent = 'Invalid File';
+                    }
+                }
+            });
+
+            function validateFile(file) {
+                const validTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+                const maxSize = 20 * 1024 * 1024; // 20MB
+
+                return validTypes.includes(file.type) && file.size <= maxSize;
+            }
+
+            uploadFileBtn.addEventListener('click', function() {
+                // Simulate upload process
+                this.disabled = true;
+                this.textContent = 'Uploading...';
+
+                setTimeout(() => {
+                    alert('File uploaded successfully!');
+                    closeModalHandler();
+                    this.disabled = false;
+                    this.textContent = 'Upload';
+                }, 2000);
+            });
+
+            // Initialize charts
+            initializeCharts();
+        });
+
+        function initializeCharts() {
+            // Savings Distribution Chart
+            const savingsCtx = document.getElementById('savingsChart').getContext('2d');
+            new Chart(savingsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Zero Savings', 'Low Savings (1-10%)', 'Medium Savings (10-20%)', 'High Savings (20-50%)', 'Very High Savings (50-100%)'],
+                    datasets: [{
+                        data: [0, 2, 8, 6, 2],
+                        backgroundColor: [
+                            '#ef4444',
+                            '#f97316',
+                            '#eab308',
+                            '#22c55e',
+                            '#16a34a'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Financial Trends Chart
+            const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+            new Chart(trendsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Oct 8', 'Oct 9', 'Oct 10', 'Oct 11', 'Oct 12', 'Oct 13', 'Oct 14'],
+                    datasets: [{
+                        label: 'Total Requested',
+                        data: [85000, 78000, 92000, 88000, 95000, 89000, 92258],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Total Allowed',
+                        data: [80000, 73000, 87000, 83000, 90000, 84000, 87257],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Total Savings',
+                        data: [5000, 5000, 5000, 5000, 5000, 5000, 5001],
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 100000) return (value / 100000).toFixed(1) + 'L';
+                                    if (value >= 1000) return (value / 1000).toFixed(1) + 'K';
+                                    return value;
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+
+            // Provider Volume Chart
+            const volumeCtx = document.getElementById('volumeChart').getContext('2d');
+            new Chart(volumeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Kenyatta National', 'Aga Khan', 'Nairobi Hospital', 'MP Shah', 'Mater Hospital'],
+                    datasets: [{
+                        label: 'Visit Count',
+                        data: [5, 4, 3, 3, 3],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Provider Savings Chart
+            const savingsProvidersCtx = document.getElementById('savingsProvidersChart').getContext('2d');
+            new Chart(savingsProvidersCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Kenyatta National', 'Aga Khan', 'Nairobi Hospital', 'MP Shah', 'Mater Hospital'],
+                    datasets: [{
+                        label: 'Total Savings',
+                        data: [1583, 1243, 851, 776, 648],
+                        backgroundColor: '#10b981',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₹' + (value / 1000).toFixed(1) + 'K';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Utility function to format amounts in Lakhs/Crores
+        function formatAmountInLakhsCrores(amount) {
+            if (amount >= 10000000) { // 1 Crore
+                return (amount / 10000000).toFixed(1) + ' Cr';
+            } else if (amount >= 100000) { // 1 Lakh
+                return (amount / 100000).toFixed(1) + 'L';
+            } else if (amount >= 1000) {
+                return (amount / 1000).toFixed(1) + 'K';
+            } else {
+                return amount.toString();
+            }
+        }
+    </script>
+</body>
+</html>

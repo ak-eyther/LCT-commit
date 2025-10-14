@@ -31,6 +31,10 @@
     {
       "source": "/team-structure-v2.html",
       "destination": "/src/app/team-structure-v2.html"
+    },
+    {
+      "source": "/brain-dumps.html",
+      "destination": "/src/app/brain-dumps.html"
     }
   ],
   "headers": [
