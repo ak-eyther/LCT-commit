@@ -231,5 +231,16 @@
 
     <script src="auth.js"></script>
     <script src="daily-claims-dashboard.js" type="module"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const logoutLink = document.getElementById('logout-link');
+            if (logoutLink && typeof logout === 'function') {
+                logoutLink.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    logout();
+                });
+            }
+        });
+    </script>
 </body>
 </html>
