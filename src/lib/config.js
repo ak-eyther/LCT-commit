@@ -97,12 +97,12 @@ function validateConfig(options = {}) {
     }
   }
 
-  if (warnings.length > 0 && logWarnings) {
+  if (warnings.length > 0 && logWarnings && process.env.NODE_ENV !== 'production') {
     console.warn('⚠️  Configuration warnings:');
     warnings.forEach(warn => console.warn(`  - ${warn}`));
   }
 
-  if (errors.length === 0) {
+  if (errors.length === 0 && process.env.NODE_ENV !== 'production') {
     console.log('✅ Configuration validation passed');
   }
 

@@ -183,7 +183,7 @@ test.describe('Brain Dumps - localStorage Auto-Save', () => {
     });
 
     // Click Save Draft button
-    await page.click('button:has-text("💾 Save Draft")');
+    await page.getByRole('button', { name: /Save Draft/i }).click();
 
     // Wait for save to complete
     await page.waitForTimeout(500);
@@ -207,7 +207,7 @@ test.describe('Brain Dumps - localStorage Auto-Save', () => {
     });
 
     // Click Save Draft
-    await page.click('button:has-text("💾 Save Draft")');
+    await page.getByRole('button', { name: /Save Draft/i }).click();
 
     // Look for success message (should appear immediately)
     // Note: Message may disappear quickly, so we check localStorage as proof
@@ -235,7 +235,7 @@ test.describe('Brain Dumps - localStorage Auto-Save', () => {
     });
 
     // Click Process button
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
 
     // Wait for processing to complete (mock takes 2 seconds)
     await page.waitForTimeout(3000);
@@ -285,7 +285,7 @@ test.describe('Brain Dumps - localStorage Auto-Save', () => {
         'This is the 21st meeting and should cause the oldest meeting to be removed from history.',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(3000);
 
     // Check history
@@ -316,7 +316,7 @@ test.describe('Brain Dumps - localStorage Auto-Save', () => {
         'This meeting should appear in the history sidebar after processing.',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(3000);
 
     // Check if meeting appears in sidebar
@@ -339,7 +339,7 @@ test.describe('Brain Dumps - localStorage Auto-Save', () => {
       notes: 'This draft should persist after refreshing the page.',
     });
 
-    await page.click('button:has-text("💾 Save Draft")');
+    await page.getByRole('button', { name: /Save Draft/i }).click();
     await page.waitForTimeout(500);
 
     // Refresh page
@@ -367,7 +367,7 @@ test.describe('Brain Dumps - localStorage Auto-Save', () => {
         'This meeting should remain in history after page refresh.',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(3000);
 
     // Refresh page
@@ -404,11 +404,11 @@ test.describe('Brain Dumps - localStorage Auto-Save', () => {
         'This meeting should be reloadable from history by clicking on it.',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(3000);
 
     // Clear form
-    await page.click('button:has-text("🗑️ Clear Form")');
+    await page.getByRole('button', { name: /Clear Form/i }).click();
 
     // Accept confirmation dialog
     page.on('dialog', dialog => dialog.accept());
@@ -452,7 +452,7 @@ test.describe('Brain Dumps - localStorage Auto-Save', () => {
     page.on('dialog', dialog => dialog.accept());
 
     // Click Clear History
-    await page.click('button:has-text("Clear All")');
+    await page.getByRole('button', { name: /Clear All/i }).click();
     await page.waitForTimeout(500);
 
     // Check localStorage

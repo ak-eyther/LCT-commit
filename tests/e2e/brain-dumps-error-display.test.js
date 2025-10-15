@@ -42,7 +42,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
     page,
   }) => {
     // Try to submit without filling required fields
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
 
     // HTML5 validation should prevent submission
     // But if we bypass it and submit invalid data via API,
@@ -56,7 +56,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
     });
 
     // Submit
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
 
     // Wait for error message
     await page.waitForTimeout(2000);
@@ -91,7 +91,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
       notes: 'Short', // Less than 50 characters
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(2000);
 
     // Look for error message
@@ -124,7 +124,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
         'This should trigger the PHI detection and show an error with error ID.',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(2000);
 
     // Look for error message
@@ -166,7 +166,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
       notes: largeNotes,
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
 
     // Wait for processing (may timeout or fail)
     await page.waitForTimeout(5000);
@@ -205,7 +205,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
       notes: largeNotes,
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(5000);
 
     const errorContainer = page.locator(
@@ -244,7 +244,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
       notes: 'Short', // Invalid
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(2000);
 
     const errorContainer = page.locator(
@@ -281,7 +281,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
       notes: 'X', // Too short
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(2000);
 
     // Look for error ID element
@@ -338,7 +338,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
       notes: 'Short', // Invalid
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(2000);
 
     const errorContainer = page.locator(
@@ -365,7 +365,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
       notes: 'Short',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(2000);
 
     const errorContainer = page.locator(
@@ -405,7 +405,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
       notes: 'Short',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(2000);
 
     // Check error is visible
@@ -432,7 +432,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
       notes: 'Short',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(2000);
 
     // Fix the form
@@ -443,7 +443,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
         'Now this is a much longer note that meets the 50 character minimum requirement and should process successfully.',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(3000);
 
     // Error should be gone (or replaced with success)
@@ -471,7 +471,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
       notes: 'Short',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(2000);
 
     // Error should have role="alert" or aria-live="assertive"
@@ -497,7 +497,7 @@ test.describe('Brain Dumps - Error Display UI', () => {
       notes: 'Short',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(2000);
 
     // Error ID should be in <code>, <span>, or similar semantic element
@@ -533,7 +533,7 @@ test.describe('Brain Dumps - Error Display Integration', () => {
       notes: 'Short',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(2000);
 
     const firstError = await page
@@ -551,7 +551,7 @@ test.describe('Brain Dumps - Error Display Integration', () => {
       notes: 'Different short error',
     });
 
-    await page.click('button:has-text("🚀 Process with AI")');
+    await page.getByRole('button', { name: /Process with AI/i }).click();
     await page.waitForTimeout(2000);
 
     const secondError = await page

@@ -88,7 +88,7 @@ Extraction Guidelines:
 
 /**
  * Validates request input
- * Extracted outside try-catch to avoid catching validation errors incorrectly
+ * Throws ValidationError which is caught and handled by sendErrorResponse
  *
  * @param {Object} body - Request body
  * @throws {ValidationError} If validation fails
