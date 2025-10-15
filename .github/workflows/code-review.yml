@@ -710,26 +710,23 @@ jobs:
             const author = process.env.COMMIT_AUTHOR;
             const sha = process.env.COMMIT_SHA;
 
+            const bodyMessage = '🤖 **Multi-Agent Code Review Activated**\n\n' +
+              '**Commit:** ' + sha + '\n' +
+              '**Author:** ' + author + '\n' +
+              '**Message:** ' + message + '\n\n' +
+              '**Active Review Agents:**\n' +
+              '🐰 CodeRabbit - Code quality & best practices\n' +
+              '💻 Codex - Deep code analysis & patterns\n' +
+              '🛡️ Sentinel - Security, UI/UX & functionality\n\n' +
+              '✅ Comprehensive code analysis in progress...\n\n' +
+              'Results will appear in this thread shortly.\n\n' +
+              '---\n' +
+              '📋 **LCT-Vitraya Healthcare Claims Project**\n' +
+              '*Powered by CodeRabbit + Codex + Sentinel*';
+
             github.rest.repos.createCommitComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               commit_sha: context.sha,
-              body: `🤖 **Multi-Agent Code Review Activated**
-
-**Commit:** ${sha}
-**Author:** ${author}
-**Message:** ${message}
-
-**Active Review Agents:**
-🐰 CodeRabbit - Code quality & best practices
-💻 Codex - Deep code analysis & patterns
-🛡️ Sentinel - Security, UI/UX & functionality
-
-✅ Comprehensive code analysis in progress...
-
-Results will appear in this thread shortly.
-
----
-📋 **LCT-Vitraya Healthcare Claims Project**
-*Powered by CodeRabbit + Codex + Sentinel*`
+              body: bodyMessage
             })
