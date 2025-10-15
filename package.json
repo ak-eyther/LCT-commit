@@ -30,7 +30,6 @@
     "@playwright/test": "^1.56.0",
     "axe-core": "^4.11.0",
     "axios": "^1.12.2",
-    "lighthouse": "^11.7.1",
-    "playwright-core": "^1.56.0"
+    "lighthouse": "^11.7.1"
   }
 }

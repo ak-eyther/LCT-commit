@@ -147,6 +147,8 @@ function validateMethod(req, allowedMethods) {
       }
     );
   }
+
+  return true;
 }
 
 /**

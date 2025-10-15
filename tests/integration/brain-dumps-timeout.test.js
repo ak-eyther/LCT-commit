@@ -51,7 +51,7 @@ test.describe('Brain Dumps API - Timeout & Network Failures', () => {
       VALID_REQUEST.notes;
 
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-      data: {
+      json: {
         ...VALID_REQUEST,
         notes: longNotes,
       },
@@ -118,7 +118,7 @@ test.describe('Brain Dumps API - Timeout & Network Failures', () => {
       .fill(null)
       .map((_, index) =>
         request.post(BRAIN_DUMPS_ENDPOINT, {
-          data: {
+          json: {
             ...VALID_REQUEST,
             title: `Test Meeting ${index}`,
           },
@@ -291,7 +291,7 @@ test.describe('Brain Dumps API - Timeout & Network Failures', () => {
       .map((_, index) =>
         request
           .post(BRAIN_DUMPS_ENDPOINT, {
-            data: {
+            json: {
               ...VALID_REQUEST,
               title: `Concurrent Test ${index}`,
             },
@@ -349,7 +349,7 @@ test.describe('Brain Dumps API - Error Tracking Integration', () => {
     // Trigger multiple errors
     for (let i = 0; i < 10; i++) {
       const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-        data: {
+        json: {
           title: 'Test',
           date: '2025-10-15',
           notes: 'x'.repeat(100000), // Too long - will fail
@@ -373,7 +373,7 @@ test.describe('Brain Dumps API - Error Tracking Integration', () => {
   }) => {
     // Trigger an error
     const response = await request.post(BRAIN_DUMPS_ENDPOINT, {
-      data: {
+      json: {
         title: 'Test',
         date: '2025-10-15',
         notes: 'x'.repeat(100000), // Too long

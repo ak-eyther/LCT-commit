@@ -67,12 +67,6 @@ export default defineConfig({
 
     // Video on failure
     video: 'retain-on-failure',
-
-    // Extra HTTP headers
-    extraHTTPHeaders: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
   },
 
   // Test projects for different browsers (for E2E tests)
@@ -82,7 +76,11 @@ export default defineConfig({
       name: 'api-integration',
       testMatch: '**/integration/**/*.test.js',
       use: {
-        // No browser for API tests
+        // API-specific headers for JSON requests
+        extraHTTPHeaders: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
       },
     },
 
