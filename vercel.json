@@ -35,6 +35,22 @@
     {
       "source": "/brain-dumps.html",
       "destination": "/src/app/brain-dumps.html"
+    },
+    {
+      "source": "/daily-claims-dashboard.html",
+      "destination": "/src/app/daily-claims-dashboard.html"
+    },
+    {
+      "source": "/auth.js",
+      "destination": "/src/app/auth.js"
+    },
+    {
+      "source": "/daily-claims-dashboard.js",
+      "destination": "/src/app/daily-claims-dashboard.js"
+    },
+    {
+      "source": "/assets/(.*)",
+      "destination": "/src/assets/$1"
     }
   ],
   "headers": [
