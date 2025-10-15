@@ -1,17 +1,17 @@
-  name: Multi-Agent Code Review
+name: Multi-Agent Code Review
 
 on:
   push:
     branches:
       - main
-      - qa
+      - QA
       - develop
       - feature/**
       - fix/**
   pull_request:
     branches:
       - main
-      - qa
+      - QA
       - develop
 
 permissions:
