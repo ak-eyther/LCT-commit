@@ -849,13 +849,13 @@
         <div class="content">
             <!-- Page Tabs -->
             <div class="page-tabs">
-                <button class="page-tab active" onclick="switchTab('new-meeting')">
+                <button class="page-tab active" onclick="switchTab('new-meeting', this)">
                     ✨ New Meeting
                 </button>
-                <button class="page-tab" onclick="switchTab('past-meetings')">
+                <button class="page-tab" onclick="switchTab('past-meetings', this)">
                     📋 Past Meetings
                 </button>
-                <button class="page-tab" onclick="switchTab('templates')">
+                <button class="page-tab" onclick="switchTab('templates', this)">
                     ⚙️ Manage Templates
                 </button>
             </div>
@@ -1266,7 +1266,7 @@ PARKING LOT
 
         // Auto-save at configurable interval (default: 30 seconds)
         function setupAutoSave() {
-            setInterval(() => {
+            autoSaveTimer = setInterval(() => {
                 const notes = document.getElementById('meetingNotes').value;
                 if (notes.length > 10) {
                     localStorage.setItem('brainDumps_draft', JSON.stringify({
@@ -1280,6 +1280,13 @@ PARKING LOT
                     showAutoSaveStatus('Auto-saved ✓');
                 }
             }, CONFIG.AUTO_SAVE_INTERVAL);
+
+            // Clear interval on page unload to prevent memory leak
+            window.addEventListener('beforeunload', () => {
+                if (autoSaveTimer) {
+                    clearInterval(autoSaveTimer);
+                }
+            });
         }
 
         function showAutoSaveStatus(message) {
@@ -1291,7 +1298,7 @@ PARKING LOT
         }
 
         // Tab switching
-        function switchTab(tabName) {
+        function switchTab(tabName, btnEl) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -1300,7 +1307,9 @@ PARKING LOT
             });
 
             document.getElementById(`tab-${tabName}`).classList.add('active');
-            event.target.classList.add('active');
+            if (btnEl) {
+                btnEl.classList.add('active');
+            }
 
             if (tabName === 'past-meetings') {
                 renderPastMeetings();
@@ -1578,6 +1587,11 @@ Next Meeting: October 27, 2025`
 
             // Add to past meetings
             pastMeetings.unshift(newMeeting);
+
+            // Cap to 20 most recent meetings
+            if (pastMeetings.length > 20) {
+                pastMeetings.length = 20;
+            }
 
             // Save to localStorage
             localStorage.setItem('brainDumps_meetings', JSON.stringify(pastMeetings));
