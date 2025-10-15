@@ -2,9 +2,9 @@
 
 ## 📋 Overview
 
-This project uses a **simple, lightweight Git workflow** optimized for small teams working on HTML applications with Vercel deployment.
+This project uses a **simple, lightweight Git workflow with QA gate** optimized for small teams working on HTML applications with Vercel deployment and AI-powered code review.
 
-**Philosophy:** Keep it simple. This is a single HTML file project, not a complex application. The strategy provides safety without unnecessary overhead.
+**Philosophy:** Keep it simple, but safe. This is a single HTML file project, not a complex application. The QA branch adds a quality gate with automated AI review (Sentinel + CodeRabbit) before production, without adding complexity.
 
 ---
 
@@ -14,19 +14,22 @@ This project uses a **simple, lightweight Git workflow** optimized for small tea
 
 ```
 main (production)
-  ↓
+  ↑
+  QA (pre-production testing & AI review)
+  ↑
 feature/*, fix/* (short-lived, 1-2 days max)
 ```
 
-**That's it!** No develop branch, no complex workflows.
+**Enhanced with QA!** Simple workflow with quality gate before production.
 
 ### Branch Descriptions
 
-| Branch      | Purpose         | Deploys To        | Protected   |
-| ----------- | --------------- | ----------------- | ----------- |
-| `main`      | Production code | Vercel Production | ⚠️ Optional |
-| `feature/*` | New features    | Local/Preview     | ❌ No       |
-| `fix/*`     | Bug fixes       | Local/Preview     | ❌ No       |
+| Branch      | Purpose                          | Deploys To                 | Protected   |
+| ----------- | -------------------------------- | -------------------------- | ----------- |
+| `main`      | Production code                  | Vercel Production          | ⚠️ Optional |
+| `QA`        | Pre-production testing & AI review | Vercel Preview (QA)      | ⚠️ Optional |
+| `feature/*` | New features                     | Local/Preview              | ❌ No       |
+| `fix/*`     | Bug fixes                        | Local/Preview              | ❌ No       |
 
 ---
 
@@ -89,29 +92,52 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 git push -u origin feature/duplicate-detection
 ```
 
-### Merging to Main
+### Merging to QA for Testing
 
-**Option 1: Direct Merge (Fast, for solo work)**
+**Recommended workflow with QA gate:**
 
 ```bash
 # After testing locally
-git checkout main
+git checkout QA
+git pull origin QA
 git merge feature/duplicate-detection
+git push origin QA
+
+# AI reviewers (Sentinel, CodeRabbit) automatically review
+# Test on QA environment
+# Wait for AI review results
+```
+
+### Promoting QA to Main (Production)
+
+**After successful QA testing:**
+
+```bash
+# Merge QA to main
+git checkout main
+git pull origin main
+git merge QA
 git push origin main
 
-# Clean up
+# Clean up feature branch
 git branch -d feature/duplicate-detection
 git push origin --delete feature/duplicate-detection
 ```
 
-**Option 2: Pull Request (Recommended for team work)**
+**Alternative: Pull Request Workflow (Recommended for team work)**
 
 ```bash
-# Push your branch
+# Push your feature branch
 git push origin feature/duplicate-detection
 
-# Create PR via GitHub web interface
-# Review → Approve → Merge → Delete branch
+# Create PR to QA via GitHub web interface
+# AI Review (Sentinel + CodeRabbit) runs automatically
+# After approval → Merge to QA
+
+# Test on QA environment
+
+# Create PR from QA to main
+# Final review → Merge → Deploy to production
 ```
 
 ---
@@ -172,6 +198,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ### DO ✅
 
 - **Test in browser before committing** - Open HTML file, verify it works
+- **Merge to QA before main** - Always use the quality gate
+- **Wait for AI review results** - Check Sentinel and CodeRabbit feedback
 - **Keep branches short-lived** - 1-2 days max
 - **One feature per branch** - Don't mix unrelated changes
 - **Write clear commit messages** - Future you will thank you
@@ -181,10 +209,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ### DON'T ❌
 
 - **Commit broken code** - Always test first
+- **Skip QA branch** - Never merge feature branches directly to main
+- **Ignore AI review comments** - Fix critical and high priority issues
 - **Mix multiple features** - One thing at a time
 - **Use vague messages** - "fix stuff" tells us nothing
 - **Let branches go stale** - Merge or delete within days
-- **Force push to main** - Never do this
+- **Force push to main or QA** - Never do this
 
 ---
 
@@ -205,9 +235,16 @@ git add .
 git commit -m "fix: Correct typo in criteria label"
 git push origin fix/typo-in-label
 
-# Merge via PR or directly
-git checkout main
+# Merge to QA for AI review
+git checkout QA
+git pull origin QA
 git merge fix/typo-in-label
+git push origin QA
+
+# After AI review passes, merge to main
+git checkout main
+git pull origin main
+git merge QA
 git push origin main
 ```
 
@@ -241,7 +278,27 @@ git merge main
 git push origin feature/your-feature
 ```
 
-### Scenario 4: Oops, Broke Production
+### Scenario 4: QA Testing Before Production
+
+```bash
+# Merge feature to QA for testing
+git checkout QA
+git pull origin QA
+git merge feature/tariff-validation
+git push origin QA
+
+# Wait for AI reviewers (Sentinel, CodeRabbit) to complete
+# Test on QA environment
+# If issues found, fix them on the feature branch and repeat
+
+# Once QA passes, promote to main
+git checkout main
+git pull origin main
+git merge QA
+git push origin main
+```
+
+### Scenario 5: Oops, Broke Production
 
 ```bash
 # Quick revert
@@ -254,7 +311,17 @@ git checkout -b fix/urgent-production-fix
 # Fix the issue
 # Test thoroughly
 git push origin fix/urgent-production-fix
-# Merge immediately
+# Merge to QA first, then main
+```
+
+### Scenario 6: Sync QA with Main
+
+```bash
+# If main has hotfixes that QA doesn't have
+git checkout QA
+git pull origin QA
+git merge main
+git push origin QA
 ```
 
 ---
@@ -268,30 +335,36 @@ Developer → feature/xxx
               ↓
            Push to GitHub
               ↓
+           Merge to QA → Vercel Preview (QA) + AI Review (Sentinel, CodeRabbit)
+              ↓
+           Test on QA environment
+              ↓
            Merge to main → Vercel Production (auto-deploy)
 ```
 
 ### Vercel Integration
 
 - **Main branch** → Automatically deploys to production
+- **QA branch** → Deploys to QA preview environment for testing
 - **Feature branches** → Can preview if needed (optional)
 
 ---
 
 ## 🛡️ Branch Protection (Optional)
 
-For `main` branch, you CAN add protection (but not required for solo work):
+For `main` and `QA` branches, you CAN add protection (but not required for solo work):
 
 **Minimal Protection:**
 
 - ✅ Require pull request before merging (optional)
 - ❌ Approvals: Not needed for solo work
 - ✅ Do not allow force push (recommended)
+- ✅ Require status checks to pass (Sentinel, CodeRabbit reviews)
 
 **How to enable:**
 
 - Go to: https://github.com/ak-eyther/LCT-commit/settings/branches
-- Add rule for `main`
+- Add rule for `main` and `QA`
 - Enable only what you need
 
 ---
@@ -316,7 +389,7 @@ Created → Work → Test → Push → Merge → Delete
 ## 📚 Quick Reference
 
 ```bash
-# Daily workflow
+# Daily workflow with QA gate
 git checkout main                # Start from main
 git pull origin main             # Get latest
 git checkout -b feature/name     # Create branch
@@ -325,13 +398,19 @@ git add .                        # Stage changes
 git commit -m "message"          # Commit
 git push origin feature/name     # Push
 
-# Merge (simple way)
-git checkout main
+# Merge to QA for testing
+git checkout QA
+git pull origin QA
 git merge feature/name
-git push origin main
+git push origin QA
+# Wait for AI review (Sentinel, CodeRabbit)
+# Test on QA environment
 
-# Merge (PR way)
-# Use GitHub web interface
+# Promote QA to main (after testing passes)
+git checkout main
+git pull origin main
+git merge QA
+git push origin main
 
 # Cleanup
 git branch -d feature/name       # Delete local
@@ -345,22 +424,23 @@ git log --oneline -5             # Recent commits
 
 ---
 
-## 💡 Why This Simplified Approach?
+## 💡 Why This QA-Enhanced Approach?
 
 ### Perfect for:
 
 - ✅ Single HTML file projects
 - ✅ Small teams (1-3 people)
 - ✅ Fast iteration needed
-- ✅ Learning Git basics
+- ✅ AI-powered code review (Sentinel, CodeRabbit)
+- ✅ Quality gate before production
+- ✅ Healthcare/financial applications requiring compliance
 - ✅ Projects where testing = opening file in browser
 
 ### Not suitable for:
 
-- ❌ Large applications with build processes
+- ❌ Large applications with complex build processes
 - ❌ Teams of 10+ developers
-- ❌ Complex deployment pipelines
-- ❌ Projects requiring extensive QA
+- ❌ Complex multi-environment pipelines
 
 ### Your LCT Project:
 
@@ -369,7 +449,17 @@ git log --oneline -5             # Recent commits
 - 🎯 No build process
 - 🎯 Test by opening in browser
 - 🎯 Small team
-- **✅ Perfect fit for simple workflow!**
+- 🎯 Healthcare claims = compliance required
+- 🎯 AI-powered security & quality checks
+- **✅ Perfect fit for QA-enhanced workflow!**
+
+### Why Add QA Branch?
+
+1. **Automated AI Review**: Sentinel and CodeRabbit automatically review all code before production
+2. **Security Compliance**: Healthcare PHI/PII requires security checks (OWASP Top 10)
+3. **Linear Integration**: Issues auto-created from AI reviews for tracking
+4. **Quality Gate**: Catch bugs before production without manual reviews
+5. **LCT Requirement**: 90% accuracy target needs quality assurance
 
 ---
 
