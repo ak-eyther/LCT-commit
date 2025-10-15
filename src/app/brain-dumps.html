@@ -15,7 +15,40 @@
         body {
             background: #f8fafc;
             display: flex;
+            flex-direction: column;
             min-height: 100vh;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background: white;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 16px 24px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .top-nav a {
+            color: #525252;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.15s;
+        }
+
+        .top-nav a:hover {
+            color: #0a0a0a;
+        }
+
+        .top-nav a.active {
+            color: #0a0a0a;
+            border-bottom: 2px solid #d97757;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex: 1;
         }
 
         /* Sidebar */
@@ -778,8 +811,19 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="index.html">Dashboard</a>
+        <a href="team-structure-v2.html">Team Structure</a>
+        <a href="reports.html">Reports</a>
+        <a href="documentation.html">Documentation</a>
+        <a href="brain-dumps.html" class="active" aria-current="page">Brain Dumps</a>
+        <a href="settings.html">Settings</a>
+    </nav>
+
+    <div class="content-wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar">
         <div class="logo">
             <h1>LCT Commit</h1>
             <p>Meeting Notes System</p>
@@ -805,13 +849,13 @@
         <div class="content">
             <!-- Page Tabs -->
             <div class="page-tabs">
-                <button class="page-tab active" onclick="switchTab('new-meeting')">
+                <button class="page-tab active" onclick="switchTab('new-meeting', this)">
                     ✨ New Meeting
                 </button>
-                <button class="page-tab" onclick="switchTab('past-meetings')">
+                <button class="page-tab" onclick="switchTab('past-meetings', this)">
                     📋 Past Meetings
                 </button>
-                <button class="page-tab" onclick="switchTab('templates')">
+                <button class="page-tab" onclick="switchTab('templates', this)">
                     ⚙️ Manage Templates
                 </button>
             </div>
@@ -1222,7 +1266,7 @@ PARKING LOT
 
         // Auto-save at configurable interval (default: 30 seconds)
         function setupAutoSave() {
-            setInterval(() => {
+            autoSaveTimer = setInterval(() => {
                 const notes = document.getElementById('meetingNotes').value;
                 if (notes.length > 10) {
                     localStorage.setItem('brainDumps_draft', JSON.stringify({
@@ -1236,6 +1280,13 @@ PARKING LOT
                     showAutoSaveStatus('Auto-saved ✓');
                 }
             }, CONFIG.AUTO_SAVE_INTERVAL);
+
+            // Clear interval on page unload to prevent memory leak
+            window.addEventListener('beforeunload', () => {
+                if (autoSaveTimer) {
+                    clearInterval(autoSaveTimer);
+                }
+            });
         }
 
         function showAutoSaveStatus(message) {
@@ -1247,7 +1298,7 @@ PARKING LOT
         }
 
         // Tab switching
-        function switchTab(tabName) {
+        function switchTab(tabName, btnEl) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -1256,7 +1307,9 @@ PARKING LOT
             });
 
             document.getElementById(`tab-${tabName}`).classList.add('active');
-            event.target.classList.add('active');
+            if (btnEl) {
+                btnEl.classList.add('active');
+            }
 
             if (tabName === 'past-meetings') {
                 renderPastMeetings();
@@ -1534,6 +1587,11 @@ Next Meeting: October 27, 2025`
 
             // Add to past meetings
             pastMeetings.unshift(newMeeting);
+
+            // Cap to 20 most recent meetings
+            if (pastMeetings.length > 20) {
+                pastMeetings.length = 20;
+            }
 
             // Save to localStorage
             localStorage.setItem('brainDumps_meetings', JSON.stringify(pastMeetings));
@@ -1926,5 +1984,6 @@ Next Meeting: October 27, 2025`
             return div.innerHTML;
         }
     </script>
+    </div> <!-- Close content-wrapper -->
 </body>
 </html>

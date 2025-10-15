@@ -6,8 +6,8 @@ on:
       - main
       - QA
       - develop
-      - feature/**
-      - fix/**
+      - feature/*
+      - fix/*
   pull_request:
     branches:
       - main
@@ -96,8 +96,13 @@ jobs:
             const path = require('path');
             const core = require('@actions/core');
 
-            // Read the elite code review agent guidelines
-            const agentGuide = fs.readFileSync('.claude/agents/code-reviewer.md', 'utf8');
+            // Read the elite code review agent guidelines (if available)
+            let agentGuide = '';
+            try {
+              agentGuide = fs.readFileSync('.claude/agents/code-reviewer.md', 'utf8');
+            } catch (error) {
+              console.log('⚠️  Agent guide not found, using default security patterns');
+            }
 
             // Split files correctly - tj-actions/changed-files outputs newline-separated files
             // Filter out empty strings and trim whitespace
@@ -590,12 +595,6 @@ jobs:
               core.setFailed(`❌ Found ${criticalIssues.length} CRITICAL security issues. Fix before merging.`);
             }
 
-      - name: Create Linear Issues
-        if: always() && (env.LINEAR_API_KEY != '' && env.LINEAR_TEAM_ID != '')
-        env:
-          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
-          LINEAR_TEAM_ID: ${{ secrets.LINEAR_TEAM_ID }}
-        run: echo "Linear integration handled in main script"
 
   lint-check:
     name: Basic Code Quality Check
