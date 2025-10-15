@@ -1185,10 +1185,15 @@ PARKING LOT
 - [Ideas to revisit later]`
         };
 
+        // Configuration (testable via window global)
+        const CONFIG = {
+            AUTO_SAVE_INTERVAL: window.BRAIN_DUMPS_AUTO_SAVE_INTERVAL || 30000, // 30 seconds default
+        };
+
         // Past meetings storage
         let pastMeetings = [];
         let currentAIResults = null;
-        let autoSaveInterval = null;
+        let autoSaveTimer = null;
 
         // Initialize
         window.addEventListener('DOMContentLoaded', () => {
@@ -1207,14 +1212,6 @@ PARKING LOT
             setupAutoSave();
         });
 
-        // Cleanup on page unload (prevents memory leak)
-        window.addEventListener('beforeunload', () => {
-            if (autoSaveInterval) {
-                clearInterval(autoSaveInterval);
-                autoSaveInterval = null;
-            }
-        });
-
         // Character counter
         function setupCharCounter() {
             const textarea = document.getElementById('meetingNotes');
@@ -1223,14 +1220,9 @@ PARKING LOT
             });
         }
 
-        // Auto-save every 30 seconds
+        // Auto-save at configurable interval (default: 30 seconds)
         function setupAutoSave() {
-            // Clear existing interval if any
-            if (autoSaveInterval) {
-                clearInterval(autoSaveInterval);
-            }
-
-            autoSaveInterval = setInterval(() => {
+            setInterval(() => {
                 const notes = document.getElementById('meetingNotes').value;
                 if (notes.length > 10) {
                     localStorage.setItem('brainDumps_draft', JSON.stringify({
@@ -1243,7 +1235,7 @@ PARKING LOT
                     }));
                     showAutoSaveStatus('Auto-saved ✓');
                 }
-            }, 30000);
+            }, CONFIG.AUTO_SAVE_INTERVAL);
         }
 
         function showAutoSaveStatus(message) {
@@ -1457,7 +1449,7 @@ Next Meeting: October 27, 2025`
                 <div class="result-item">
                     <div class="result-item-title">${escapeHtml(item.task)}</div>
                     <div class="result-item-meta">
-                        👤 ${escapeHtml(item.owner)} • 📅 Due: ${item.dueDate} • ⚡ Priority: ${item.priority}
+                        👤 ${escapeHtml(item.owner)} • 📅 Due: ${escapeHtml(item.dueDate)} • ⚡ Priority: ${escapeHtml(item.priority)}
                     </div>
                 </div>
             `).join('');
@@ -1478,7 +1470,7 @@ Next Meeting: October 27, 2025`
             blockersList.innerHTML = results.blockers.map(item => `
                 <div class="result-item">
                     <div class="result-item-title">${escapeHtml(item.blocker)}</div>
-                    <div class="result-item-meta">👤 ${escapeHtml(item.owner)} • Impact: ${item.impact}</div>
+                    <div class="result-item-meta">👤 ${escapeHtml(item.owner)} • Impact: ${escapeHtml(item.impact)}</div>
                 </div>
             `).join('');
 
@@ -1772,8 +1764,8 @@ Next Meeting: October 27, 2025`
                                                     </div>
                                                     <div class="action-item-meta">
                                                         <span class="meta-badge">👤 ${escapeHtml(action.owner)}</span>
-                                                        <span class="meta-badge">📅 Due: ${action.dueDate}</span>
-                                                        <span class="meta-badge">⚡ Priority: ${action.priority}</span>
+                                                        <span class="meta-badge">📅 Due: ${escapeHtml(action.dueDate)}</span>
+                                                        <span class="meta-badge">⚡ Priority: ${escapeHtml(action.priority)}</span>
                                                     </div>
                                                 </div>
                                             `).join('')}
@@ -1797,7 +1789,7 @@ Next Meeting: October 27, 2025`
                                                 <div class="blocker-item">
                                                     <div class="item-title">⚠️ ${escapeHtml(blocker.blocker)}</div>
                                                     <div class="item-context">
-                                                        Owner: ${escapeHtml(blocker.owner)} • Impact: ${blocker.impact}
+                                                        Owner: ${escapeHtml(blocker.owner)} • Impact: ${escapeHtml(blocker.impact)}
                                                     </div>
                                                 </div>
                                             `).join('')}

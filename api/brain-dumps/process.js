@@ -2,30 +2,29 @@
 // Integrates with OpenAI GPT-4 to extract action items, decisions, and blockers
 // Updated: October 14, 2025 - Added error handling infrastructure with tracking IDs
 
-import OpenAI from 'openai';
-import {
+const OpenAI = require('openai');
+const {
   ValidationError,
   handleOpenAIError,
   InternalServerError,
   generateErrorId,
-} from '../../src/lib/errors.js';
-import {
+} = require('../../src/lib/errors');
+const {
   sendErrorResponse,
   sendSuccessResponse,
   setCORSHeaders,
   handlePreflightRequest,
   validateMethod,
-} from '../../src/lib/error-handler.js';
-import { getOpenAIKey, validateConfig } from '../../src/lib/config.js';
+} = require('../../src/lib/error-handler');
+const { getOpenAIKey, validateConfig } = require('../../src/lib/config');
 
 // Validate configuration on function cold start
 const configValidation = validateConfig({ logWarnings: false });
 if (!configValidation.valid) {
   const errorId = generateErrorId();
-  console.error(`[${errorId}] CRITICAL: Configuration validation failed`, {
+  console.error(`[${errorId}] Configuration validation failed`, {
     errorId,
     errors: configValidation.errors,
-    timestamp: new Date().toISOString(),
   });
 }
 
@@ -36,13 +35,11 @@ try {
   openai = new OpenAI({ apiKey });
 } catch (error) {
   const errorId = generateErrorId();
-  console.error(`[${errorId}] CRITICAL: Failed to initialize OpenAI client`, {
+  console.error(`[${errorId}] Failed to initialize OpenAI client`, {
     errorId,
     error: error.message,
-    stack: error.stack,
-    timestamp: new Date().toISOString(),
   });
-  // OpenAI will be null, and requests will fail with clear error message at line 175
+  // OpenAI will be null, and requests will fail with clear error message
 }
 
 // System prompt for AI extraction
@@ -91,7 +88,7 @@ Extraction Guidelines:
 
 /**
  * Validates request input
- * Extracted outside try-catch to avoid catching validation errors incorrectly
+ * Throws ValidationError which is caught and handled by sendErrorResponse
  *
  * @param {Object} body - Request body
  * @throws {ValidationError} If validation fails
@@ -101,9 +98,7 @@ function validateInput(body) {
 
   // Check required fields
   if (!title || !date || !notes) {
-    throw new ValidationError(
-      'Missing required fields: title, date, and notes are required.'
-    );
+    throw new ValidationError('Missing required fields: title, date, and notes are required.');
   }
 
   // Validate title
@@ -135,19 +130,9 @@ function validateInput(body) {
 
   // PHI/Medical data detection
   const medicalKeywords = [
-    'patient',
-    'diagnosis',
-    'prescription',
-    'medical record',
-    'phi',
-    'hipaa',
-    'treatment',
-    'medication',
-    'symptom',
-    'icd-10',
-    'cpt code',
-    'pharmacy',
-    'hospital admission',
+    'patient', 'diagnosis', 'prescription', 'medical record',
+    'phi', 'hipaa', 'treatment', 'medication', 'symptom',
+    'icd-10', 'cpt code', 'pharmacy', 'hospital admission'
   ];
 
   const notesLower = notes.toLowerCase();
@@ -200,11 +185,6 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Validate HTTP method
-  if (!validateMethod(req, res, ['POST'])) {
-    return;
-  }
-
   // Check if OpenAI client was initialized
   if (!openai) {
     return sendErrorResponse(
@@ -218,8 +198,13 @@ export default async function handler(req, res) {
 
   try {
     // ==============================
-    // INPUT VALIDATION (Outside try-catch for specific handling)
+    // VALIDATION
     // ==============================
+
+    // Validate HTTP method
+    validateMethod(req, ['POST']);
+
+    // Validate request input
     validateInput(req.body);
 
     const { title, date, participants, notes } = req.body;
@@ -244,16 +229,16 @@ ${notes}`;
         messages: [
           {
             role: 'system',
-            content: SYSTEM_PROMPT,
+            content: SYSTEM_PROMPT
           },
           {
             role: 'user',
-            content: userMessage,
-          },
+            content: userMessage
+          }
         ],
         response_format: { type: 'json_object' },
-        temperature: 0.3, // Lower temperature for consistent extraction
-        max_tokens: 2000, // Sufficient for most meeting extractions
+        temperature: 0.3,  // Lower temperature for consistent extraction
+        max_tokens: 2000   // Sufficient for most meeting extractions
       });
     } catch (openaiError) {
       // Handle OpenAI-specific errors with proper error types
@@ -287,14 +272,15 @@ ${notes}`;
       results: {
         action_items: extracted.action_items,
         decisions: extracted.decisions,
-        blockers: extracted.blockers,
+        blockers: extracted.blockers
       },
       metadata: {
         model: completion.model,
         tokens_used: completion.usage.total_tokens,
-        processing_time: new Date().toISOString(),
-      },
+        processing_time: new Date().toISOString()
+      }
     });
+
   } catch (error) {
     // ==============================
     // CENTRALIZED ERROR HANDLING
