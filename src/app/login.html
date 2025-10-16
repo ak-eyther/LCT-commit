@@ -219,7 +219,25 @@
         </div>
     </div>
 
+    <script src="../shared/role-utils.js" defer></script>
+    <script src="auth.js" defer></script>
     <script>
+        function getNormalizedRole(role) {
+            try {
+                if (window.lctRoleUtils && typeof window.lctRoleUtils.normalizeRole === 'function') {
+                    return window.lctRoleUtils.normalizeRole(role || 'user');
+                }
+            } catch (error) {
+                console.warn('Failed to normalize role', error);
+            }
+            if (typeof role === 'string') {
+                const normalized = role.trim().toLowerCase();
+                if (normalized === 'admin' || normalized === 'user') {
+                    return normalized;
+                }
+            }
+            return 'user';
+        }
         // Check if already logged in
         const existingToken = localStorage.getItem('lctAuthToken');
         if (existingToken) {
@@ -270,9 +288,11 @@
                 if (data.success) {
                     // Store token
                     localStorage.setItem('lctAuthToken', data.token);
-                    
+
                     // Store user info
-                    localStorage.setItem('lctUser', JSON.stringify(data.user));
+                    const normalizedRole = getNormalizedRole(data.user && data.user.role);
+                    const userInfo = Object.assign({}, data.user, { role: normalizedRole });
+                    localStorage.setItem('lctUser', JSON.stringify(userInfo));
                     
                     // Set remember me (extend token if needed)
                     if (rememberMe) {
@@ -324,6 +344,12 @@
                 });
                 
                 if (response.ok) {
+                    const data = await response.json().catch(() => null);
+                    if (data && data.user) {
+                        const normalizedRole = getNormalizedRole(data.user.role);
+                        const storedUser = Object.assign({}, data.user, { role: normalizedRole });
+                        localStorage.setItem('lctUser', JSON.stringify(storedUser));
+                    }
                     // Token is valid, redirect to dashboard
                     window.location.href = '/';
                 } else {

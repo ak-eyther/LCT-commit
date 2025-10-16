@@ -1541,8 +1541,9 @@
         </div>
     </div>
 
-    <script src="auth.js"></script>
-    <script>
+    <script src="../shared/role-utils.js" defer></script>
+    <script src="auth.js" defer></script>
+    <script type="module">
         function showTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');

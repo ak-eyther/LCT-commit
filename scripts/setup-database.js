@@ -17,7 +17,6 @@ async function setupDatabase() {
   try {
     console.log('🔧 Setting up LCT authentication database...');
 
-    // Validate POSTGRES_URL is configured
     if (!process.env.POSTGRES_URL) {
       console.error('❌ POSTGRES_URL environment variable is not configured');
       console.error('💡 Check:');
@@ -27,7 +26,6 @@ async function setupDatabase() {
       process.exit(1);
     }
 
-    // Create database client with direct connection
     client = new Client({
       connectionString: process.env.POSTGRES_URL,
     });
@@ -36,52 +34,74 @@ async function setupDatabase() {
     await client.connect();
     console.log('✅ Connected to database');
 
-    // Create users table
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        last_login TIMESTAMP
+        role VARCHAR(20) NOT NULL DEFAULT 'user',
+        CONSTRAINT users_role_valid CHECK (role IN ('user','admin')),
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        last_login TIMESTAMPTZ
       );
     `;
 
     await client.query(createTableQuery);
-    console.log('✅ Users table created successfully');
+    console.log('✅ Users table created or verified successfully');
 
-    // Create index on email for faster lookups
+    const ensureRoleColumnQuery = `
+      ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS role VARCHAR(20) NOT NULL DEFAULT 'user';
+    `;
+    await client.query(ensureRoleColumnQuery);
+
+    const ensureConstraintQuery = `
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM pg_constraint c
+          JOIN pg_class t ON t.oid = c.conrelid
+          WHERE t.relname = 'users' AND c.conname = 'users_role_valid'
+        ) THEN
+          ALTER TABLE users
+          ADD CONSTRAINT users_role_valid CHECK (role IN ('user','admin'));
+        END IF;
+      END $$;
+    `;
+    await client.query(ensureConstraintQuery);
+
+    const ensureTimestampsQuery = `
+      ALTER TABLE users
+      ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC',
+      ALTER COLUMN created_at SET DEFAULT CURRENT_TIMESTAMP,
+      ALTER COLUMN last_login TYPE TIMESTAMPTZ USING last_login AT TIME ZONE 'UTC';
+    `;
+    await client.query(ensureTimestampsQuery).catch(() => undefined);
+
     const createIndexQuery = `
       CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
     `;
-
     await client.query(createIndexQuery);
-    console.log('✅ Email index created');
 
     console.log('🎉 Database setup complete!');
     console.log('📝 Next steps:');
-    console.log(
-      '   1. Run: node scripts/add-user.js "email@example.com" "your-secure-password"'
-    );
+    console.log('   1. Run: node scripts/add-user.js "email@example.com" "your-secure-password" [role]');
     console.log('   2. Test login at: /login.html');
   } catch (error) {
     console.error('❌ Database setup failed:', error.message);
     console.error('💡 Make sure:');
     console.error('   - Vercel Postgres is set up in your project');
-    console.error(
-      '   - POSTGRES_URL environment variable is configured in .env'
-    );
+    console.error('   - POSTGRES_URL environment variable is configured in .env');
     console.error('   - You have run: npm install');
     process.exit(1);
   } finally {
-    // Close the database connection
     if (client) {
       await client.end();
     }
   }
 }
 
-// Run if called directly
 if (require.main === module) {
   setupDatabase();
 }

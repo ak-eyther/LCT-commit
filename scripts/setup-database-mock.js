@@ -9,6 +9,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcryptjs');
+const { normalizeRole } = require('../shared/role-utils');
 
 async function setupMockDatabase() {
   try {
@@ -16,19 +18,24 @@ async function setupMockDatabase() {
       '🔧 Setting up LCT authentication (mock mode for local development)...'
     );
 
-    // Create a mock users file for local development
+    const adminEmail = process.env.MOCK_ADMIN_EMAIL || 'admin@example.com';
+    const adminPassword =
+      process.env.MOCK_ADMIN_PASSWORD || 'ChangeMe123!';
+    const normalizedEmail = adminEmail.trim().toLowerCase();
+    const passwordHash = await bcrypt.hash(adminPassword, 12);
+    const adminRole = normalizeRole('admin');
+
     const mockUsers = {
-      'arif.khan@vitraya.com': {
+      [normalizedEmail]: {
         id: 1,
-        email: 'arif.khan@vitraya.com',
-        passwordHash:
-          '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj5J5K5K5K5K', // Mock hash for development password
+        email: normalizedEmail,
+        passwordHash,
+        role: adminRole,
         createdAt: new Date().toISOString(),
         lastLogin: null,
       },
     };
 
-    // Save mock users to a local file
     const mockDataPath = path.join(__dirname, '..', 'mock-users.json');
     await fs.promises.writeFile(
       mockDataPath,
@@ -36,18 +43,19 @@ async function setupMockDatabase() {
     );
 
     console.log('✅ Mock database setup complete!');
+    console.log(`👤 Admin email: ${normalizedEmail}`);
+    console.log('🔐 Password sourced from MOCK_ADMIN_PASSWORD (or default).');
     console.log('📝 This is for local development only.');
     console.log('📝 When deployed to Vercel, the real database will be used.');
     console.log('📝 Next steps:');
     console.log('   1. Test login at: /login.html');
-    console.log('   2. Use: arif.khan@vitraya.com / [password in .env.local]');
+    console.log('   2. Use the configured mock admin credentials.');
   } catch (error) {
     console.error('❌ Mock database setup failed:', error.message);
     process.exit(1);
   }
 }
 
-// Run if called directly
 if (require.main === module) {
   setupMockDatabase();
 }

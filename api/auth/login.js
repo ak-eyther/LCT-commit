@@ -29,14 +29,15 @@ const { sql } = require('@vercel/postgres');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
+const { normalizeRole } = require('../../shared/role-utils');
 
 // Create rate limiter for login endpoint
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // limit each IP to 5 requests per windowMs
   message: 'Too many login attempts, please try again later',
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 // Production-safe logging utility
@@ -45,13 +46,15 @@ const logger = {
     if (process.env.NODE_ENV !== 'production') {
       console.error(msg, data);
     }
-    // In production, this would integrate with your logging service
-    // e.g., Sentry, LogRocket, CloudWatch, etc.
+  },
+  warn: (msg, data) => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(msg, data);
+    }
   },
 };
 
 module.exports = async function handler(req, res) {
-  // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({
       success: false,
@@ -59,19 +62,15 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  // Apply rate limiting (for Vercel serverless)
-  // Note: In production, use a distributed rate limiter with Redis or similar
   await new Promise((resolve, reject) => {
     loginLimiter(req, res, err => {
       if (err) reject(err);
       else resolve();
     });
   }).catch(() => {
-    // Rate limit exceeded - response already sent by limiter
     return;
   });
 
-  // Check if response was already sent by rate limiter
   if (res.headersSent) {
     return;
   }
@@ -79,7 +78,6 @@ module.exports = async function handler(req, res) {
   try {
     const { email, password, rememberMe } = req.body;
 
-    // Validate inputs
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -87,7 +85,6 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // Basic email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
@@ -96,11 +93,12 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // Find user in database
+    const normalizedEmail = email.trim().toLowerCase();
+
     const userResult = await sql`
-      SELECT id, email, password_hash 
-      FROM users 
-      WHERE email = ${email}
+      SELECT id, email, password_hash, role
+      FROM users
+      WHERE email = ${normalizedEmail}
     `;
 
     if (userResult.rows.length === 0) {
@@ -112,7 +110,6 @@ module.exports = async function handler(req, res) {
 
     const user = userResult.rows[0];
 
-    // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
 
     if (!isValidPassword) {
@@ -122,7 +119,6 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // Validate JWT_SECRET is configured
     if (!process.env.JWT_SECRET) {
       logger.error('CRITICAL: JWT_SECRET is not configured');
       return res.status(500).json({
@@ -131,33 +127,40 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // Generate JWT token with appropriate expiration
-    // Remember Me: 7 days, otherwise: 1 hour
-    const expiresIn = rememberMe ? '7d' : '1h';
-
-    const token = jwt.sign(
-      {
+    let userRole;
+    try {
+      userRole = normalizeRole(user.role || 'user');
+    } catch (roleError) {
+      logger.warn('Invalid role detected during login, defaulting to user', {
         userId: user.id,
-        email: user.email,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn }
-    );
+        role: user.role,
+        message: roleError.message,
+      });
+      userRole = 'user';
+    }
 
-    // Update last login timestamp
+    const tokenPayload = {
+      userId: user.id,
+      email: user.email,
+      role: userRole,
+    };
+
+    const expiresIn = rememberMe ? '7d' : '1h';
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn });
+
     await sql`
-      UPDATE users 
-      SET last_login = CURRENT_TIMESTAMP 
+      UPDATE users
+      SET last_login = CURRENT_TIMESTAMP
       WHERE id = ${user.id}
     `;
 
-    // Return success with token
     return res.status(200).json({
       success: true,
-      token: token,
+      token,
       user: {
         id: user.id,
         email: user.email,
+        role: userRole,
       },
     });
   } catch (error) {
