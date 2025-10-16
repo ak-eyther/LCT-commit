@@ -159,8 +159,9 @@
         </div>
     </div>
 
-    <script src="auth.js"></script>
-    <script>
+    <script src="../shared/role-utils.js" defer></script>
+    <script src="auth.js" defer></script>
+    <script type="module">
         // Logout event listener
         document.addEventListener('DOMContentLoaded', function() {
             const logoutLink = document.getElementById('logout-link');

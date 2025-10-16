@@ -166,6 +166,61 @@
             color: #525252;
             margin-top: 12px;
         }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .form-field label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #262626;
+        }
+
+        .form-field input,
+        .form-field select {
+            padding: 10px 12px;
+            border: 1px solid #d4d4d4;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus {
+            border-color: #d97757;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(217, 119, 87, 0.2);
+        }
+
+        .field-hint {
+            font-size: 12px;
+            color: #737373;
+        }
+
+        .admin-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .form-feedback {
+            margin-top: 16px;
+            font-size: 13px;
+            color: #525252;
+        }
+
+        .form-feedback.is-success {
+            color: #047857;
+        }
+
+        .form-feedback.is-error {
+            color: #b91c1c;
+        }
     </style>
 </head>
 <body>
@@ -212,6 +267,38 @@
             </div>
         </div>
 
+        <div class="card" id="admin-user-card" hidden>
+            <h2>Admin: Create User</h2>
+            <p style="margin-bottom: 16px;">Provision dashboard access for teammates. Admins can create both standard and admin accounts.</p>
+            <form id="create-user-form" autocomplete="off" novalidate>
+                <div class="form-field">
+                    <label for="new-user-email">Email</label>
+                    <input type="email" id="new-user-email" name="email" placeholder="teammate@example.com" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="new-user-password">Temporary Password</label>
+                    <input type="password" id="new-user-password" name="password" placeholder="At least 6 characters" minlength="6" required>
+                    <span class="field-hint">Share this temporary password with the user; they should change it after logging in.</span>
+                </div>
+
+                <div class="form-field">
+                    <label for="new-user-role">Role</label>
+                    <select id="new-user-role" name="role">
+                        <option value="user" selected>User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <div class="admin-actions">
+                    <button type="submit" class="btn btn-primary" id="create-user-submit">Create User</button>
+                    <button type="button" class="btn" id="reset-admin-form">Reset Form</button>
+                </div>
+
+                <p class="form-feedback" id="admin-feedback" role="status" aria-live="polite"></p>
+            </form>
+        </div>
+
         <div class="card">
             <h2>About</h2>
             <p><strong>Version:</strong> 1.0.0</p>
@@ -223,7 +310,9 @@
 
     <div class="toast" id="toast">Saved</div>
 
-    <script>
+    <script src="../shared/role-utils.js" defer></script>
+    <script src="auth.js" defer></script>
+    <script type="module">
         function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
@@ -298,14 +387,116 @@
             }
         }
 
-        // Event listeners
-        document.getElementById('export-json').addEventListener('click', exportJSON);
-        document.getElementById('export-csv').addEventListener('click', exportCSV);
-        document.getElementById('import-json').addEventListener('click', () => {
-            document.getElementById('importFile').click();
+        function resetAdminForm() {
+            const form = document.getElementById('create-user-form');
+            if (form) {
+                form.reset();
+            }
+            const feedback = document.getElementById('admin-feedback');
+            if (feedback) {
+                feedback.textContent = '';
+                feedback.className = 'form-feedback';
+            }
+        }
+
+        const ADMIN_SECTION_ID = 'admin-user-card';
+        let adminSectionActivated = false;
+
+        function showAdminSection(user) {
+            if (!user || user.role !== 'admin') {
+                return;
+            }
+
+            const card = document.getElementById(ADMIN_SECTION_ID);
+            if (!card || adminSectionActivated) {
+                return;
+            }
+
+            adminSectionActivated = true;
+            card.hidden = false;
+
+            const form = document.getElementById('create-user-form');
+            const feedback = document.getElementById('admin-feedback');
+            const submitButton = document.getElementById('create-user-submit');
+
+            form.addEventListener('submit', async event => {
+                event.preventDefault();
+
+                feedback.textContent = '';
+                feedback.className = 'form-feedback';
+
+                const email = document.getElementById('new-user-email').value.trim();
+                const password = document.getElementById('new-user-password').value;
+                const role = document.getElementById('new-user-role').value;
+
+                if (!email || !password) {
+                    feedback.textContent = 'Email and password are required.';
+                    feedback.classList.add('is-error');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    feedback.textContent = 'Temporary password must be at least 6 characters.';
+                    feedback.classList.add('is-error');
+                    return;
+                }
+
+                submitButton.disabled = true;
+
+                try {
+                    const token = localStorage.getItem('lctAuthToken');
+                    const response = await fetch('/api/auth/admin/create-user', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({ email, password, role }),
+                    });
+
+                    const data = await response.json().catch(() => ({}));
+
+                    if (response.ok && data.success) {
+                        feedback.textContent = 'User created successfully. Share the temporary password with the new user.';
+                        feedback.classList.add('is-success');
+                        showToast('User account created');
+                        form.reset();
+                    } else {
+                        feedback.textContent = data.error || 'Unable to create user.';
+                        feedback.classList.add('is-error');
+                    }
+                } catch (error) {
+                    feedback.textContent = 'Network error. Please try again.';
+                    feedback.classList.add('is-error');
+                } finally {
+                    submitButton.disabled = false;
+                }
+            });
+
+            document
+                .getElementById('reset-admin-form')
+                .addEventListener('click', resetAdminForm);
+        }
+
+        function initialiseSettingsPage() {
+            document.getElementById('export-json').addEventListener('click', exportJSON);
+            document.getElementById('export-csv').addEventListener('click', exportCSV);
+            document.getElementById('import-json').addEventListener('click', () => {
+                document.getElementById('importFile').click();
+            });
+            document.getElementById('importFile').addEventListener('change', importData);
+            document.getElementById('clear-data').addEventListener('click', clearAllData);
+
+            const existingUser = typeof window.getCurrentUser === 'function' ? window.getCurrentUser() : null;
+            if (existingUser) {
+                showAdminSection(existingUser);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initialiseSettingsPage);
+        window.addEventListener('lct-auth-ready', event => {
+            showAdminSection(event.detail);
         });
-        document.getElementById('importFile').addEventListener('change', importData);
-        document.getElementById('clear-data').addEventListener('click', clearAllData);
     </script>
 </body>
 </html>

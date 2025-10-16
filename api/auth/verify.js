@@ -7,9 +7,9 @@
  */
 
 const jwt = require('jsonwebtoken');
+const { normalizeRole } = require('../../shared/role-utils');
 
 module.exports = async function handler(req, res) {
-  // Only allow GET requests
   if (req.method !== 'GET') {
     return res.status(405).json({
       success: false,
@@ -18,7 +18,6 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Get token from Authorization header
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -28,31 +27,33 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const token = authHeader.substring(7); // Remove "Bearer " prefix
+    const token = authHeader.substring(7);
 
-    // Validate JWT_SECRET is configured
     if (!process.env.JWT_SECRET) {
-      // CRITICAL: JWT_SECRET is not configured - logged internally by Vercel
       return res.status(500).json({
         success: false,
         error: 'Server configuration error',
       });
     }
 
-    // Verify JWT token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    let userRole = 'user';
 
-    // Return user info
+    try {
+      userRole = normalizeRole(decoded.role || 'user');
+    } catch (error) {
+      userRole = 'user';
+    }
+
     return res.status(200).json({
       success: true,
       user: {
         id: decoded.userId,
         email: decoded.email,
+        role: userRole,
       },
     });
   } catch (error) {
-    // Token verification error - logged internally by Vercel
-
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,
