@@ -15,7 +15,7 @@ on:
       - develop
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
   issues: write
 
@@ -457,6 +457,12 @@ jobs:
 
               const githubUrl = context.payload.pull_request?.html_url || context.payload.repository.html_url;
 
+              // Redact potential secrets before sending to Linear
+              const containsSecret = /Hardcoded|AWS|Stripe|Secret|Password|Token/i.test(issue.type);
+              const sanitizedCode = containsSecret
+                ? '[REDACTED — potential secret detected]'
+                : issue.code;
+
               const description = [
                 '🛡️ **Sentinel Code Review Alert**',
                 '',
@@ -471,7 +477,7 @@ jobs:
                 '',
                 '## Code Location',
                 '```',
-                issue.code,
+                sanitizedCode,
                 '```',
                 '',
                 '## Impact',
@@ -588,6 +594,7 @@ jobs:
 
             // Fail the build if critical issues found
             if (criticalIssues.length > 0) {
+              const core = require('@actions/core');
               core.setFailed(`❌ Found ${criticalIssues.length} CRITICAL security issues. Fix before merging.`);
             }
 
@@ -663,6 +670,7 @@ jobs:
             **/*.ts
             **/*.tsx
             **/*.jsx
+            **/*.vue
             **/*.py
             **/*.java
             **/*.html
