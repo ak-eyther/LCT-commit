@@ -42,13 +42,22 @@ async function setupDatabase() {
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
+        role VARCHAR(20) NOT NULL DEFAULT 'user',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         last_login TIMESTAMP
       );
     `;
 
     await client.query(createTableQuery);
-    console.log('✅ Users table created successfully');
+    console.log('✅ Users table created or verified successfully');
+
+    // Ensure role column exists on older tables
+    const ensureRoleColumnQuery = `
+      ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS role VARCHAR(20) NOT NULL DEFAULT 'user';
+    `;
+    await client.query(ensureRoleColumnQuery);
+    console.log('✅ Role column ensured on users table');
 
     // Create index on email for faster lookups
     const createIndexQuery = `

@@ -99,6 +99,11 @@
             margin-bottom: 12px;
         }
 
+        .subtle-text {
+            font-size: 13px;
+            color: #737373;
+        }
+
         .btn {
             padding: 6px 12px;
             border: 1px solid #e5e5e5;
@@ -166,6 +171,51 @@
             color: #525252;
             margin-top: 12px;
         }
+
+        .admin-card {
+            margin-top: 24px;
+        }
+
+        .admin-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .admin-form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0a0a0a;
+        }
+
+        .admin-form-group input,
+        .admin-form-group select {
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 14px;
+        }
+
+        .admin-section-note {
+            font-size: 12px;
+            color: #737373;
+            margin-top: 8px;
+        }
+
+        .form-feedback {
+            font-size: 13px;
+            margin-top: 12px;
+            color: #525252;
+        }
+
+        .form-feedback.is-success {
+            color: #047857;
+        }
+
+        .form-feedback.is-error {
+            color: #b91c1c;
+        }
     </style>
 </head>
 <body>
@@ -178,6 +228,7 @@
         <a href="documentation.html">Documentation</a>
         <a href="brain-dumps.html">Brain Dumps</a>
         <a href="settings.html" class="active" aria-current="page">Settings</a>
+        <a href="#" id="logout-link" style="color: #dc2626; margin-left: auto;">Logout</a>
     </nav>
 
     <div class="container">
@@ -219,10 +270,39 @@
             <p><strong>Organization:</strong> LCT Group & Vitraya Technologies</p>
             <p style="margin-top: 12px;"><a href="https://github.com/ak-eyther/LCT-commit" target="_blank">View on GitHub</a></p>
         </div>
+
+        <div class="card admin-card" id="admin-user-card" hidden>
+            <h2>User Management</h2>
+            <p class="subtle-text">Admins can provision accounts and assign roles. Standard users cannot see this section.</p>
+            <form id="create-user-form" novalidate>
+                <div class="admin-form-group">
+                    <label for="new-user-email">User email</label>
+                    <input type="email" id="new-user-email" name="new-user-email" placeholder="user@example.com" required>
+                </div>
+                <div class="admin-form-group">
+                    <label for="new-user-password">Temporary password</label>
+                    <input type="password" id="new-user-password" name="new-user-password" placeholder="Minimum 6 characters" minlength="6" required>
+                </div>
+                <div class="admin-form-group">
+                    <label for="new-user-role">Role</label>
+                    <select id="new-user-role" name="new-user-role">
+                        <option value="user">Standard user</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <p class="admin-section-note">Admins can create new accounts and view admin-only tooling. Standard users only access dashboards.</p>
+                </div>
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button class="btn" type="button" id="reset-admin-form">Clear</button>
+                    <button class="btn btn-primary" type="submit" id="create-user-submit">Create user</button>
+                </div>
+            </form>
+            <p class="form-feedback" id="admin-feedback" role="status" aria-live="polite"></p>
+        </div>
     </div>
 
     <div class="toast" id="toast">Saved</div>
 
+    <script src="auth.js"></script>
     <script>
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -298,14 +378,105 @@
             }
         }
 
-        // Event listeners
-        document.getElementById('export-json').addEventListener('click', exportJSON);
-        document.getElementById('export-csv').addEventListener('click', exportCSV);
-        document.getElementById('import-json').addEventListener('click', () => {
-            document.getElementById('importFile').click();
+        function resetAdminForm() {
+            document.getElementById('create-user-form').reset();
+            const feedback = document.getElementById('admin-feedback');
+            feedback.textContent = '';
+            feedback.className = 'form-feedback';
+        }
+
+        const ADMIN_SECTION_ID = 'admin-user-card';
+        let adminSectionActivated = false;
+
+        function showAdminSection(user) {
+            if (!user || user.role !== 'admin') {
+                return;
+            }
+
+            const card = document.getElementById(ADMIN_SECTION_ID);
+            if (!card || adminSectionActivated) {
+                return;
+            }
+
+            adminSectionActivated = true;
+            card.hidden = false;
+
+            const form = document.getElementById('create-user-form');
+            const feedback = document.getElementById('admin-feedback');
+            const submitButton = document.getElementById('create-user-submit');
+
+            form.addEventListener('submit', async event => {
+                event.preventDefault();
+
+                feedback.textContent = '';
+                feedback.className = 'form-feedback';
+
+                const email = document.getElementById('new-user-email').value.trim();
+                const password = document.getElementById('new-user-password').value;
+                const role = document.getElementById('new-user-role').value;
+
+                if (!email || !password) {
+                    feedback.textContent = 'Email and password are required.';
+                    feedback.classList.add('is-error');
+                    return;
+                }
+
+                submitButton.disabled = true;
+
+                try {
+                    const token = localStorage.getItem('lctAuthToken');
+                    const response = await fetch('/api/auth/admin/create-user', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({ email, password, role }),
+                    });
+
+                    const data = await response.json().catch(() => ({}));
+
+                    if (response.ok && data.success) {
+                        feedback.textContent = 'User created successfully. Share the temporary password with the new user.';
+                        feedback.classList.add('is-success');
+                        showToast('User account created');
+                        form.reset();
+                    } else {
+                        feedback.textContent = data.error || 'Unable to create user.';
+                        feedback.classList.add('is-error');
+                    }
+                } catch (error) {
+                    feedback.textContent = 'Network error. Please try again.';
+                    feedback.classList.add('is-error');
+                } finally {
+                    submitButton.disabled = false;
+                }
+            });
+
+            document
+                .getElementById('reset-admin-form')
+                .addEventListener('click', resetAdminForm);
+        }
+
+        function initialiseSettingsPage() {
+            document.getElementById('export-json').addEventListener('click', exportJSON);
+            document.getElementById('export-csv').addEventListener('click', exportCSV);
+            document.getElementById('import-json').addEventListener('click', () => {
+                document.getElementById('importFile').click();
+            });
+            document.getElementById('importFile').addEventListener('change', importData);
+            document.getElementById('clear-data').addEventListener('click', clearAllData);
+
+            const existingUser = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+            if (existingUser) {
+                showAdminSection(existingUser);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initialiseSettingsPage);
+        window.addEventListener('lct-auth-ready', event => {
+            showAdminSection(event.detail);
         });
-        document.getElementById('importFile').addEventListener('change', importData);
-        document.getElementById('clear-data').addEventListener('click', clearAllData);
     </script>
 </body>
 </html>

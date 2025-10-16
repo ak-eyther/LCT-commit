@@ -9,9 +9,6 @@
 const AUTH_RETRY_DELAY_MS = 2000;
 const AUTH_MAX_RETRIES = 1;
 
-// Routes that should not enforce login (landing pages, public dashboards, etc.)
-const PUBLIC_PATH_SEGMENTS = ['daily-claims-dashboard.html'];
-
 // Production-safe logging utility (client-side)
 const logger = {
   error: (msg, data) => {
@@ -72,7 +69,31 @@ async function checkAuth() {
       localStorage.removeItem('lctUser');
       localStorage.removeItem('lctRememberMe');
       window.location.href = '/login.html';
+      return;
     }
+
+    const data = await response.json().catch(() => null);
+    const user = data?.user;
+
+    if (user) {
+      const normalizedRole = user.role || 'user';
+      user.role = normalizedRole;
+      localStorage.setItem('lctUser', JSON.stringify(user));
+      document.documentElement.setAttribute('data-user-role', normalizedRole);
+
+      const requiredRole = window?.lctAuthConfig?.requiredRole;
+      if (requiredRole && normalizedRole !== requiredRole) {
+        alert('You do not have permission to access this page.');
+        window.location.href = '/';
+        return;
+      }
+
+      window.dispatchEvent(
+        new CustomEvent('lct-auth-ready', { detail: user })
+      );
+    }
+
+    bindLogoutLink();
   } catch (error) {
     logger.error('Auth verification failed:', {
       message: error.message,
@@ -90,6 +111,21 @@ async function checkAuth() {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (retryResponse.ok) {
+          const data = await retryResponse.json().catch(() => null);
+          const user = data?.user;
+          if (user) {
+            const normalizedRole = user.role || 'user';
+            user.role = normalizedRole;
+            localStorage.setItem('lctUser', JSON.stringify(user));
+            document.documentElement.setAttribute(
+              'data-user-role',
+              normalizedRole
+            );
+            window.dispatchEvent(
+              new CustomEvent('lct-auth-ready', { detail: user })
+            );
+          }
+          bindLogoutLink();
           logger.log('Authentication retry successful');
           return; // Success, don't log out
         }
@@ -161,6 +197,11 @@ function getCurrentUser() {
       return null;
     }
 
+    if (!user.role) {
+      user.role = 'user';
+      localStorage.setItem('lctUser', JSON.stringify(user));
+    }
+
     return user;
   } catch (error) {
     logger.error('Failed to parse user data:', error);
@@ -179,14 +220,24 @@ function isLoggedIn() {
   return !!localStorage.getItem('lctAuthToken');
 }
 
+function bindLogoutLink() {
+  const logoutLink = document.getElementById('logout-link');
+  if (logoutLink && !logoutLink.dataset.boundLogout) {
+    logoutLink.addEventListener('click', event => {
+      event.preventDefault();
+      logout();
+    });
+    logoutLink.dataset.boundLogout = 'true';
+  }
+}
+
 // Auto-run auth check when script loads
 if (typeof window !== 'undefined') {
   // Only run auth check if not on login page
   const { pathname } = window.location;
-  const isPublicPath = PUBLIC_PATH_SEGMENTS.some(segment =>
-    pathname.endsWith(segment)
-  );
-  if (!pathname.includes('login.html') && !isPublicPath) {
+  if (!pathname.includes('login.html')) {
     checkAuth();
   }
+
+  document.addEventListener('DOMContentLoaded', bindLogoutLink);
 }
