@@ -9,6 +9,9 @@
 const AUTH_RETRY_DELAY_MS = 2000;
 const AUTH_MAX_RETRIES = 1;
 
+// Routes that should not enforce login (landing pages, public dashboards, etc.)
+const PUBLIC_PATH_SEGMENTS = ['daily-claims-dashboard.html'];
+
 // Production-safe logging utility (client-side)
 const logger = {
   error: (msg, data) => {
@@ -179,7 +182,11 @@ function isLoggedIn() {
 // Auto-run auth check when script loads
 if (typeof window !== 'undefined') {
   // Only run auth check if not on login page
-  if (!window.location.pathname.includes('login.html')) {
+  const { pathname } = window.location;
+  const isPublicPath = PUBLIC_PATH_SEGMENTS.some(segment =>
+    pathname.endsWith(segment)
+  );
+  if (!pathname.includes('login.html') && !isPublicPath) {
     checkAuth();
   }
 }
