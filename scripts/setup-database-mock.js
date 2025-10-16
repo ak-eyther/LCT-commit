@@ -23,6 +23,7 @@ async function setupMockDatabase() {
         email: 'arif.khan@vitraya.com',
         passwordHash:
           '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj5J5K5K5K5K', // Mock hash for development password
+        role: 'admin',
         createdAt: new Date().toISOString(),
         lastLogin: null,
       },

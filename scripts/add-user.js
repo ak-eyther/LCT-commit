@@ -13,7 +13,7 @@ require('dotenv').config();
 const { Client } = require('pg');
 const bcrypt = require('bcryptjs');
 
-async function addUser(email, password) {
+async function addUser(email, password, role = 'user') {
   let client;
   try {
     console.log(`🔧 Adding user: ${email}`);
@@ -50,6 +50,14 @@ async function addUser(email, password) {
       throw new Error('Password must be at least 6 characters');
     }
 
+    const normalizedRole = role.toLowerCase();
+    const allowedRoles = ['admin', 'user'];
+    if (!allowedRoles.includes(normalizedRole)) {
+      throw new Error(
+        `Role must be one of: ${allowedRoles.join(', ')}`
+      );
+    }
+
     // Hash the password
     console.log('🔐 Hashing password...');
     const saltRounds = 12;
@@ -66,16 +74,16 @@ async function addUser(email, password) {
 
       // Update existing user
       await client.query(
-        'UPDATE users SET password_hash = $1, created_at = CURRENT_TIMESTAMP WHERE email = $2',
-        [passwordHash, email]
+        'UPDATE users SET password_hash = $1, role = $2, created_at = CURRENT_TIMESTAMP WHERE email = $3',
+        [passwordHash, normalizedRole, email]
       );
 
-      console.log('✅ User password updated successfully');
+      console.log('✅ User password and role updated successfully');
     } else {
       // Insert new user
       await client.query(
-        'INSERT INTO users (email, password_hash) VALUES ($1, $2)',
-        [email, passwordHash]
+        'INSERT INTO users (email, password_hash, role) VALUES ($1, $2, $3)',
+        [email, passwordHash, normalizedRole]
       );
 
       console.log('✅ User created successfully');
@@ -83,6 +91,7 @@ async function addUser(email, password) {
 
     console.log('🎉 User setup complete!');
     console.log(`📧 Email: ${email}`);
+    console.log(`👤 Role: ${normalizedRole}`);
     console.log('🔐 Password: [hidden for security]');
     console.log('📝 You can now test login at: /login.html');
   } catch (error) {
@@ -107,18 +116,21 @@ async function addUser(email, password) {
 // Get command line arguments
 const email = process.argv[2];
 const password = process.argv[3];
+const role = process.argv[4] || 'user';
 
 if (!email || !password) {
-  console.log('Usage: node scripts/add-user.js "email@example.com" "password"');
   console.log(
-    'Example: node scripts/add-user.js "email@example.com" "your-secure-password"'
+    'Usage: node scripts/add-user.js "email@example.com" "password" [role]'
+  );
+  console.log(
+    'Example: node scripts/add-user.js "admin@example.com" "your-secure-password" admin'
   );
   process.exit(1);
 }
 
 // Run if called directly
 if (require.main === module) {
-  addUser(email, password);
+  addUser(email, password, role);
 }
 
 module.exports = { addUser };

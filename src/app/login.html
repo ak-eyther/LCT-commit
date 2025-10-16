@@ -272,7 +272,12 @@
                     localStorage.setItem('lctAuthToken', data.token);
                     
                     // Store user info
-                    localStorage.setItem('lctUser', JSON.stringify(data.user));
+                    const userInfo = Object.assign(
+                        {},
+                        data.user,
+                        { role: (data.user && data.user.role) || 'user' }
+                    );
+                    localStorage.setItem('lctUser', JSON.stringify(userInfo));
                     
                     // Set remember me (extend token if needed)
                     if (rememberMe) {
@@ -324,6 +329,14 @@
                 });
                 
                 if (response.ok) {
+                    const data = await response.json().catch(() => null);
+                    if (data && data.user) {
+                        const normalizedRole = data.user.role || 'user';
+                        const storedUser = Object.assign({}, data.user, {
+                            role: normalizedRole
+                        });
+                        localStorage.setItem('lctUser', JSON.stringify(storedUser));
+                    }
                     // Token is valid, redirect to dashboard
                     window.location.href = '/';
                 } else {
